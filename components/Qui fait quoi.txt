@@ -1,0 +1,31 @@
+Qui fait quoi ?
+
+1 PhotoGallery.tsx – affichage & gestion de la galerie
+
+Récupère toutes les photos de l’utilisateur depuis photos et calcule l’URL publique du Storage.
+
+Affiche les vignettes sans recadrage (ratio 4/5 + object-contain).
+
+Permet de définir la photo principale et de supprimer une photo (pas la principale).
+
+Ne gère pas l’upload lui-même.
+
+2 UploadGalleryPhoto.tsx – ajout d’une photo de galerie ✅ (à privilégier)
+
+Compresse côté client (~1600 px, JPEG ~0.82) pour accélérer l’envoi.
+
+Upload vers le bucket avatars/ avec timeout + retry, puis attend brièvement que l’objet soit listé (évite les 404 juste après envoi).
+
+Insère la ligne dans photos avec is_main: false (c’est bien une photo de galerie) et status: "pending".
+
+Gère une limite (par ex. 5 gratuites / 12 premium) avant d’autoriser l’envoi.
+
+Appelle onUploadSuccess() pour que la page rafraîchisse la galerie.
+
+3 UploadPhoto.tsx – ancien uploader générique (optionnel / legacy)
+
+Même idée (compression + upload), mais plus simple.
+
+Insère dans photos et peut marquer la première photo comme is_main: true (utile si encore utilisé quelque part pour la photo principale).
+
+Si tu n’en as plus l’usage, tu peux le retirer pour éviter la confusion et n’utiliser que UploadGalleryPhoto.

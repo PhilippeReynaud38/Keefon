@@ -1,0 +1,47 @@
+B) Tu as perdu l’audit mais Stripe reste la source de vérité
+
+Côté serveur (webhook / script), tu listes les abonnements actifs chez Stripe, puis tu mets à jour en masse via la RPC service (sécurisée par la Service Key) :
+
+=====>>   SQL
+
+
+
+-- Confirme Essential (service role only) + enlève le traceur
+create or replace function public.mark_paid_essential_service(p_user_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.profiles
+     set subscription_tier        = 'essential',
+         essentiel_global_granted = false,
+         updated_at               = now()
+   where id = p_user_id;
+end;
+$$;
+
+revoke all on function public.mark_paid_essential_service(uuid) from public, authenticated;
+grant execute on function public.mark_paid_essential_service(uuid) to service_role;
+
+-- Variante Élite (si besoin)
+create or replace function public.mark_paid_elite_service(p_user_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.profiles
+     set subscription_tier        = 'elite',
+         essentiel_global_granted = false,
+         updated_at               = now()
+   where id = p_user_id;
+end;
+$$;
+
+revoke all on function public.mark_paid_elite_service(uuid) from public, authenticated;
+grant execute on function public.mark_paid_elite_service(uuid) to service_role;
+
+

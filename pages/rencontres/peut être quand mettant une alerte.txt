@@ -1,0 +1,41 @@
+peut être quand mettant une alerte sur la page admin pour les profiles qui spam, et l'admin vérifie le comportement, s'il juge le profile no crédible (  exemple de message sur tout le territoire Français, ou autre ) ce profile peut être écarté sans le lui dire pour évité qu'il en créer d'autres ( si personne lui répond il va ce lassé et tester d'autres sites ) .  tout de suite c'est la pause jusqu'à demain, à demain.
+
+
+
+
+
+Bonne idée 👍 : une alerte admin “suspect spam” + shadow-ban discret (pas de notification au profil) fera le taf sans friction.
+
+Pour demain, je te propose ce plan simple (pas de code ce soir) :
+
+Déclencheurs d’alerte
+
+X messages/heure OU > Y destinataires/jour (valeurs douces).
+
+“Rayon anormal” : messages envoyés partout en France en très peu de temps.
+
+Liens externes dans les 10 premiers messages.
+
+Profil tout neuf + envoi massif.
+
+Panneau admin
+
+Carte “Profils suspects” triée par score.
+
+Détails rapides : âge du compte, #messages, #destinataires, % avec lien, dispersion géo.
+
+Actions 1-clic : Surveiller, Limiter en silence, Écarter en silence (shadow-ban), Débannir.
+
+Journal d’actions (qui a cliqué quoi).
+
+Comportement côté utilisateur suspect
+
+Ses messages partent “normalement” mais ne sont plus délivrés.
+
+Pas d’info d’échec → il se lasse et part.
+
+Sécurité douce
+
+Limites automatiques pour comptes très récents.
+
+Bouton Signaler visible pour accélérer la détection.

@@ -1,0 +1,165 @@
+VIVAYA / KEEFORN – RÉSUMÉ DU SYSTÈME DE PAIEMENT (MODE ABSTRACTION)
+
+Objectif général
+----------------
+Le projet ne parle plus directement à Stripe dans les pages React.
+À la place, tout passe par une couche d’abstraction unique : `lib/payments.ts`.
+
+Cette couche pourra plus tard être branchée :
+- soit sur Stripe,
+- soit sur un autre PSP,
+- soit sur un mode “DEV / FAKE” (celui qui est utilisé actuellement).
+
+Ainsi, on peut continuer à développer tout le front (abonnements, boutique, crédits)
+sans dépendre d’un vrai compte Stripe, ni des clés secrètes.
+
+Fichiers principaux impliqués
+-----------------------------
+1) `lib/payments.ts`
+   - Cœur du système.
+   - Expose une fonction :
+
+       `export function getPaymentProvider(): PaymentProvider`
+
+   - Le `PaymentProvider` est une interface TypeScript qui définit au minimum :
+       • `subscribeToPlan({ userId, planId })`
+       • `purchaseCredits({ userId, type, quantity })`
+
+   - Types principaux :
+       • `PlanId` : `'free' | 'essential' | 'elite'` (aujourd’hui)
+       • `CreditType` : `'heart' | 'echo'`
+       • `PaymentResult` : `{ success: boolean; message?: string }`
+
+   - Implémentation actuelle : un “DEV provider” interne qui :
+       • NE déclenche aucun paiement réel,
+       • renvoie simplement `{ success: true, message: "...mode test..." }`,
+       • peut éventuellement appeler plus tard une RPC ou une table interne
+         pour stocker les changements d’abonnement / de crédits.
+
+   - Plus tard, on pourra ajouter un vrai provider Stripe du style :
+       • `StripePaymentProvider` qui implémente la même interface et
+         qui créera des sessions de paiement, gérera les webhooks, etc.
+       • Le front n’aura pas besoin de changer : il appellera toujours
+         `getPaymentProvider()`.
+
+2) `pages/abonnement.tsx`
+   - Page des abonnements (Gratuit / Essentiel / Keefon+).
+   - Lit le plan effectif via la vue SQL : `user_plans_effective_v`.
+   - N’APPELLE PAS Stripe directement.
+   - Pour changer d’abonnement (boutons “Passer à Essentiel” / “Choisir Keefon+”),
+     elle appelle :
+
+       ```ts
+       const payment = getPaymentProvider()
+       const result = await payment.subscribeToPlan({
+         userId,
+         planId: target, // 'essential' ou 'elite'
+       })
+       ```
+
+   - Si `result.success === true`, la page recharge le plan effectif à partir
+     de la vue Supabase, et affiche éventuellement `result.message`.
+   - En mode actuel, c’est donc un changement “logique”/interne, sans paiement réel.
+   - Les boutons de navigation haut de page :
+       • `← Retour` (jaune)
+       • `Tableau de bord →` (vert / paleGreen)
+     ne sont pas liés au paiement, mais font partie de l’UX autour de l’abonnement.
+
+3) `pages/boutique.tsx`
+   - Nouvelle page “Boutique Vivaya”.
+   - Accessible depuis le dashboard (menu “🧍 Mon espace” → “🛍️ Boutique”)
+     et via les boutons en haut de la boutique :
+       • “Gérer mon abonnement” (jaune) → `/abonnement`
+       • “Tableau de bord →” (vert) → `/dashboard`
+   - Propose trois familles de produits :
+       • Packs de cœurs (hearts)
+       • Packs d’échos (echos)
+       • Packs mixtes (bundles : cœur + écho)
+   - Les produits sont définis dans une constante `PRODUCTS` avec :
+       • `id`, `label`, `description`
+       • `category` : `'hearts' | 'echos' | 'bundle'`
+       • `hearts`, `echos` : quantités
+       • `price` : prix affiché (mode test)
+
+   - Quand l’utilisateur clique sur “Ajouter ce pack”, la page :
+       • vérifie qu’il est connecté via `supabase.auth.getUser()`,
+       • appelle `getPaymentProvider()`,
+       • envoie un ou deux appels à `purchaseCredits` selon le type de pack.
+
+     Exemples :
+       - Pack cœurs seuls :
+         payment.purchaseCredits({ userId, type: 'heart', quantity: hearts })
+
+       - Pack échos seuls :
+         payment.purchaseCredits({ userId, type: 'echo', quantity: echos })
+
+       - Pack mixte (bundle) : deux appels successifs
+         pour cœurs puis échos.
+
+   - Les boutons “Ajouter ce pack” sont désormais tous en vert (bg-paleGreen),
+     avec un état “Ajout en cours…” quand une requête est en cours.
+
+   - Le texte rappelle clairement : “Mode test : aucun paiement réel n’est effectué”.
+
+4) `pages/dashboard.tsx`
+   - Tableau de bord principal de l’utilisateur.
+   - Menu “🧍 Mon espace” contient maintenant les entrées :
+       • 👤 Mon profil  → `/profile`
+       • ⭐ Abonnement  → `/abonnement`
+       • 🛍️ Boutique    → `/boutique`
+       • ⚙️ Paramètres  → `/parametres`
+       • 🚪 Déconnexion → `/logout`
+   - Le dashboard lui-même ne fait AUCUN appel au système de paiement,
+     mais c’est le point d’entrée UX vers l’abonnement et la boutique.
+
+Ce qui a été nettoyé par rapport à l’ancien Stripe
+--------------------------------------------------
+- Les fichiers API spécifiques Stripe (create.ts, portal.ts, trial.ts, etc.)
+  ne sont plus utilisés dans le front. Ils pourront être supprimés ou réécrits
+  plus tard derrière l’abstraction si on rebranche Stripe.
+- Les pages React ne contiennent plus de clé publique Stripe, ni d’appel direct
+  à `stripe.redirectToCheckout`, ni d’URL `/api/stripe/*`.
+- Toute la logique de “changement de plan” et “achat de crédits” est centralisée
+  dans `lib/payments.ts` en passant par `getPaymentProvider()`.
+
+Flux général (aujourd’hui, en mode test)
+----------------------------------------
+1) L’utilisateur se connecte puis va :
+   - soit sur `/abonnement` pour gérer Essentiel / Keefon+,
+   - soit sur `/boutique` pour ajouter des cœurs et des échos.
+
+2) La page récupère `userId` via Supabase :
+   - `const { data } = await supabase.auth.getUser()`.
+
+3) La page appelle l’abstraction :
+   - `const payment = getPaymentProvider()`.
+
+4) La page appelle ensuite :
+   - `payment.subscribeToPlan({ userId, planId })` pour les abonnements,
+   - `payment.purchaseCredits({ userId, type, quantity })` pour les crédits.
+
+5) Le provider actuel renvoie un résultat de test et, si nécessaire, on met à jour :
+   - le plan effectif via la vue `user_plans_effective_v` (pour affichage),
+   - ou des compteurs internes (à implémenter plus tard côté BDD).
+
+6) Aucun débit réel, aucune redirection vers une page de paiement.
+
+Idée pour la suite (quand on activera un vrai PSP)
+--------------------------------------------------
+- Implémenter un provider réel, par exemple `StripePaymentProvider`, qui :
+   • traduit `subscribeToPlan` en création de session de paiement / abonnement,
+   • traduit `purchaseCredits` en session de paiement “one shot”,
+   • gère les retours / webhooks côté backend (crédits, plan actif, etc.).
+
+- Modifier `getPaymentProvider()` pour qu’il renvoie :
+   • le provider DEV sur l’environnement de développement,
+   • le provider Stripe sur l’environnement de production.
+
+- Garder strictement le même contrat :
+   • les pages n’appellent JAMAIS Stripe directement,
+   • elles ne connaissent que `getPaymentProvider()` et les types partagés.
+
+Ce fichier peut servir de mémo pour la prochaine session afin de se rappeler :
+- où se trouvent les points d’entrée du paiement,
+- quels fichiers modifiés sont liés à ce système,
+- et comment brancher un nouveau prestataire sans casser le front.

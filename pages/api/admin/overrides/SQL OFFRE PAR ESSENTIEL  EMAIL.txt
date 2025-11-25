@@ -1,0 +1,33 @@
+-- UTF-8
+-- Base unique de calcul (pas de SELECT sur user_plans_effective_v)
+create or replace function admin.effective_plan_for_user(p_user_id uuid)
+returns text
+language sql
+stable
+security definer
+as $$
+  with base as (
+    select
+      lower(coalesce(p.subscription_tier, 'free')) as raw_tier,
+      -- override actif ?
+      exists (
+        select 1
+        from admin.plan_overrides po
+        where po.user_id = p_user_id
+          and po.expires_at > now()
+      ) as has_active_override,
+      -- flag global
+      coalesce(get_essentiel_offert_global(), false) as geo_on
+    from profiles p
+    where p.id = p_user_id
+  )
+  select case
+    when has_active_override then 'essentiel'  -- (ou po.plan_id si tu gères plusieurs plans)
+    when geo_on              then 'essentiel'
+    else raw_tier
+  end
+  from base;
+$$;
+
+-- Donner l'exécution à authenticated/anon si nécessaire
+grant execute on function admin.effective_plan_for_user(uuid) to authenticated, anon;

@@ -1,0 +1,47 @@
+{
+  "name": "vivaya",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "test": "echo \"no tests\" && exit 0"
+  },
+  "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/auth-helpers-react": "^0.5.0",
+    "@supabase/supabase-js": "^2.75.0",
+    "dayjs": "^1.11.13",
+    "formik": "^2.4.6",
+    "framer-motion": "^12.23.0",
+    "jspdf": "^3.0.1",
+    "lucide-react": "^0.525.0",
+    "next": "^15.4.6",
+    "nodemailer": "^7.0.9",
+    "pg": "^8.16.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.2.0",
+    "stripe": "^18.5.0",
+    "uuid": "^11.1.0",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.29",
+    "@types/nodemailer": "^7.0.3",
+    "@types/pg": "^8.15.6",
+    "@types/react": "19.1.2",
+    "autoprefixer": "^10.4.21",
+    "dotenv": "^16.5.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^13.5.6",
+    "husky": "^9.1.7",
+    "playwright": "^1.52.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.0.0"
+  }
+}

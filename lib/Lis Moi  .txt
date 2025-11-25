@@ -1,0 +1,37 @@
+le fichier  userIdMapping.ts serre à faire la liaison entre id de la table profile et user_id des autres tables// UTF-8
+// lib/seo.ts — utilitaires SEO simples et robustes (sans librairie externe)
+
+export const SITE = {
+  name: "Keefon",
+  url: "https://keefon.com", // ← ajuste si besoin
+  defaultLocale: "fr",
+  locales: ["fr", "en"],
+  twitter: "@keefon", // optionnel
+};
+
+export type SeoMeta = {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  locale?: "fr" | "en";
+  noindex?: boolean;
+  imageAbsUrl?: string; // URL absolue d'une image OG
+};
+
+export function buildTitle(parts: Array<string | undefined>) {
+  const clean = parts.filter(Boolean) as string[];
+  return clean.length ? `${clean.join(" · ")} | ${SITE.name}` : SITE.name;
+}
+
+export function absoluteUrl(pathOrUrl?: string) {
+  if (!pathOrUrl) return SITE.url;
+  if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl;
+  return `${SITE.url}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
+}
+
+export function fallbackDescription(desc?: string) {
+  return (
+    desc ||
+    "Keefon — rencontres bienveillantes et profils authentiques. Rejoignez une communauté qui privilégie le respect, la clarté et la simplicité."
+  );
+}

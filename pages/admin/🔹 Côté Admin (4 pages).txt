@@ -1,0 +1,13 @@
+🔹 Côté Admin (4 pages)
+
+Plans
+➝ gérer les règles de base (par abonnement).
+
+Overrides
+➝ accorder une exception temporaire à un utilisateur.
+
+Cohortes
+➝ créer un groupe test (ex: ville, âge, promo).
+
+Debug
+➝ taper l’email → voir tout ce qui s’applique, et la source (plan / override / cohorte).

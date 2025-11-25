@@ -1,0 +1,83 @@
+// SQL : EMPECHE QU'UN PROFILE MALIN AJOUTE PLUS QUE 5 PHOTOS. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-- ============================================================
+-- Vivaya — Sécurisation "max 5 photos par utilisateur"
+-- Inclut la photo principale (is_main = true) dans le quota
+-- ============================================================
+
+begin;
+
+-- 0) RLS activé (si déjà activé, ça ne casse rien)
+alter table public.photos enable row level security;
+
+-- 1) Trigger côté DB : interdit d'insérer plus de 5 photos/user
+drop trigger if exists trg_photos_limit on public.photos;
+drop function if exists public.enforce_photos_limit();
+
+create or replace function public.enforce_photos_limit()
+returns trigger
+language plpgsql
+security definer
+as $fn$
+begin
+  -- Compte toutes les photos existantes du user (principale comprise)
+  if (select count(*) from public.photos where user_id = new.user_id) >= 5 then
+    raise exception 'PHOTO_LIMIT: maximum 5 photos par utilisateur (y compris la principale)';
+  end if;
+  return new;
+end;
+$fn$;
+
+create trigger trg_photos_limit
+before insert on public.photos
+for each row
+execute function public.enforce_photos_limit();
+
+-- 2) RLS policies (ceinture + bretelles)
+--    a) INSERT: seulement ses propres lignes ET seulement si < 5
+drop policy if exists photos_insert_max5 on public.photos;
+create policy photos_insert_max5
+on public.photos
+for insert
+to authenticated
+with check (
+  user_id = auth.uid()
+  and (
+    select count(*) from public.photos where user_id = auth.uid()
+  ) < 5
+);
+
+--    b) UPDATE: modifier seulement ses propres lignes (pas besoin de recompter)
+drop policy if exists photos_update_self on public.photos;
+create policy photos_update_self
+on public.photos
+for update
+to authenticated
+using (user_id = auth.uid())
+with check (user_id = auth.uid());
+
+--    c) DELETE: supprimer seulement ses propres lignes
+drop policy if exists photos_delete_self on public.photos;
+create policy photos_delete_self
+on public.photos
+for delete
+to authenticated
+using (user_id = auth.uid());
+
+-- 3) Unicité de la photo principale (0 ou 1 par user)
+create unique index if not exists uniq_one_main_photo_per_user
+on public.photos (user_id)
+where is_main = true;
+
+commit;
+
+-- =========================
+-- (Optionnel) ROLLBACK KIT
+-- Si besoin d'annuler rapidement :
+-- begin;
+-- drop trigger if exists trg_photos_limit on public.photos;
+-- drop function if exists public.enforce_photos_limit();
+-- drop policy if exists photos_insert_max5 on public.photos;
+-- drop policy if exists photos_update_self on public.photos;
+-- drop policy if exists photos_delete_self on public.photos;
+-- drop index if exists uniq_one_main_photo_per_user;
+-- commit;

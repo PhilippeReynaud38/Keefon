@@ -1,0 +1,81 @@
+
+A) Tu as le journal d’audit (subscription_audit) → reconstruction 100% SQL
+
+Ajoute cette procédure admin (UTF-8, simple). Elle recalcule le palier de tous les utilisateurs à partir du dernier événement “paiement” trouvé dans l’audit, et enlève le traceur global.=====>>
+
+
+
+
+
+
+-- -*- coding: utf-8 -*- +++ SQL
+-- ============================================================================
+-- Vivaya — Reconstruction de profiles depuis le journal d’audit
+-- Recalcule le palier courant (free/essential/elite) à partir des derniers
+-- événements de paiement, pour TOUS les users. Enlève le traceur global.
+-- Appel : select public.admin_rebuild_profiles_from_audit();
+-- Sécurité : admin only.
+-- ============================================================================
+
+create or replace function public.admin_rebuild_profiles_from_audit()
+returns table (repaired bigint)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.auth_is_admin() then
+    raise exception 'unauthorized: admin only' using errcode = '42501';
+  end if;
+
+  -- 1) Dernier état "paiement" par user (resume/start/end/canceled/elite variants)
+  with paid_events as (
+    select
+      user_id,
+      created_at,
+      case
+        when action in ('paid_elite_start', 'paid_elite_resume') then 'elite'
+        when action in ('paid_start', 'paid_resume')             then 'essential'
+        when action in ('paid_end', 'paid_elite_end', 'paid_canceled') then 'free'
+        else null
+      end as tier_delta
+    from public.subscription_audit
+    where action in (
+      'paid_start','paid_resume','paid_end','paid_canceled',
+      'paid_elite_start','paid_elite_resume','paid_elite_end'
+    )
+  ),
+  last_paid as (
+    select distinct on (user_id)
+      user_id,
+      tier_delta
+    from paid_events
+    where tier_delta is not null
+    order by user_id, created_at desc
+  ),
+
+  -- 2) Met tout le monde en "free" par défaut (enlève aussi le traceur)
+  reset_all as (
+    update public.profiles
+       set subscription_tier        = 'free',
+           essentiel_global_granted = false
+    returning id
+  ),
+
+  -- 3) Applique le dernier statut payé (essential/elite) si présent
+  apply_paid as (
+    update public.profiles p
+       set subscription_tier = lp.tier_delta
+      from last_paid lp
+     where p.id = lp.user_id
+       and lp.tier_delta in ('essential','elite')
+    returning p.id
+  )
+
+  select (select count(*) from reset_all)
+       + (select count(*) from apply_paid) as repaired;
+end;
+$$;
+
+revoke all on function public.admin_rebuild_profiles_from_audit() from public;
+grant execute on function public.admin_rebuild_profiles_from_audit() to authenticated;

@@ -1,0 +1,1 @@
+*findCoordsByCity.ts -- > Rôle : Trouver les coordonnées d'une ville française depuis la table `communes_fr`

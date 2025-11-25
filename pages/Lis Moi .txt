@@ -1,0 +1,97 @@
+# ✅ Récapitulatif des fichiers modifiés – Vivaya (Juillet 2025)
+
+## 🔒 Objectif global
+Corriger le parcours utilisateur après création de compte, empêcher les redirections forcées vers `/presignup`, et créer une expérience fluide avec une page intermédiaire `/welcome-back`.
+
+---
+
+## 🔁 Fichiers modifiés ou ajoutés
+
+### 1. `_app.tsx`
+- 🔁 Redirection centrale vers `/welcome-back` si l’utilisateur est connecté mais n’a pas encore de `username`
+- ✅ Redirections déplacées ici (logique centralisée)
+- 🧼 Encodé UTF-8, logique propre et commentée
+
+---
+
+### 2. `login.tsx`
+- ✅ Redirige vers `/dashboard` si l’utilisateur est finalisé
+- 🔁 Sinon redirige vers `/welcome-back`
+- ❌ Ne redirige plus jamais vers `/presignup`
+- 🧼 Gestion propre de `presignup_data` et `photos`
+
+---
+
+### 3. `signup.tsx`
+- ✅ Vérifie la complétion du profil (`presignup_data` + photo)
+- 🔁 Redirige vers `/dashboard` si OK, sinon `/welcome-back`
+- 🧼 Formulaire propre, avec retour après email validé
+
+---
+
+### 4. `presignup.tsx`
+- ✅ Fichier resté intact (aucune modification)
+- Comportement correct : enregistrement dans `presignup_data` + upload avatar
+
+---
+
+### 5. `index.tsx` (accueil)
+- ❌ Ancienne redirection forcée vers `/presignup` supprimée
+- ✅ Le composant laisse désormais l’utilisateur choisir
+- 🧼 Affiche les bons boutons selon la session
+
+---
+
+### 6. `lib/libuseUser.ts`
+- ❌ Redirection `router.push("/presignup")` supprimée
+- ✅ Hook allégé, sans effet de bord, utile pour exposer `user`, `email`, `username`
+
+---
+
+### 7. `pages/welcome-back.tsx` (nouveau)
+- ✅ Ajouté pour gérer les profils incomplets
+- 🎯 L’utilisateur peut soit continuer son inscription, soit se déconnecter
+- 💎 Page simple, claire, et utile
+
+---
+
+### 8. `dashboard.tsx`
+- ✅ Ajout de la protection d’accès : redirige vers `/login` si l’utilisateur est non connecté
+- 💡 Aucun changement visuel
+- 🧼 Code robuste, aucun gadget
+
+---
+
+### 9. `profileplus/[id].tsx`
+- ✅ Relecture et validation : aucune correction nécessaire
+- ✅ Affiche uniquement les champs remplis
+- ✅ Galerie, avatar, certifié, tout est bien affiché
+- 🧼 Conforme aux règles Vivaya
+
+---
+
+## ✅ Résultat final
+
+- Aucun utilisateur n’est bloqué ni redirigé de force
+- Les profils incomplets sont guidés vers `/welcome-back`
+- Toutes les pages sont UTF-8, logiques, propres et commentées
+- Le parcours d’inscription est fluide et réversible
+
+---
+
+📦 Fichiers validés pour archive :
+- `_app.tsx`
+- `login.tsx`
+- `signup.tsx`
+- `index.tsx`
+- `presignup.tsx`
+- `dashboard.tsx`
+- `lib/libuseUser.ts`
+- `pages/welcome-back.tsx`
+- `pages/profileplus/[id].tsx`
+
+---
+
+🗂️ Dernière validation : **2025-07-16**
+
+Règles respectées : ✅ robustesse | ✅ logique | ✅ UTF-8 | ✅ zéro redirection parasite

@@ -1,0 +1,11 @@
+COULEURS UTILISES : 
+
+paleGreen: '#59FF72'
+
+orangeVivaya: '#FFA500'
+
+chatOuter: '#00bcd4'
+
+primary: '#f55057'
+
+secondary: '#ffcf00'

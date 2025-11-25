@@ -1,0 +1,25 @@
+# Dépendances
+node_modules/
+
+# Build Next.js
+.next/
+.out/
+.vercel/
+.turbo/
+
+# Env & secrets
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Divers
+dist/
+# Sauvegardes lourdes
+*.zip

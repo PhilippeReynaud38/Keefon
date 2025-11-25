@@ -1,0 +1,9 @@
+/features/billing/
+  tiers.ts                 (déjà donné)
+  client.ts                (déjà donné)
+  admin-client.ts          ← NEW (appelle l’API pour générer un code promo)
+/components/admin/
+  GrantPremiumOffer.tsx    ← NEW (UI admin 1/2/3 mois)
+/pages/api/billing/
+  checkout/create.ts       (déjà donné)
+  coupons/create-promo.ts  ← NEW (crée coupon + promotion code -100%)

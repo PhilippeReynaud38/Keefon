@@ -1,0 +1,43 @@
+-- Activer la RLS si besoin
+alter table public.certified_photos enable row level security;
+
+-- Contrainte unique (recommandée par l'upsert onConflict:'user_id')
+create unique index if not exists certified_photos_user_id_key
+on public.certified_photos (user_id);
+
+-- Nettoyage des anciennes policies (si elles existent)
+drop policy if exists "self can manage own certified_photo" on public.certified_photos;
+drop policy if exists "admin can read all certified photos" on public.certified_photos;
+drop policy if exists "admin can update certified photos" on public.certified_photos;
+drop policy if exists "admin can delete certified photos" on public.certified_photos;
+
+-- L'utilisateur peut TOUT faire sur SA ligne (insert/select/update/delete)
+create policy "self can manage own certified_photo"
+on public.certified_photos
+for all
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+-- L’admin peut LIRE toutes les lignes (pour le dashboard)
+create policy "admin can read all certified photos"
+on public.certified_photos
+for select
+using (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin = true)
+);
+
+-- L’admin doit aussi pouvoir basculer le statut (approve/reject)
+create policy "admin can update certified photos"
+on public.certified_photos
+for update
+using (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin = true)
+);
+
+-- Et supprimer la ligne quand il refuse (le bouton "Refuser")
+create policy "admin can delete certified photos"
+on public.certified_photos
+for delete
+using (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin = true)
+);

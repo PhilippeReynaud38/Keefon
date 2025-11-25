@@ -1,0 +1,100 @@
+Vivaya - Confidentialite des profils (CHEATSHEET)
+Mise a jour : 2025-11-07
+
+Objectif
+--------
+Document court, lisible en terminal Windows (.cmd) et simple a parcourir
+dans VSCode. Lignes limitees a 80 colonnes, ASCII uniquement.
+
+REGLE PRINCIPALE (affichage d'un profil)
+----------------------------------------
+Pour un viewer V et un candidat C :
+1) Lire flags[C] = { is_public, cert_only } via RPC get_privacy_flags([C]).
+2) Lire viewer_is_certified via RPC get_viewer_is_certified().
+3) Afficher C si is_public = true ET (cert_only = false OU viewer_is_certified =
+ true).
+
+Stockage unique des parametres
+------------------------------
+Table: public.user_settings
+Champs utilises:
+- user_id uuid (PK)
+- is_public boolean default true
+- visible_to_certified_only boolean default false
+
+Index recommande:
+- create index if not exists idx_user_settings_user_id on public.user_settings(user_id);
+
+Certification d'un viewer
+-------------------------
+Un viewer est certifie si :
+- profiles.certified_status = 'approved' OU
+- une ligne existe dans certified_photos(user_id=viewer, status='approved').
+
+Index recommande:
+- create index if not exists idx_cert_photos_user_status on certified_photos(user_id, status);
+
+RPC utilisees (security definer)
+--------------------------------
+1) public.get_privacy_flags(p_ids uuid[]) -> (user_id, is_public, cert_only)
+   - Retourne les drapeaux de confidentialite pour une liste d'ids.
+   - Grant: execute to authenticated; revoke all from public.
+
+2) public.get_viewer_is_certified() -> boolean
+   - Indique si auth.uid() est certifie.
+   - Grant: execute to authenticated; revoke all from public.
+
+Integration Front - fichiers
+----------------------------
+/pages/dashboard.tsx (ProfilesArea):
+- Obtenir les candidats via rpc('trouver_profils_proches', ...).
+- Filtrer les bloques (table blocks).
+- Appeler get_privacy_flags(ids) et get_viewer_is_certified().
+- Appliquer la REGLE PRINCIPALE.
+- Optionnel: lire profiles(id, created_at) pour flag "nouveau".
+- Precharger photos (storage avatars) et likes.
+
+/pages/recherche.tsx :
+- Meme logique: apres obtention de la liste candidates,
+  appliquer get_privacy_flags + get_viewer_is_certified et REGLE PRINCIPALE.
+- Ensuite seulement, appliquer les filtres avances UI (certifies, enfants, fume/alcool, etc.).
+
+Invariants a respecter
+----------------------
+- Source unique: public.user_settings (ne pas dupliquer dans profiles ou des vues).
+- Toujours filtrer via les 2 RPC apres la construction de la liste des candidats.
+- RPC = security definer; grant execute to authenticated; revoke all from public.
+- Defauts si pas de ligne user_settings: is_public=true, cert_only=false.
+
+Plan de tests rapide (profils connus)
+-------------------------------------
+- H2 (certifie & abonne): aac2e829-f271-454d-a43a-b84b1c490395
+- F1 (non certifiee, non abonnee): d2e3af44-fed2-4b0d-bb5b-d3c903cf5899
+- Mimie (certifiee non abonnee): eafac9ae-dafb-442c-8b22-31ae544de7c8
+
+Cas a tester pour le candidat C (dans user_settings de C):
+1) is_public=false -> jamais visible.
+2) is_public=true, cert_only=false -> visible pour tous.
+3) is_public=true, cert_only=true + viewer non certifie -> masque.
+4) is_public=true, cert_only=true + viewer certifie -> visible.
+
+Depannage (checklist)
+---------------------
+1) Profil "prive" visible quand meme :
+   - Verifier la ligne user_settings (ou l'absence -> defauts).
+   - SQL rapide:
+     select * from get_privacy_flags(array['<user_id>'::uuid]);
+     select get_viewer_is_certified();
+   - Si les RPC renvoient la bonne info -> verifier l'application du filtre front.
+
+2) Profil "cert_only" visible par viewer non certifie :
+   - get_viewer_is_certified() doit renvoyer false.
+   - Verifier profiles.certified_status='approved' ou certified_photos(..., 'approved').
+
+3) Erreurs RLS :
+   - Ne jamais interroger user_settings/certified_photos en direct depuis le front.
+   - Utiliser exclusivement les 2 RPC.
+
+Rappel
+------
+Principe: une table (user_settings), deux RPC, un unique filtre front.
