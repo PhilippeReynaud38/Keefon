@@ -23,6 +23,12 @@
 // CHANGELOG (2025-11-19-ter):
 //   - En-tête : bouton « ← Retour » (historique) + bouton « Tableau de bord → »,
 //     avec couleurs ajustées (Retour jaune, Tableau de bord vert).
+// CHANGELOG (2025-11-26):
+//   - Distinction “plan de base” (profiles.subscription_tier) vs plan effectif
+//     (user_plans_effective_v.effective_tier).
+//   - Si base = free et effectif ≠ free → badge = “Accès partiel” (période offerte)
+//     au lieu d’afficher “Essentiel” ou “Keefon+”. Keefon+ reste le 4e état réel.
+//   - Affichage explicite : “Accès partiel Essentiel / Keefon+” dans le badge.
 // ============================================================================
 
 import React, { useEffect, useState } from 'react'
@@ -58,9 +64,18 @@ const euro = (n: number) =>
 const labelFromUiTier = (t: UiTier) =>
   t === 'elite' ? 'Keefon+' : t === 'essential' ? 'Essentiel' : 'Gratuit'
 
+// Lecture générique d’un palier texte -> UiTier (vue effectif)
 const mapEffectiveFromView = (raw: string | null): UiTier => {
   const s = (raw || '').trim().toLowerCase()
-  if (s === 'elite') return 'elite'
+  if (s === 'elite' || s === 'keefon+' || s === 'keefonplus') return 'elite'
+  if (s === 'essentiel' || s === 'essential' || s === 'premium') return 'essential'
+  return 'free'
+}
+
+// Lecture d’un palier depuis profiles.subscription_tier (plan “de base”)
+const mapProfileTierFromRaw = (raw: string | null): UiTier => {
+  const s = (raw || '').trim().toLowerCase()
+  if (s === 'elite' || s === 'keefon+' || s === 'keefonplus') return 'elite'
   if (s === 'essentiel' || s === 'essential' || s === 'premium') return 'essential'
   return 'free'
 }
@@ -69,7 +84,11 @@ export default function AbonnementPage() {
   const router = useRouter()
 
   const [billing, setBilling] = useState<Billing>('monthly')
+
+  // Plan effectif (ce que la vue calcule) et plan “de base” (profil)
   const [effective, setEffective] = useState<UiTier>('free')
+  const [baseTier, setBaseTier] = useState<UiTier>('free')
+
   const [loadingPlan, setLoadingPlan] = useState(true)
   const [pending, setPending] = useState<UiTier | null>(null)
 
@@ -80,32 +99,71 @@ export default function AbonnementPage() {
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
-  // -- Lecture du palier effectif depuis la vue sécurisée --------------------
-  const loadEffectiveTier = async (): Promise<UiTier> => {
+  // -- Lecture du palier effectif + palier de base --------------------------
+  type PlanState = { effective: UiTier; base: UiTier }
+
+  const loadPlanState = async (): Promise<PlanState> => {
     const { data: auth } = await supabase.auth.getUser()
     const uid = auth?.user?.id
     if (!uid) {
       setUserId(null)
-      return 'free'
+      return { effective: 'free', base: 'free' }
     }
     setUserId(uid)
 
-    const { data, error } = await supabase
-      .from('user_plans_effective_v') // doit renvoyer { id, effective_tier }
-      .select('effective_tier')
-      .eq('id', uid)
-      .single()
+    // On lit en parallèle : vue “effectif” + profil brut.
+    const [effRes, profRes] = await Promise.all([
+      supabase
+        .from('user_plans_effective_v')
+        .select('effective_tier')
+        .eq('id', uid)
+        .maybeSingle(),
+      supabase
+        .from('profiles')
+        .select('subscription_tier')
+        .eq('id', uid)
+        .maybeSingle(),
+    ])
 
-    if (error) throw error
-    return mapEffectiveFromView(data?.effective_tier ?? null)
+    let eff: UiTier = 'free'
+    let base: UiTier = 'free'
+
+    if (!effRes.error && effRes.data) {
+      eff = mapEffectiveFromView((effRes.data as any).effective_tier ?? null)
+    }
+
+    if (!profRes.error && profRes.data) {
+      base = mapProfileTierFromRaw((profRes.data as any).subscription_tier ?? null)
+    }
+
+    // Fallback de sécurité : si rien en base, on aligne le “base” sur l’effectif
+    if (base === 'free' && eff !== 'free') {
+      // Cas intéressant pour nous : base free + effectif non-free = accès offert/partiel.
+      // On laisse base = free pour que la UI puisse le détecter.
+    } else if (base === 'free' && eff === 'free') {
+      // OK : tout est free.
+    } else if (base !== 'free') {
+      // OK : vrai abonnement enregistré en base.
+    } else {
+      base = eff
+    }
+
+    return { effective: eff, base }
   }
 
   useEffect(() => {
     let on = true
     ;(async () => {
       try {
-        const eff = await loadEffectiveTier()
-        if (on) setEffective(eff)
+        const st = await loadPlanState()
+        if (!on) return
+        setEffective(st.effective)
+        setBaseTier(st.base)
+      } catch (e) {
+        if (on) {
+          setEffective('free')
+          setBaseTier('free')
+        }
       } finally {
         if (on) setLoadingPlan(false)
       }
@@ -148,9 +206,10 @@ export default function AbonnementPage() {
         return
       }
 
-      // En mode DEV : on recharge simplement le plan effectif.
-      const eff = await loadEffectiveTier()
-      setEffective(eff)
+      // En mode DEV : on recharge simplement le plan effectif + base.
+      const st = await loadPlanState()
+      setEffective(st.effective)
+      setBaseTier(st.base)
 
       if (result.message) {
         setActionMessage(result.message)
@@ -168,8 +227,20 @@ export default function AbonnementPage() {
 
   // Helpers d’UI
   const isActive = (t: UiTier) => effective === t
-  const planBadge = labelFromUiTier(effective)
   const isCurrentForUi = (t: UiTier) => isActive(t)
+
+  // ⚙️ Badge affiché en haut :
+  // - si chargement : “Chargement…”
+  // - si base = free et effectif ≠ free : période offerte → “Accès partiel Essentiel / Keefon+”
+  // - sinon : “Gratuit” / “Essentiel” / “Keefon+”
+  const hasPartialAccess = !loadingPlan && effective !== 'free' && baseTier === 'free'
+  const planBadge = loadingPlan
+    ? 'Chargement…'
+    : hasPartialAccess
+    ? `Accès partiel ${labelFromUiTier(effective)}`
+    : labelFromUiTier(effective)
+
+  const hasUnlockedAccess = !loadingPlan && effective !== 'free'
 
   return (
     <main
@@ -206,13 +277,18 @@ export default function AbonnementPage() {
         </div>
 
         {/* Plan actuel */}
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-800" aria-busy={loadingPlan}>
+        <div
+          className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-800"
+          aria-busy={loadingPlan}
+        >
           <span>Ton plan actuel :</span>
           <span className="rounded-full bg-paleGreen px-2.5 py-1 text-black">
-            {loadingPlan ? 'Chargement…' : planBadge}
+            {planBadge}
           </span>
-          {effective !== 'free' && (
-            <span className="rounded-full bg-green-100 px-2 py-1 text-green-800">Accès débloqués</span>
+          {hasUnlockedAccess && (
+            <span className="rounded-full bg-green-100 px-2 py-1 text-green-800">
+              Accès débloqués
+            </span>
           )}
         </div>
 
@@ -275,7 +351,9 @@ export default function AbonnementPage() {
           <PlanCard
             title="Essentiel"
             tagline="— pour vraiment avancer"
-            price={euro(billing === 'monthly' ? PRICES.essential.monthly : PRICES.essential.quarterly)}
+            price={euro(
+              billing === 'monthly' ? PRICES.essential.monthly : PRICES.essential.quarterly
+            )}
             priceSub={billing === 'monthly' ? 'par mois' : 'par trimestre'}
             features={[
               'Profil enrichi et tu peux poser Jusqu’à 12 photos pour te présenter',
@@ -311,7 +389,13 @@ export default function AbonnementPage() {
               'Illimité avec les abonnés',
               `${LIMITS.eliteHearts} cœurs par mois`,
             ]}
-            ctaLabel={pending === 'elite' ? 'Activation…' : isCurrentForUi('elite') ? 'Déjà actif' : 'Choisir Keefon+'}
+            ctaLabel={
+              pending === 'elite'
+                ? 'Activation…'
+                : isCurrentForUi('elite')
+                ? 'Déjà actif'
+                : 'Choisir Keefon+'
+            }
             onClick={() => changePlan('elite')}
             disabled={pending !== null || isCurrentForUi('elite')}
             current={isCurrentForUi('elite')}
@@ -321,13 +405,16 @@ export default function AbonnementPage() {
         {/* Mentions & FAQ */}
         <div className="mt-8 space-y-6">
           <details className="rounded-lg border border-gray-200 bg-white p-4">
-            <summary className="cursor-pointer select-none font-semibold">Questions fréquentes</summary>
+            <summary className="cursor-pointer select-none font-semibold">
+              Questions fréquentes
+            </summary>
             <div className="mt-3 space-y-4 text-sm text-gray-800">
               <div>
                 <p className="font-medium">Comment arrêter mon abonnement&nbsp;?</p>
                 <p>
-                  La gestion fine de l’abonnement (arrêt, reprise, etc.) arrive avec le système de paiement définitif.
-                  En attendant, tu peux toujours repasser en mode Gratuit en nous écrivant à
+                  La gestion fine de l’abonnement (arrêt, reprise, etc.) arrive avec le système
+                  de paiement définitif. En attendant, tu peux toujours repasser en mode Gratuit
+                  en nous écrivant à
                   <a className="underline" href="mailto:contact@keefon.com">
                     {' '}
                     contact@keefon.com
@@ -339,32 +426,38 @@ export default function AbonnementPage() {
               <div>
                 <p className="font-medium">Le renouvellement est-il automatique&nbsp;?</p>
                 <p>
-                  Le comportement exact dépendra du prestataire de paiement sélectionné (Stripe ou autre).
-                  Les règles seront affichées clairement avant tout engagement payant.
+                  Le comportement exact dépendra du prestataire de paiement sélectionné (Stripe
+                  ou autre). Les règles seront affichées clairement avant tout engagement payant.
                 </p>
               </div>
 
               <div>
-                <p className="font-medium">Puis-je changer de formule ou de fréquence&nbsp;?</p>
+                <p className="font-medium">
+                  Puis-je changer de formule ou de fréquence&nbsp;?
+                </p>
                 <p>
-                  Oui, c’est l’objectif : pouvoir monter ou baisser de formule simplement.
-                  En mode test, le changement est direct ; en mode réel, un récapitulatif sera affiché avant validation.
+                  Oui, c’est l’objectif : pouvoir monter ou baisser de formule simplement. En
+                  mode test, le changement est direct ; en mode réel, un récapitulatif sera
+                  affiché avant validation.
                 </p>
               </div>
 
               <div>
-                <p className="font-medium">Mon accès «&nbsp;offert&nbsp;» est-il un abonnement&nbsp;?</p>
+                <p className="font-medium">
+                  Mon accès «&nbsp;offert&nbsp;» est-il un abonnement&nbsp;?
+                </p>
                 <p>
-                  Non. C’est un accès provisoire débloqué par l’équipe et des limites peuvent s’appliquer.
-                  Pour l’offre complète, active Essentiel ou Keefon+ dès que le paiement sera disponible.
+                  Non. C’est un accès provisoire débloqué par l’équipe et des limites peuvent
+                  s’appliquer. Pour l’offre complète, active Essentiel ou Keefon+ dès que le
+                  paiement sera disponible.
                 </p>
               </div>
 
               <div>
                 <p className="font-medium">Reçus et factures</p>
                 <p>
-                  Dès que le paiement sera actif, un reçu ou une facture sera envoyé après chaque règlement.
-                  En attendant, pour toute question, écris à
+                  Dès que le paiement sera actif, un reçu ou une facture sera envoyé après
+                  chaque règlement. En attendant, pour toute question, écris à
                   <a className="underline" href="mailto:contact@keefon.com">
                     {' '}
                     contact@keefon.com
@@ -376,8 +469,8 @@ export default function AbonnementPage() {
               <div>
                 <p className="font-medium">Carte expirée / paiement refusé</p>
                 <p>
-                  Cette partie dépendra du prestataire de paiement final.
-                  Les instructions détaillées seront précisées au moment de l’activation des abonnements payants.
+                  Cette partie dépendra du prestataire de paiement final. Les instructions
+                  détaillées seront précisées au moment de l’activation des abonnements payants.
                 </p>
               </div>
 
@@ -385,14 +478,13 @@ export default function AbonnementPage() {
                 <p className="font-medium">Supprimer mon compte</p>
                 <p>
                   Tu peux demander la suppression depuis les paramètres (quand disponibles){' '}
-                  ou tout simplement depuis la page <Link href="/parametres">Paramètres</Link>, en cliquant sur
-                  « Désinscription ». Tu peux aussi nous écrire à
+                  ou tout simplement depuis la page <Link href="/parametres">Parametres</Link>,
+                  en cliquant sur « Désinscription ». Tu peux aussi nous écrire à
                   <a className="underline" href="mailto:contact@keefon.com">
                     {' '}
                     contact@keefon.com
                   </a>
-                  .
-                  La suppression est définitive et irréversible.
+                  . La suppression est définitive et irréversible.
                 </p>
               </div>
             </div>
@@ -443,7 +535,11 @@ function PlanCard({
     <div
       className={[
         'relative flex flex-col rounded-xl border bg-white p-4',
-        recommended ? 'border-yellowGreen ring-1 ring-yellowGreen/50' : subtle ? 'border-gray-200' : 'border-gray-300',
+        recommended
+          ? 'border-yellowGreen ring-1 ring-yellowGreen/50'
+          : subtle
+          ? 'border-gray-200'
+          : 'border-gray-300',
       ].join(' ')}
     >
       {current && (
@@ -473,7 +569,9 @@ function PlanCard({
         aria-label={ctaLabel}
         className={[
           'mt-auto w-full rounded-xl px-4 py-2 font-semibold shadow transition',
-          disabled ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-yellowGreen text-black hover:opacity-90',
+          disabled
+            ? 'cursor-not-allowed bg-gray-200 text-gray-500'
+            : 'bg-yellowGreen text-black hover:opacity-90',
         ].join(' ')}
       >
         {ctaLabel}

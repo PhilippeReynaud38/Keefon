@@ -3,7 +3,7 @@
 'use client'
 
 /**
- * VIVAYA — Carte Admin : Offrir Essentiel (sans CB) — MODE EMAIL UNIQUEMENT
+ * VIVAYA — Carte Admin : Offrir Essentiel partielle (sans CB) — MODE EMAIL UNIQUEMENT
  * ----------------------------------------------------------------------------
  * - Supprime définitivement le mode "bulk France" (plus d'appel à /grant-bulk).
  * - Conserve l’unitaire par email via /grant-plan et /revoke-plan.
@@ -15,6 +15,10 @@
  *  - PLAN_ID/labels : rendus paramétrables avec des valeurs par défaut sûres.
  *  - Validation des durées via une constante unique DURATIONS.
  *  - Messages d'erreur plus explicites + parsing JSON sécurisé.
+ *
+ * NOTE (2025-11-26) :
+ *  - Le libellé insiste désormais sur le fait qu’il s’agit d’un ACCÈS PARTIEL /
+ *    nominatif, et non d’un abonnement Essentiel complet.
  */
 
 import React from 'react'
@@ -58,7 +62,11 @@ async function callApi(
   // Parse JSON de manière défensive
   let json: any = null
   if (contentType.includes('application/json')) {
-    try { json = JSON.parse(raw) } catch { /* ignore */ }
+    try {
+      json = JSON.parse(raw)
+    } catch {
+      /* ignore */
+    }
   }
 
   if (!resp.ok) {
@@ -75,7 +83,12 @@ const isLikelyEmail = (v: string) => /\S+@\S+\.\S+/.test(v)
 
 // Champ contrôlé réutilisable
 function Field({
-  label, placeholder, value, onChange, type = 'email', disabled = false,
+  label,
+  placeholder,
+  value,
+  onChange,
+  type = 'email',
+  disabled = false,
 }: {
   label: string
   placeholder: string
@@ -114,8 +127,8 @@ function Field({
 // Composant principal — Mode email uniquement
 // -----------------------------------------------------------------------------
 const OfferEssentielCard: React.FC<Props> = ({
-  planId = 'essentiel',     // <— par défaut : "essentiel" pour coller au wording
-  planLabel = 'Essentiel',  // <— label affiché
+  planId = 'essentiel', // identifiant technique dans l’API
+  planLabel = 'Essentiel', // label de base, utilisé dans les textes
 }) => {
   const supabase = createClientComponentClient()
   const [s, set] = React.useState<State>({ email: '', loading: false, msg: null })
@@ -138,7 +151,11 @@ const OfferEssentielCard: React.FC<Props> = ({
         method: 'POST',
         body: JSON.stringify({ email, plan: planId, days }),
       })
-      set((v) => ({ ...v, msg: `Offert à ${email} : ${days} jours ${planLabel} ✅` }))
+      // On insiste bien sur le côté "accès partiel", nominatif.
+      set((v) => ({
+        ...v,
+        msg: `Offert à ${email} : ${days} jours d’accès partiel ${planLabel} ✅`,
+      }))
     } catch (e: any) {
       set((v) => ({ ...v, msg: `Erreur : ${e?.message ?? e}` }))
     } finally {
@@ -170,7 +187,10 @@ const OfferEssentielCard: React.FC<Props> = ({
 
   return (
     <div className="relative z-10 rounded-2xl p-4 md:p-6 shadow border border-neutral-800 bg-neutral-900 text-neutral-100 space-y-4">
-      <div className="text-lg md:text-xl font-semibold">Offrir {planLabel} (sans CB)</div>
+      {/* Titre explicite : accès partiel Essentiel, nominatif */}
+      <div className="text-lg md:text-xl font-semibold">
+        Offrir accès partiel {planLabel} (sans CB)
+      </div>
 
       <Field
         label="Par Email"
@@ -181,34 +201,47 @@ const OfferEssentielCard: React.FC<Props> = ({
       />
 
       <div className="flex flex-wrap gap-2">
-        <button className="px-3 py-2 rounded bg-neutral-700 hover:bg-neutral-600 disabled:opacity-50"
-                disabled={s.loading}
-                onClick={() => grant(30)}>
+        <button
+          className="px-3 py-2 rounded bg-neutral-700 hover:bg-neutral-600 disabled:opacity-50"
+          disabled={s.loading}
+          onClick={() => grant(30)}
+        >
           Offrir 1 mois
         </button>
-        <button className="px-3 py-2 rounded bg-neutral-700 hover:bg-neutral-600 disabled:opacity-50"
-                disabled={s.loading}
-                onClick={() => grant(60)}>
+        <button
+          className="px-3 py-2 rounded bg-neutral-700 hover:bg-neutral-600 disabled:opacity-50"
+          disabled={s.loading}
+          onClick={() => grant(60)}
+        >
           Offrir 2 mois
         </button>
-        <button className="px-3 py-2 rounded bg-neutral-700 hover:bg-neutral-600 disabled:opacity-50"
-                disabled={s.loading}
-                onClick={() => grant(90)}>
+        <button
+          className="px-3 py-2 rounded bg-neutral-700 hover:bg-neutral-600 disabled:opacity-50"
+          disabled={s.loading}
+          onClick={() => grant(90)}
+        >
           Offrir 3 mois
         </button>
         <div className="flex-1" />
-        <button className="px-3 py-2 rounded bg-red-700 hover:bg-red-600 disabled:opacity-50"
-                disabled={s.loading}
-                onClick={revoke}>
+        <button
+          className="px-3 py-2 rounded bg-red-700 hover:bg-red-600 disabled:opacity-50"
+          disabled={s.loading}
+          onClick={revoke}
+        >
           Révoquer
         </button>
       </div>
 
       <div className="text-xs text-neutral-500 space-y-1">
-        <p>Aucun passage par Stripe. Accès {planLabel} via override temporaire (email unitaire).</p>
+        <p>
+          Aucun passage par Stripe. Accès partiel {planLabel} via override temporaire
+          nominatif (email unitaire).
+        </p>
       </div>
 
-      {s.msg && <div className="text-sm text-amber-300 whitespace-pre-wrap">{s.msg}</div>}
+      {s.msg && (
+        <div className="text-sm text-amber-300 whitespace-pre-wrap">{s.msg}</div>
+      )}
     </div>
   )
 }

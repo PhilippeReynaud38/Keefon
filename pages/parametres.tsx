@@ -91,20 +91,22 @@ export default function Parametres() {
       const provider = (user as any)?.app_metadata?.provider;
       setCanChangePassword(!provider || provider === "email");
 
-      // 2) Détection abonné (RPC > fallback profiles.subscription_tier)
+      // 2) Détection abonné (basée UNIQUEMENT sur le plan de base)
+      // Règle actuelle : seuls les vrais abonnés (plan de base ≠ free) ont accès
+      // aux réglages réservés. Les accès offerts partiels (overrides e-mail,
+      // périodes d’essai, etc.) NE doivent PAS débloquer ce bloc.
       try {
-        const { data: planStr, error: planErr } = await supabase.rpc("get_my_effective_plan_vivaya");
-        if (!planErr && planStr) {
-          const plan = String(planStr).toLowerCase();
-          setIsSubscriber(plan === "premium" || plan === "elite" || plan === "essentiel");
+        const { data: prof, error: profErr } = await supabase
+          .from("profiles")
+          .select("subscription_tier")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (!profErr && prof) {
+          const base = String((prof as any)?.subscription_tier ?? "").toLowerCase();
+          setIsSubscriber(base === "premium" || base === "elite" || base === "essentiel");
         } else {
-          const { data: prof } = await supabase
-            .from("profiles")
-            .select("subscription_tier")
-            .eq("id", user.id)
-            .maybeSingle();
-          const p = String((prof as any)?.subscription_tier ?? "").toLowerCase();
-          setIsSubscriber(p === "premium" || p === "elite" || p === "essentiel");
+          setIsSubscriber(false);
         }
       } catch {
         setIsSubscriber(false);
@@ -229,101 +231,71 @@ export default function Parametres() {
     }
 
     const currentPwd = prompt("Mot de passe ACTUEL :"); if (currentPwd === null) return;
-    const nextPwd    = prompt("NOUVEAU mot de passe (min. 8 caractères) :"); if (nextPwd === null) return;
-    const confirmPwd = prompt("Confirme le nouveau mot de passe :"); if (confirmPwd === null) return;
+    const nextPwd    = prompt("NOUVEAU mot de passe (min. 6 caractères) :"); if (nextPwd === null) return;
 
-    if (nextPwd !== confirmPwd) { showToast("Les deux mots de passe ne correspondent pas.", "error"); return; }
-    if (nextPwd.length < 8) { showToast("Minimum 8 caractères.", "error"); return; }
+    if (!currentPwd || !nextPwd) {
+      showToast("Changement annulé (mot de passe vide).", "info");
+      return;
+    }
 
-    setSaving(true);
     try {
-      const { error: signErr } = await supabase.auth.signInWithPassword({ email: email!, password: currentPwd });
-      if (signErr) { showToast("Mot de passe actuel incorrect.", "error"); return; }
-      const { error: updErr } = await supabase.auth.updateUser({ password: nextPwd });
-      if (updErr) { showToast("Échec de la mise à jour.", "error"); return; }
-      setInfo("Mot de passe mis à jour.");
+      const { error } = await supabase.auth.updateUser({
+        password: nextPwd,
+      });
+      if (error) throw error;
       showToast("Mot de passe mis à jour.", "success");
-    } finally {
-      setSaving(false);
+    } catch {
+      showToast("Impossible de changer le mot de passe pour le moment.", "error");
     }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
+    try {
+      await supabase.auth.signOut();
+      router.push("/");
+    } catch {
+      showToast("Déconnexion impossible pour le moment.", "error");
+    }
   };
 
-  // Désinscription : double confirmation + POST /api/account/self-delete
-  const requestAccountDeletion = async () => {
-    if (!userId) return;
-    if (!confirm("⚠️ Désinscription : ton compte sera supprimé. Continuer ?")) return;
-    if (!confirm("Confirmer la suppression définitive du compte ?")) return;
-
-    setSaving(true);
-    setInfo(null);
-    setError(null);
+  const deleteAccount = async () => {
+    const sure = window.confirm(
+      "Supprimer ton compte Keefon ?\n\n" +
+      "Cette action est irréversible. Tes messages et tes données\n" +
+      "seront supprimés (ou anonymisés) selon nos règles de sécurité."
+    );
+    if (!sure) return;
 
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const tokenFromSession = sessionData.session?.access_token ?? null;
-
-      let token = tokenFromSession;
-      if (!token && typeof window !== "undefined") {
-        const k = Object.keys(localStorage).find((x) => /sb-.*-auth-token/.test(x));
-        if (k) {
-          try {
-            const j = JSON.parse(localStorage.getItem(k) || "null");
-            token = j?.currentSession?.access_token || j?.access_token || null;
-          } catch { /* ignore */ }
-        }
-      }
-
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-
-      const res = await fetch("/api/account/self-delete", {
-        method: "POST",
-        headers,
-        credentials: "same-origin",
-        body: JSON.stringify({ user_id: userId }),
-      });
-
-      if (res.ok) {
-        setInfo("Demande de suppression envoyée.");
-        showToast("Suppression demandée. Déconnexion dans 3 secondes…", "success");
-        window.setTimeout(async () => {
-          try { await supabase.auth.signOut(); } catch {}
-          router.replace("/login?account_deleted=1");
-        }, 3500);
-      } else if (res.status === 404) {
-        showToast("La suppression n’est pas encore branchée côté serveur.", "info");
-      } else {
-        const t = await res.text();
-        showToast("Échec de la demande : " + t, "error");
-      }
+      const res = await fetch("/api/account/self-delete", { method: "POST" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      showToast("Compte supprimé. À bientôt peut-être.", "success");
+      await supabase.auth.signOut();
+      router.push("/");
     } catch {
-      showToast("Impossible d’envoyer la demande pour le moment.", "error");
-    } finally {
-      setSaving(false);
+      showToast("Impossible de supprimer le compte pour le moment.", "error");
     }
   };
 
   // ==========================================================================
-  // Render
+  // Rendu
   // ==========================================================================
   return (
     <>
       <Head>
-        <title>Paramètres — Vivaya</title>
-        <meta name="robots" content="noindex,nofollow" />
+        <title>Paramètres | Keefon</title>
+        <meta
+          name="description"
+          content="Gère tes paramètres de compte, confidentialité et notifications."
+        />
       </Head>
 
-      {/* Toast (fixe en bas-centre) */}
+      {/* Toast flottant */}
       {toast && (
-        <div aria-live="polite" className="fixed left-1/2 -translate-x-1/2 bottom-6 z-50">
+        <div className="fixed inset-x-0 top-4 flex justify-center z-50 px-4">
           <div
             className={[
-              "px-4 py-2 rounded-xl shadow-lg text-sm font-medium",
+              "rounded-2xl px-4 py-2 text-sm shadow-lg",
               toast.kind === "success" ? "bg-emerald-600 text-white" :
               toast.kind === "error"   ? "bg-red-600 text-white" :
                                          "bg-blue-600 text-white",
@@ -463,6 +435,7 @@ export default function Parametres() {
                   checked={visibleToCertifiedOnly}
                   disabled={!isSubscriber}
                   onChange={async (e) => {
+                    if (!isSubscriber) return;
                     const next = e.target.checked;
                     setVisibleToCertifiedOnly(next);
                     await saveSettings({ ...current, visible_to_certified_only: next }, true);
@@ -516,51 +489,23 @@ export default function Parametres() {
             {/* Panneau désinscription replié par défaut */}
             <div id="desinscription" ref={deleteSectionRef} className="mt-6">
               <details ref={deleteDetailsRef} className="group">
-                <summary className="text-xs text-blue-400 opacity-60 hover:opacity-90 focus:opacity-90 cursor-pointer select-none decoration-transparent">
-                  suppression de compte (avertissement)
+                <summary className="cursor-pointer select-none text-sm text-gray-600 group-open:text-red-700">
+                  <span className="underline">Supprimer mon compte</span> (définitif)
                 </summary>
-
-                <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-4">
-                  <h4 className="text-sm font-semibold text-red-800"></h4>
-                  <p className="text-xs text-red-700 mt-1">
-                    La suppression de compte est définitive. Tes données pourront être anonymisées selon notre politique.
+                <div className="mt-3 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-800 space-y-2">
+                  <p>
+                    Cette action est <b>difficilement réversible</b>. Tes messages et données seront supprimés
+                    (ou anonymisés) selon nos règles de sécurité.
                   </p>
                   <button
-                    onClick={requestAccountDeletion}
-                    disabled={saving}
-                    className="mt-3 rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-700 disabled:opacity-60"
+                    type="button"
+                    onClick={deleteAccount}
+                    className="rounded-lg bg-red-600 text-white px-3 py-1.5 text-sm font-semibold hover:bg-red-700"
                   >
-                    Supprimer mon compte
+                    Confirmer la suppression
                   </button>
                 </div>
               </details>
-            </div>
-          </section>
-
-          {/* 5 — Légal (lien discret bleu très clair, sans soulignement) */}
-          <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Légal</h3>
-            <ul className="mt-2 list-disc list-inside text-sm text-blue-700">
-              <li><Link className="underline hover:no-underline" href="/mentions-legales">Mentions légales</Link></li>
-              <li><Link className="underline hover:no-underline" href="/cgu">Conditions Générales d’Utilisation</Link></li>
-              <li><Link className="underline hover:no-underline" href="/confidentialite">Politique de confidentialité</Link></li>
-            </ul>
-          </section>
-
-          {/* 6 — Langue */}
-          <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Langue</h3>
-            <div className="mt-2">
-              <select
-                disabled
-                className="rounded-md border px-3 py-2 text-sm text-gray-500 bg-gray-100 cursor-not-allowed"
-                defaultValue="fr"
-                title="Bientôt disponible"
-              >
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Bientôt disponible.</p>
             </div>
           </section>
         </div>
@@ -568,6 +513,3 @@ export default function Parametres() {
     </>
   );
 }
-
-// Flag auth
-;(Parametres as any).requireAuth = true;
