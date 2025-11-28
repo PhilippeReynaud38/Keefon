@@ -38,7 +38,9 @@ export default function Parametres() {
   const [error, setError] = useState<string | null>(null);
 
   // --- Toast minimal --- //
-  const [toast, setToast] = useState<{ text: string; kind: ToastKind } | null>(null);
+  const [toast, setToast] = useState<{ text: string; kind: ToastKind } | null>(
+    null
+  );
   const showToast = (text: string, kind: ToastKind = "success") => {
     setToast({ text, kind });
     window.setTimeout(() => setToast(null), 3000);
@@ -79,7 +81,9 @@ export default function Parametres() {
       setInfo(null);
 
       // 1) Session
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         setError("Connexion requise.");
         setLoading(false);
@@ -104,7 +108,9 @@ export default function Parametres() {
 
         if (!profErr && prof) {
           const base = String((prof as any)?.subscription_tier ?? "").toLowerCase();
-          setIsSubscriber(base === "premium" || base === "elite" || base === "essentiel");
+          setIsSubscriber(
+            base === "premium" || base === "elite" || base === "essentiel"
+          );
         } else {
           setIsSubscriber(false);
         }
@@ -136,7 +142,9 @@ export default function Parametres() {
         if (row) {
           setIsPublic(row.is_public !== false);
           setNewsletter(!!row.newsletter);
-          const certOnly = row.visible_to_certified_only ?? (row.visibility_scope === "certified");
+          const certOnly =
+            row.visible_to_certified_only ??
+            (row.visibility_scope === "certified");
           setVisibleToCertifiedOnly(!!certOnly);
           setInfo("Paramètres chargés.");
         } else {
@@ -151,7 +159,10 @@ export default function Parametres() {
   // ==========================================================================
   // Helpers
   // ==========================================================================
-  const upsertUserSettings = async (payloadWithScope: any, payloadFallback: any) => {
+  const upsertUserSettings = async (
+    payloadWithScope: any,
+    payloadFallback: any
+  ) => {
     const { error: upErr } = await supabase
       .from("user_settings")
       .upsert(payloadWithScope, { onConflict: "user_id" });
@@ -165,11 +176,16 @@ export default function Parametres() {
 
   const saveSettings = async (next: Settings, silent = false) => {
     if (!userId) return;
-    if (!silent) { setSaving(true); setInfo(null); setError(null); }
+    if (!silent) {
+      setSaving(true);
+      setInfo(null);
+      setError(null);
+    }
 
     try {
-      const scope: "all" | "certified" =
-        next.visible_to_certified_only ? "certified" : "all";
+      const scope: "all" | "certified" = next.visible_to_certified_only
+        ? "certified"
+        : "all";
 
       const payloadWithScope = {
         user_id: userId,
@@ -220,18 +236,28 @@ export default function Parametres() {
       showToast("Indisponible pour les connexions sociales.", "info");
       return;
     }
-    if (loading) { showToast("La page charge encore, réessaie dans un instant.", "info"); return; }
+    if (loading) {
+      showToast("La page charge encore, réessaie dans un instant.", "info");
+      return;
+    }
 
     let email = userEmail;
     if (!email) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       email = user?.email ?? null;
-      if (!email) { showToast("Utilisateur introuvable.", "error"); return; }
+      if (!email) {
+        showToast("Utilisateur introuvable.", "error");
+        return;
+      }
       setUserEmail(email);
     }
 
-    const currentPwd = prompt("Mot de passe ACTUEL :"); if (currentPwd === null) return;
-    const nextPwd    = prompt("NOUVEAU mot de passe (min. 6 caractères) :"); if (nextPwd === null) return;
+    const currentPwd = prompt("Mot de passe ACTUEL :");
+    if (currentPwd === null) return;
+    const nextPwd = prompt("NOUVEAU mot de passe (min. 6 caractères) :");
+    if (nextPwd === null) return;
 
     if (!currentPwd || !nextPwd) {
       showToast("Changement annulé (mot de passe vide).", "info");
@@ -245,7 +271,10 @@ export default function Parametres() {
       if (error) throw error;
       showToast("Mot de passe mis à jour.", "success");
     } catch {
-      showToast("Impossible de changer le mot de passe pour le moment.", "error");
+      showToast(
+        "Impossible de changer le mot de passe pour le moment.",
+        "error"
+      );
     }
   };
 
@@ -261,8 +290,8 @@ export default function Parametres() {
   const deleteAccount = async () => {
     const sure = window.confirm(
       "Supprimer ton compte Keefon ?\n\n" +
-      "Cette action est irréversible. Tes messages et tes données\n" +
-      "seront supprimés (ou anonymisés) selon nos règles de sécurité."
+        "Cette action est irréversible. Tes messages et tes données\n" +
+        "seront supprimés (ou anonymisés) selon nos règles de sécurité."
     );
     if (!sure) return;
 
@@ -273,7 +302,10 @@ export default function Parametres() {
       await supabase.auth.signOut();
       router.push("/");
     } catch {
-      showToast("Impossible de supprimer le compte pour le moment.", "error");
+      showToast(
+        "Impossible de supprimer le compte pour le moment.",
+        "error"
+      );
     }
   };
 
@@ -296,9 +328,11 @@ export default function Parametres() {
           <div
             className={[
               "rounded-2xl px-4 py-2 text-sm shadow-lg",
-              toast.kind === "success" ? "bg-emerald-600 text-white" :
-              toast.kind === "error"   ? "bg-red-600 text-white" :
-                                         "bg-blue-600 text-white",
+              toast.kind === "success"
+                ? "bg-emerald-600 text-white"
+                : toast.kind === "error"
+                ? "bg-red-600 text-white"
+                : "bg-blue-600 text-white",
             ].join(" ")}
           >
             {toast.text}
@@ -331,16 +365,29 @@ export default function Parametres() {
           {/* 1 — Tout le monde */}
           <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
             <header className="mb-3">
-              <h2 className="text-lg font-semibold text-gray-900">Paramètres — tout le monde</h2>
-              {userEmail && <p className="text-sm text-gray-700 mt-1">Connecté en tant que <b>{userEmail}</b></p>}
+              <h2 className="text-lg font-semibold text-gray-900">
+                Paramètres — tout le monde
+              </h2>
+              {userEmail && (
+                <p className="text-sm text-gray-700 mt-1">
+                  Connecté en tant que <b>{userEmail}</b>
+                </p>
+              )}
             </header>
 
             {loading ? (
               <p>Chargement…</p>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); }} className="space-y-6">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+                className="space-y-6"
+              >
                 <div>
-                  <label className="text-sm font-medium text-gray-900">E-mails & nouveautés</label>
+                  <label className="text-sm font-medium text-gray-900">
+                    E-mails & nouveautés
+                  </label>
                   <div className="mt-2">
                     <label className="inline-flex items-center gap-2 text-sm">
                       <input
@@ -350,13 +397,19 @@ export default function Parametres() {
                         onChange={async (e) => {
                           const next = e.target.checked;
                           setNewsletter(next);
-                          await saveSettings({
-                            is_public: isPublic,
-                            newsletter: next,
-                            visible_to_certified_only: visibleToCertifiedOnly,
-                          }, true);
+                          await saveSettings(
+                            {
+                              is_public: isPublic,
+                              newsletter: next,
+                              visible_to_certified_only: visibleToCertifiedOnly,
+                            },
+                            true
+                          );
                           setInfo("Préférence newsletter enregistrée.");
-                          showToast("Préférence newsletter enregistrée.", "success");
+                          showToast(
+                            "Préférence newsletter enregistrée.",
+                            "success"
+                          );
                         }}
                       />
                       Recevoir des conseils & actus
@@ -379,25 +432,50 @@ export default function Parametres() {
                   >
                     {saving ? "Enregistrement…" : "Enregistrer"}
                   </button>
-                  {info && <span className="text-sm text-emerald-700">{info}</span>}
-                  {error && <span className="text-sm text-red-600">{error}</span>}
+                  {info && (
+                    <span className="text-sm text-emerald-700">{info}</span>
+                  )}
+                  {error && (
+                    <span className="text-sm text-red-600">{error}</span>
+                  )}
                 </div>
               </form>
             )}
           </section>
 
-          {/* 2 — Abonnés : confidentialité */}
+          {/* 2 — Icône Keefon sur l'écran d'accueil (permanent) */}
+          <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Icône sur l’écran d’accueil
+            </h3>
+            <p className="text-xs text-gray-600 mt-1 mb-3">
+              Ajoute Keefon sur l’écran de ton téléphone pour y accéder comme
+              une appli.
+            </p>
+            <InstallIconButton />
+          </section>
+
+          {/* 3 — Abonnés : confidentialité */}
           <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
             <header className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Paramètres — réservés aux abonnés</h2>
-              {!isSubscriber && <span className="text-xs text-gray-500">Réservé aux abonnés</span>}
+              <h2 className="text-lg font-semibold text-gray-900">
+                Paramètres — réservés aux abonnés
+              </h2>
+              {!isSubscriber && (
+                <span className="text-xs text-gray-500">
+                  Réservé aux abonnés
+                </span>
+              )}
             </header>
 
             {/* Mode privé */}
             <div className="mb-4">
-              <label className="text-sm font-medium text-gray-900">Confidentialité du profil</label>
+              <label className="text-sm font-medium text-gray-900">
+                Confidentialité du profil
+              </label>
               <p className="text-xs text-gray-600 mb-2">
-                Par défaut, ton profil est <b>visible</b>. Tu peux activer le mode privé pour le cacher.
+                Par défaut, ton profil est <b>visible</b>. Tu peux activer le
+                mode privé pour le cacher.
               </p>
               <label className="inline-flex items-center gap-2 text-sm">
                 <input
@@ -423,7 +501,11 @@ export default function Parametres() {
                 />
                 Cacher mon profil (mode privé)
               </label>
-              {!isSubscriber && <div className="text-xs text-gray-500 mt-1">(Réservé aux abonnés)</div>}
+              {!isSubscriber && (
+                <div className="text-xs text-gray-500 mt-1">
+                  (Réservé aux abonnés)
+                </div>
+              )}
             </div>
 
             {/* Certifiés seulement */}
@@ -438,24 +520,22 @@ export default function Parametres() {
                     if (!isSubscriber) return;
                     const next = e.target.checked;
                     setVisibleToCertifiedOnly(next);
-                    await saveSettings({ ...current, visible_to_certified_only: next }, true);
+                    await saveSettings(
+                      { ...current, visible_to_certified_only: next },
+                      true
+                    );
                     setInfo("Visibilité enregistrée.");
                     showToast("Visibilité enregistrée.", "success");
                   }}
                 />
                 Seuls les profils certifiés peuvent me voir
               </label>
-              {!isSubscriber && <div className="text-xs text-gray-500 mt-1">(Réservé aux abonnés)</div>}
+              {!isSubscriber && (
+                <div className="text-xs text-gray-500 mt-1">
+                  (Réservé aux abonnés)
+                </div>
+              )}
             </div>
-          </section>
-
-          {/* 3 — Icône Keefon sur l'écran d'accueil (permanent) */}
-          <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Icône sur l’écran d’accueil</h3>
-            <p className="text-xs text-gray-600 mt-1 mb-3">
-              Ajoute Keefon sur l’écran de ton téléphone pour y accéder comme une appli.
-            </p>
-            <InstallIconButton />
           </section>
 
           {/* 4 — Compte (désinscription en <details> avec style discret) */}
@@ -468,7 +548,9 @@ export default function Parametres() {
                 disabled={!canChangePassword || saving || loading}
                 title={
                   canChangePassword
-                    ? (loading ? "Chargement en cours…" : "Mettre à jour le mot de passe")
+                    ? loading
+                      ? "Chargement en cours…"
+                      : "Mettre à jour le mot de passe"
                     : "Indisponible pour les connexions via réseaux sociaux"
                 }
                 className={`rounded-lg border px-3 py-1.5 text-sm hover:bg-gray-50 disabled:opacity-50 ${
@@ -487,15 +569,21 @@ export default function Parametres() {
             </div>
 
             {/* Panneau désinscription replié par défaut */}
-            <div id="desinscription" ref={deleteSectionRef} className="mt-6">
+            <div
+              id="desinscription"
+              ref={deleteSectionRef}
+              className="mt-6"
+            >
               <details ref={deleteDetailsRef} className="group">
                 <summary className="cursor-pointer select-none text-sm text-gray-600 group-open:text-red-700">
-                  <span className="underline">Supprimer mon compte</span> (définitif)
+                  <span className="underline">Supprimer mon compte</span>{" "}
+                  (définitif)
                 </summary>
                 <div className="mt-3 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-800 space-y-2">
                   <p>
-                    Cette action est <b>difficilement réversible</b>. Tes messages et données seront supprimés
-                    (ou anonymisés) selon nos règles de sécurité.
+                    Cette action est <b>difficilement réversible</b>. Tes
+                    messages et données seront supprimés (ou anonymisés) selon
+                    nos règles de sécurité.
                   </p>
                   <button
                     type="button"

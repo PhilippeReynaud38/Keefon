@@ -89,6 +89,10 @@ export async function middleware(req: NextRequest) {
 
 // Matcher par défaut : tout sauf fichiers statiques classiques.
 // (Simple et sûr ; ajuste si besoin dans une passe ultérieure dédiée.)
+// Matcher : tout sauf les fichiers statiques + manifest & icons (pour la PWA)
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.json|icons).*)',
+  ],
 };
+
