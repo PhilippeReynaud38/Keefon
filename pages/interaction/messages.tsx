@@ -11,11 +11,17 @@
  *   • Mémorisation des filtres (âge min/max, distance) entre sessions via localStorage.
  *   • Filtre antibrouteur : les conversations liées à un antibrouteur disparaissent
  *     de la page pour les victimes, mais restent visibles pour le brouteur lui-même.
+ *   • Règle Free / Keefon+ sur “Messages reçus” :
+ *        - un Free ne voit pas qui lui a écrit
+ *        - sauf si expéditeur Keefon+ (tier "elite"),
+ *          ou Keefon (cœurs réciproques non expirés),
+ *          ou conversation ouverte via un écho (open_free_conv_log).
  */
 
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "@/lib/supabaseClient";
+import { pickMaskedAvatar } from "@/lib/maskedAvatars";
 
 /* Constantes UI/domaine --------------------------------------------------- */
 const AGE_MIN_ABS = 18;
@@ -237,6 +243,13 @@ export default function MessagesPage() {
   const [peers, setPeers] = useState<Record<string, Peer>>({});
   const [knownDistances, setKnownDistances] = useState(0);
 
+  /* Plan / visibilité pour les Free --------------------------------------- */
+  // myTier : "free" | "essential" | "elite" | autre. On ne branche que sur "free".
+  const [myTier, setMyTier] = useState<string | null>(null);
+  // Quand l'utilisateur est Free, cet ensemble contient les otherId dont
+  // l'identité peut quand même être affichée (Keefon+, Keefon réciproque, écho ouvert).
+  const [freeCanSeeIds, setFreeCanSeeIds] = useState<Set<string>>(new Set());
+
   const [tab, setTab] = useState<"ongoing" | "received">("ongoing");
 
   /* Liste des antibrouteurs (IDs) ----------------------------------------- */
@@ -290,10 +303,107 @@ export default function MessagesPage() {
       }
 
       setThreads(th);
-      const ids = Array.from(new Set(th.map((t) => t.otherId))).filter(Boolean);
+
+      // IDs des autres participants
+      const ids = Array.from(new Set(th.map((t) => t.otherId))).filter(Boolean) as string[];
+
+      // Enrichissement profils + distances (inchangé)
       const { peers: enriched, knownCount } = await loadPeersAndGeo(me, ids);
       setPeers(enriched);
       setKnownDistances(knownCount);
+
+      // ───────────────── RÈGLE « un Free ne voit pas qui lui a écrit » ────────────────
+      // On récupère d'abord le plan effectif pour moi + pour chaque otherId.
+      const allIds = Array.from(new Set([me, ...ids]));
+      let tierById: Record<string, string> = {};
+      let myTierNext: string | null = null;
+
+      try {
+        const { data: planRows, error: planErr } = await supabase
+          .from("user_plans_effective_v")
+          .select("id,effective_tier")
+          .in("id", allIds);
+        if (planErr) throw planErr;
+        for (const row of (planRows ?? []) as any[]) {
+          const id = asStr(row.id);
+          const tier = asStr(row.effective_tier).toLowerCase();
+          if (id) {
+            tierById[id] = tier;
+            if (id === me) myTierNext = tier;
+          }
+        }
+      } catch {
+        // Si la vue n'est pas accessible, on ne casse pas la page :
+        tierById = {};
+        myTierNext = null;
+      }
+
+      const freeCanSee = new Set<string>();
+
+      // Si je suis Free, on calcule les exceptions où je peux quand même voir l'identité :
+      //   • expéditeur en Keefon+ (tier "elite")
+      //   • Keefon réciproque (cœurs dans les deux sens, non expirés)
+      //   • conversation ouverte via un écho (open_free_conv_log)
+      if (myTierNext === "free") {
+        // 1) Keefon+ en face (plan "elite" côté expéditeur)
+        for (const otherId of ids) {
+          if (tierById[otherId] === "elite") {
+            freeCanSee.add(otherId);
+          }
+        }
+
+        // 2) Keefon réciproque (table hearts)
+        try {
+          const { data: heartRows, error: heartErr } = await supabase
+            .from("hearts")
+            .select("from_user,to_user,expired")
+            .or(`from_user.eq.${me},to_user.eq.${me}`);
+          if (!heartErr && Array.isArray(heartRows)) {
+            const activeFromMe = new Set<string>();
+            const activeToMe = new Set<string>();
+            for (const h of heartRows as any[]) {
+              const from = asStr(h.from_user);
+              const to = asStr(h.to_user);
+              const expired = h.expired === true; // NULL ou false = actif
+              if (expired) continue;
+              if (from === me && ids.includes(to)) activeFromMe.add(to);
+              if (to === me && ids.includes(from)) activeToMe.add(from);
+            }
+            for (const otherId of ids) {
+              if (activeFromMe.has(otherId) && activeToMe.has(otherId)) {
+                freeCanSee.add(otherId);
+              }
+            }
+          }
+        } catch {
+          // on ignore les erreurs : au pire le Free verra moins d'identités, jamais plus
+        }
+
+        // 3) Conversation ouverte via un écho (open_free_conv_log)
+        try {
+          const { data: logRows, error: logErr } = await supabase
+            .from("open_free_conv_log")
+            .select("opener_user_id,target_user_id")
+            .or(`opener_user_id.eq.${me},target_user_id.eq.${me}`);
+          if (!logErr && Array.isArray(logRows)) {
+            for (const r of logRows as any[]) {
+              const opener = asStr(r.opener_user_id);
+              const target = asStr(r.target_user_id);
+              const otherId =
+                opener === me && ids.includes(target) ? target :
+                target === me && ids.includes(opener) ? opener :
+                null;
+              if (otherId) freeCanSee.add(otherId);
+            }
+          }
+        } catch {
+          // idem : en cas d'erreur, on ne montre pas plus d'identités que prévu
+        }
+      }
+
+      setMyTier(myTierNext);
+      setFreeCanSeeIds(freeCanSee);
+      // ──────────────────────────────────────────────────────────────────────
     } catch (e: any) {
       setError(e?.message ?? "Erreur chargement messages");
     } finally {
@@ -627,6 +737,11 @@ export default function MessagesPage() {
               viewProfile={(id) => router.push(`/profileplus/${id}`)}
               onShield={openBlockModal}
               onDelete={onDelete}
+              hideIdentityForOtherId={(otherId) => {
+                // Règle : un Free ne voit pas qui lui a écrit, sauf exceptions calculées dans freeCanSeeIds.
+                if (myTier !== "free") return false;
+                return !freeCanSeeIds.has(otherId);
+              }}
             />
           )}
 
@@ -915,6 +1030,7 @@ function DistanceSlider({
 /* Listes + cartes --------------------------------------------------------- */
 function SectionList({
   title, showTitle = true, loading, items, peers, openChat, viewProfile, onShield, onDelete,
+  hideIdentityForOtherId,
   showUnreadDot = false,
 }:{
   title: string;
@@ -926,8 +1042,13 @@ function SectionList({
   viewProfile: (id: string)=>void;
   onShield: (id: string)=>void;
   onDelete: (id: string)=>void;
+  hideIdentityForOtherId?: (id: string) => boolean;
   showUnreadDot?: boolean;
 }) {
+  // Même logique que sur /interaction/mes_coups_de_coeur :
+  // on varie légèrement les avatars voilés pour casser la monotonie.
+  const usedMasked = new Set<number>();
+
   return (
     <section className="space-y-3 mt-6">
       {showTitle && <h2 className="text-lg font-medium text-white drop-shadow">{title}</h2>}
@@ -937,30 +1058,61 @@ function SectionList({
         <ul className="grid gap-2">
           {items.map((t) => {
             const p = peers[t.otherId];
-            const titleTxt = p?.username?.trim() ? p.username : "Utilisateur";
+            const hide = hideIdentityForOtherId ? hideIdentityForOtherId(t.otherId) : false;
+            const rawTitle = p?.username?.trim() ? p.username : "Utilisateur";
+            const titleTxt = hide ? "Profil confidentiel" : rawTitle;
             const preview = (t.lastText || "…").slice(0, 140);
             const when = t.lastInboundAtISO || t.lastDateISO || "";
             const dateStr = when ? new Date(when).toLocaleString() : "";
-            const city = p?.ville ? p.ville : null;
-            const dist = (p?.distanceKm != null) ? `${p.distanceKm} km` : null;
+            const city = !hide && p?.ville ? p.ville : null;
+            const dist = !hide && (p?.distanceKm != null) ? `${p.distanceKm} km` : null;
             const hasUnread = showUnreadDot && (t.unreadInboundCount ?? 0) > 0;
+            const maskedAvatar = hide ? pickMaskedAvatar(t.otherId, usedMasked).src : null;
 
             return (
               <li
                 key={t.otherId}
                 className="w-full max-w-full overflow-hidden rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 cursor-pointer"
-                onClick={() => viewProfile(t.otherId)}
+                onClick={() => {
+                  if (hide) {
+                    // Profil non dévoilé : on ne va PAS sur /profileplus
+                    return;
+                  }
+                  viewProfile(t.otherId);
+                }}
               >
                 <div className="flex items-start gap-3">
                   {/* Avatar + 🛡️ dessous */}
                   <div className="shrink-0 flex flex-col items-center">
                     <div className="h-16 w-16 rounded-full overflow-hidden ring-1 ring-gray-200 bg-gray-100">
-                      {p?.avatarUrl ? (
-                        <img src={p.avatarUrl} alt={titleTxt || "Avatar"} className="h-full w-full object-cover" />
+                      {p?.avatarUrl && !hide ? (
+                        <img
+                          src={p.avatarUrl}
+                          alt={titleTxt || "Avatar"}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : hide ? (
+                        maskedAvatar ? (
+                          // Avatar voilé multi-couleurs (identité cachée)
+                          <img
+                            src={maskedAvatar}
+                            alt="Profil confidentiel"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          // Fallback très rare si aucun masque n'est dispo
+                          <div className="h-full w-full grid place-items-center bg-sky-200 text-sky-800 text-2xl font-semibold">
+                            ?
+                          </div>
+                        )
                       ) : (
-                        <div className="h-full w-full grid place-items-center text-gray-400 text-xl">—</div>
+                        // Avatar générique quand l'identité n'est PAS cachée mais qu'il n'y a pas encore de photo
+                        <div className="h-full w-full grid place-items-center text-gray-400 text-2xl">
+                          <span aria-hidden>👤</span>
+                        </div>
                       )}
                     </div>
+
                     <button
                       type="button"
                       aria-label="Bloquer définitivement"
