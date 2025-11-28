@@ -154,7 +154,7 @@ export default function Aide() {
             href="/dashboard"
             className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-purple-600 text-white text-sm font-semibold shadow hover:bg-purple-700"
           >
-            ← Retour au dashboard
+            ← Retour au Tableau de bord
           </Link>
           <p className="text-[11px] text-gray-600 text-center sm:text-right">
             Pour les aspects juridiques (CGU, mentions légales), tu peux
