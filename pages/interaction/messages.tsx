@@ -1060,7 +1060,8 @@ function SectionList({
             const p = peers[t.otherId];
             const hide = hideIdentityForOtherId ? hideIdentityForOtherId(t.otherId) : false;
             const rawTitle = p?.username?.trim() ? p.username : "Utilisateur";
-            const titleTxt = hide ? "Profil confidentiel" : rawTitle;
+            const titleTxt = hide ? "Profil caché" : rawTitle;
+
             const preview = (t.lastText || "…").slice(0, 140);
             const when = t.lastInboundAtISO || t.lastDateISO || "";
             const dateStr = when ? new Date(when).toLocaleString() : "";
@@ -1094,11 +1095,12 @@ function SectionList({
                       ) : hide ? (
                         maskedAvatar ? (
                           // Avatar voilé multi-couleurs (identité cachée)
-                          <img
-                            src={maskedAvatar}
-                            alt="Profil confidentiel"
-                            className="h-full w-full object-cover"
-                          />
+<img
+  src={maskedAvatar}
+  alt="Profil caché"
+  className="h-full w-full object-cover"
+/>
+
                         ) : (
                           // Fallback très rare si aucun masque n'est dispo
                           <div className="h-full w-full grid place-items-center bg-sky-200 text-sky-800 text-2xl font-semibold">

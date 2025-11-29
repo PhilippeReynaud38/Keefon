@@ -210,7 +210,7 @@ export default function SignupPage() {
           spécial.
         </p>
         <p className="text-xs text-gray-600 mb-4">
-          Les adresses e-mail jetables (Yopmail, Mailinator, 10minutemail…) ne
+          Les adresses e-mail jetables ne
           sont pas acceptées sur la version publique de Keefon.
         </p>
 

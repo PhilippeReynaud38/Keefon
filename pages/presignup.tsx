@@ -1,176 +1,265 @@
-// pages/presignup.tsx — Vivaya (UTF-8)
-// Presignup robuste + chemin d’upload SANS dossier user : avatars/<userId>_<uuid>.jpg
-// ⚠️ Rappel : l’URL publique contiendra automatiquement /storage/v1/object/public/avatars/ + path
-//               donc si path = "avatars/<fichier>", l’URL sera .../avatars/avatars/<fichier>
+// pages/presignup.tsx — Keefon / Vivaya (UTF-8)
+// Page de finalisation d'inscription avec upload photo (clic + drag & drop).
+// - Récupère l'utilisateur une seule fois au montage, stocke son userId.
+// - Upload de la photo principale dans le bucket "avatars" au chemin avatars/<userId>_<timestamp>.jpg
+// - Nettoie les anciennes photos temporaires de ce user dans le même bucket.
+// - Ne touche pas aux photos de galerie.
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, type ChangeEvent, type DragEvent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient"; // ajuste si ton alias @/ n'est pas configuré
+import { supabase } from "@/lib/supabaseClient";
 
 // --- Utils -------------------------------------------------------------------
 
-// Compression JPEG (~1600px) pour accélérer l’upload
-async function compressImage(file: File, maxSide = 1600, quality = 0.82): Promise<Blob> {
+// Calcul d'âge simple à partir d'une date ISO (YYYY-MM-DD)
+function getAgeFromISO(dateStr: string): number {
+  const d = new Date(dateStr);
+  const t = new Date();
+  let age = t.getFullYear() - d.getFullYear();
+  const m = t.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && t.getDate() < d.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+// Compression JPEG (~1600px) pour accélérer l'upload
+async function compressImage(
+  file: File,
+  maxSide = 1600,
+  quality = 0.82
+): Promise<Blob> {
   const img = new Image();
   const url = URL.createObjectURL(file);
-  await new Promise<void>((res, rej) => {
-    img.onload = () => res();
-    img.onerror = (e) => rej(e);
+
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = (e) => reject(e);
     img.src = url;
   });
+
   const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(img.width * ratio);
   canvas.height = Math.round(img.height * ratio);
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    URL.revokeObjectURL(url);
+    return file;
+  }
+
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  const blob: Blob = await new Promise((res) =>
-    canvas.toBlob((b) => res(b as Blob), "image/jpeg", quality)!
-  );
+
+  const blob: Blob = await new Promise((resolve) => {
+    canvas.toBlob(
+      (b) => resolve(b as Blob),
+      "image/jpeg",
+      quality
+    );
+  });
+
   URL.revokeObjectURL(url);
   return blob;
 }
 
-// Upload avec timeout + retry, et chemin EXACT exigé (SANS sous-dossier user)
-async function uploadMainPhotoWithRetry(params: {
-  file: File;
-  userId: string;
-}) {
-  const { file, userId } = params;
-  if (!userId) throw new Error("userId manquant");
+// Upload dans le bucket "avatars" sous la forme avatars/<userId>_<timestamp>.jpg
+async function uploadAvatar(file: File, userId: string): Promise<string> {
+  const fileName = `${userId}_${Date.now()}.jpg`;
+  const path = `avatars/${fileName}`;
 
-  // ⬇️ Nom final : avatars/<userId>_<uuid>.jpg  (PAS de répertoire /<userId>/)
-  const unique =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : String(Date.now());
-  const filename = `${userId}_${unique}.jpg`;
-  const path = `avatars/${filename}`; // ✅ format demandé (dossier fixe "avatars/", pas de sous-dossier par user)
+  const { error } = await supabase.storage.from("avatars").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
 
-  const uploadWithTimeout = async (ms: number) => {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), ms);
-    try {
-      const { error } = await supabase.storage.from("avatars").upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
-        // @ts-expect-error — injection AbortSignal supportée par supabase-js
-        fetch: (url: string, init?: RequestInit) =>
-          fetch(url, { ...init, signal: controller.signal }),
-      });
-      if (error) throw error;
-    } finally {
-      clearTimeout(t);
-    }
-  };
-
-  try {
-    await uploadWithTimeout(30_000);
-  } catch (e: any) {
-    if (
-      e?.name === "AbortError" ||
-      e?.message?.includes("Failed to fetch") ||
-      e?.message?.includes("Network")
-    ) {
-      await uploadWithTimeout(30_000); // retry 1x
-    } else {
-      throw e;
-    }
+  if (error) {
+    throw error;
   }
-  return { path };
+  return path;
 }
 
-// Attendre que l’objet soit listé par Storage (évite les 404 juste après upload)
-async function waitUntilExists(path: string, tries = 6, delayMs = 700) {
-  // Ici on liste le dossier racine "avatars" du bucket, car le fichier n’est plus dans avatars/<userId>
+// Attendre que le fichier soit visible dans Storage (évite certains 404 juste après upload)
+async function waitUntilFileExists(
+  path: string,
+  maxTries = 6,
+  delayMs = 700
+): Promise<boolean> {
   const parts = path.split("/");
-  // path = "avatars/<fichier>" ⇒ dir = "avatars", name = "<fichier>"
   const dir = parts[0]; // "avatars"
   const name = parts[1];
-  for (let i = 0; i < tries; i++) {
+
+  for (let i = 0; i < maxTries; i++) {
     const { data, error } = await supabase.storage
       .from("avatars")
       .list(dir, { limit: 1, search: name });
-    if (!error && data && data.length) return true;
-    await new Promise((r) => setTimeout(r, delayMs));
+
+    if (!error && data && data.length) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
   return false;
 }
 
-// Nettoyage des anciens temporaires UNIQUEMENT pour ce user
-// On supprime dans le dossier "avatars" tous les fichiers qui commencent par `${userId}_`, sauf le courant.
-async function deleteOldTempsExcept(currentPath: string | null, userId: string) {
+// Supprime les anciennes photos temporaires de ce user dans le bucket "avatars"
+async function deleteOldAvatars(userId: string, keepPath?: string | null) {
   const { data: files, error } = await supabase.storage
     .from("avatars")
     .list("avatars", { limit: 1000 });
+
   if (error || !files) return;
-  const currentName = currentPath ? currentPath.split("/")[1] : null; // "<userId>_<uuid>.jpg"
+
+  const keepName = keepPath ? keepPath.split("/")[1] : null;
   const toDelete: string[] = [];
+
   for (const f of files) {
-    // ne touche qu’aux fichiers de ce user
     if (!f.name.startsWith(`${userId}_`)) continue;
-    if (currentName && f.name === currentName) continue; // garde le fichier courant
+    if (keepName && f.name === keepName) continue;
     toDelete.push(`avatars/${f.name}`);
   }
-  if (toDelete.length) await supabase.storage.from("avatars").remove(toDelete);
+
+  if (toDelete.length) {
+    await supabase.storage.from("avatars").remove(toDelete);
+  }
 }
 
-// --- Page --------------------------------------------------------------------
+// --- Composant principal -----------------------------------------------------
 
-export default function Presignup() {
+const PresignupPage: React.FC = () => {
   const router = useRouter();
 
-  // Form
+  // User
+  const [userId, setUserId] = useState<string | null>(null);
+  const [checkingUser, setCheckingUser] = useState(true);
+
+  // Formulaire
   const [username, setUsername] = useState("");
   const [genre, setGenre] = useState("");
-  const [birthday, setBirthday] = useState("");
   const [genreRecherche, setGenreRecherche] = useState("");
+  const [birthday, setBirthday] = useState("");
   const [acceptCgu, setAcceptCgu] = useState(false);
   const [acceptData, setAcceptData] = useState(false);
 
   // Photo
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [tempFilePath, setTempFilePath] = useState<string | null>(null);
+  const [avatarPath, setAvatarPath] = useState<string | null>(null);
 
   // UI
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirection si déjà terminé
+  // Récupération utilisateur + éventuel redirect vers dashboard si déjà complété
   useEffect(() => {
-    const check = async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const user = sessionData?.session?.user;
-      if (!user) return;
+    const checkUserAndProgress = async () => {
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
 
-      const { data: presignup } = await supabase
-        .from("presignup_data")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        if (error || !user) {
+          router.replace("/login");
+          return;
+        }
 
-      const { data: photo } = await supabase
-        .from("photos")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("is_main", true)
-        .maybeSingle();
+        setUserId(user.id);
 
-      if (presignup && photo) router.replace("/dashboard");
+        // Déjà complété ? → dashboard
+        const { data: presignup } = await supabase
+          .from("presignup_data")
+          .select("user_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        const { data: photo } = await supabase
+          .from("photos")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("is_main", true)
+          .maybeSingle();
+
+        if (presignup && photo) {
+          router.replace("/dashboard");
+          return;
+        }
+      } finally {
+        setCheckingUser(false);
+      }
     };
-    check();
+
+    checkUserAndProgress();
   }, [router]);
 
-  const getAge = (s: string) => {
-    const d = new Date(s),
-      t = new Date();
-    let a = t.getFullYear() - d.getFullYear();
-    const m = t.getMonth() - d.getMonth();
-    if (m < 0 || (m === 0 && t.getDate() < d.getDate())) a--;
-    return a;
+  // Traitement commun d'un fichier (clic ou drag & drop)
+  const processPickedFile = async (file: File) => {
+    if (!userId) {
+      setError("Ta session a expiré. Merci de te reconnecter.");
+      return;
+    }
+
+    setError(null);
+    setUploading(true);
+
+    try {
+      // Compression JPEG
+      const compressedBlob = await compressImage(file);
+      const jpegFile = new File([compressedBlob], file.name, {
+        type: "image/jpeg",
+      });
+
+      // Upload
+      const path = await uploadAvatar(jpegFile, userId);
+
+      // Nettoyage des anciens avatars de ce user (sauf celui-ci)
+      await deleteOldAvatars(userId, path);
+
+      // On attend que le fichier soit bien visible
+      const ok = await waitUntilFileExists(path);
+      if (!ok) {
+        throw new Error(
+          "La photo a été envoyée mais n'est pas encore disponible. Réessaie dans quelques secondes."
+        );
+      }
+
+      // Mise à jour UI
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+      setAvatarFile(jpegFile);
+      setAvatarPath(path);
+      setAvatarPreview(URL.createObjectURL(jpegFile));
+    } catch (e: any) {
+      console.error(e);
+      setError(
+        e?.message || "Erreur lors du téléchargement de la photo. Réessaie."
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Clic classique sur input file
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (uploading) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processPickedFile(file);
+  };
+
+  // Drag & drop sur la zone de label (optionnel, même si tu ne le mentionnes plus dans le texte)
+  const handleDrop = async (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    if (uploading) return;
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    await processPickedFile(file);
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
   };
 
   // Submit final
@@ -178,125 +267,108 @@ export default function Presignup() {
     e.preventDefault();
     setError(null);
 
+    if (!userId) {
+      setError("Ta session a expiré. Merci de te reconnecter.");
+      return;
+    }
+
     if (
       !username ||
       !genre ||
-      !birthday ||
       !genreRecherche ||
+      !birthday ||
       !avatarFile ||
-      !tempFilePath
+      !avatarPath
     ) {
       setError("Tous les champs sont obligatoires.");
       return;
     }
+
     if (!acceptCgu || !acceptData) {
-      setError("Vous devez accepter les CGU et l’utilisation des données.");
+      setError("Tu dois accepter les CGU et l'utilisation de tes données.");
       return;
     }
-    const age = getAge(birthday);
+
+    const age = getAgeFromISO(birthday);
     if (age < 18 || age > 110) {
-      setError("L’âge doit être entre 18 et 110 ans.");
+      setError("L'âge doit être entre 18 et 110 ans.");
       return;
     }
 
     setSubmitting(true);
+
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Utilisateur non connecté.");
+      // On s'assure que la photo existe bien dans le bucket
+      const exists = await waitUntilFileExists(avatarPath);
+      if (!exists) {
+        throw new Error(
+          "Ta photo principale n'est pas encore disponible. Réessaie dans quelques secondes."
+        );
+      }
 
-      const exists = await waitUntilExists(tempFilePath);
-      if (!exists) throw new Error("Upload terminé mais fichier indisponible. Réessayez.");
+      // On garde uniquement la dernière photo temporaire de ce user
+      await deleteOldAvatars(userId, avatarPath);
 
-      // Nettoyage des anciens temporaires de CE user (dans le dossier fixe "avatars")
-      await deleteOldTempsExcept(tempFilePath, user.id);
+      // Enregistrement presignup_data
+      const { error: presignupError } = await supabase
+        .from("presignup_data")
+        .insert([
+          {
+            user_id: userId,
+            username,
+            genre,
+            birthday,
+            genre_recherche: genreRecherche,
+            accepted_cgu: acceptCgu,
+            accepted_sensitive_data: acceptData,
+          },
+        ]);
 
-      await supabase.from("presignup_data").insert([
+      if (presignupError) throw presignupError;
+
+      // Màj profil (pseudo)
+      await supabase
+        .from("profiles")
+        .update({ username })
+        .eq("id", userId);
+
+      // Enregistrement de la photo principale
+      const { error: photoError } = await supabase.from("photos").insert([
         {
-          user_id: user.id,
-          username,
-          genre,
-          birthday,
-          genre_recherche: genreRecherche,
-          accepted_cgu: acceptCgu,
-          accepted_sensitive_data: acceptData,
-        },
-      ]);
-
-      await supabase.from("profiles").update({ username }).eq("id", user.id);
-
-      await supabase.from("photos").insert([
-        {
-          user_id: user.id,
-          url: tempFilePath, // on stocke le PATH (avatars/<userId>_<uuid>.jpg)
+          user_id: userId,
+          url: avatarPath, // on stocke le PATH interne (avatars/...)
           is_main: true,
           status: "pending",
           created_at: new Date().toISOString(),
         },
       ]);
 
+      if (photoError) throw photoError;
+
       router.push("/dashboard");
     } catch (e: any) {
       console.error(e);
-      setError(e?.message || "Erreur pendant l’enregistrement.");
+      setError(
+        e?.message || "Erreur pendant l'enregistrement de ton inscription."
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Choix image
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const picked = e.target.files?.[0];
-    if (!picked) return;
-    setError(null);
-    setUploading(true);
+  if (checkingUser) {
+    return (
+      <main className="min-h-screen bg-blue-200 flex items-center justify-center">
+        <p className="text-sm text-gray-700">Chargement…</p>
+      </main>
+    );
+  }
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("Utilisateur non connecté.");
-
-      // Compression -> JPEG
- // Compression -> JPEG
-const blob = await compressImage(picked);
-const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
-
-
-      // Upload (chemin exact SANS sous-dossier user)
-      const { path } = await uploadMainPhotoWithRetry({
-        file: lightFile,
-        userId: user.id,
-      });
-
-      // Nettoyage des anciens temporaires (avatars/<userId>_*.jpg)
-      await deleteOldTempsExcept(path, user.id);
-
-      // Attente visibilité avant d’utiliser l’image
-      const ok = await waitUntilExists(path);
-      if (!ok) throw new Error("Fichier non disponible immédiatement. Réessayez.");
-
-      setTempFilePath(path);
-      setAvatarFile(lightFile);
-      setAvatarPreview(URL.createObjectURL(lightFile));
-    } catch (e: any) {
-      console.error(e);
-      setError(e?.message || "Erreur lors de l’upload de la photo.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // Rendu
   return (
     <main className="min-h-screen bg-blue-200">
       <div className="max-w-md mx-auto px-4 py-8">
         <div className="bg-white/80 backdrop-blur rounded-xl p-6 shadow">
-          <h1
-            className="text-xl font-bold text-center mb-4"
-            style={{ color: "var(--paleGreen, #98FB98)" }}
-          >
+          <h1 className="text-xl font-bold text-center mb-4 text-lime-500">
             Finalise ton inscription
           </h1>
 
@@ -316,17 +388,21 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
               required
             />
 
+            {/* IMPORTANT : valeurs identiques à l'ancien presignup
+                genre = "homme" | "femme" */}
             <select
               className="w-full border px-3 py-2 rounded"
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
               required
             >
-              <option value="">Sélectionne ton genre</option>
-              <option value="homme">Homme</option>
+              <option value="">Genre</option>
               <option value="femme">Femme</option>
+              <option value="homme">Homme</option>
             </select>
 
+            {/* IMPORTANT : genre_recherche = "homme" | "femme"
+                (les labels restent "un Homme" / "une Femme") */}
             <select
               className="w-full border px-3 py-2 rounded"
               value={genreRecherche}
@@ -346,31 +422,29 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
               required
             />
 
-            {/* Photo principale : on veut une photo de toi (visage adulte).
-                Photos refusées : visages d'enfants, nudité ou contenu sexuel,
-                violence ou armes, captures d'écran, dessins ou images de célébrités. */}
+            {/* Upload photo principale */}
             <input
               id="avatar"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               className="hidden"
-              required
             />
             <label
               htmlFor="avatar"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
               className="block text-center border border-dashed border-gray-400 p-4 rounded cursor-pointer bg-white hover:bg-orange-50 text-gray-600"
             >
               {uploading
                 ? "Envoi en cours…"
                 : avatarFile
                 ? `Photo sélectionnée : ${avatarFile.name}`
-                : "Choisis une photo ou fais-la glisser ici"}
+                : "Choisis une photo depuis ton téléphone ou ton ordinateur"}
             </label>
 
-            {/* Petit texte visible pour expliquer les règles photos */}
             <p className="text-xs text-gray-600 mt-1">
-              Nous attendons une photo de toi, avec ton visage d’adulte
+              Nous attendons une photo de toi, avec ton visage d&apos;adulte
               clairement visible. Les photos suivantes pourront être refusées :
               visages d&apos;enfants, nudité ou contenu sexuel, scènes de
               violence ou avec des armes, captures d&apos;écran, images de
@@ -380,12 +454,12 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
             {avatarPreview && (
               <img
                 src={avatarPreview}
-                alt="Aperçu"
-                className="w-24 h-24 rounded-full mx-auto"
+                alt="Aperçu de la photo"
+                className="w-24 h-24 rounded-full mx-auto mt-2 object-cover"
               />
             )}
 
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-sm mt-2">
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
@@ -393,7 +467,7 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
                   onChange={(e) => setAcceptCgu(e.target.checked)}
                 />
                 <span>
-                  J’accepte les CGU (
+                  J&apos;accepte les CGU (
                   <Link href="/mentions-legales" className="underline">
                     voir les mentions légales
                   </Link>
@@ -407,8 +481,8 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
                   onChange={(e) => setAcceptData(e.target.checked)}
                 />
                 <span>
-                  J’accepte que mes données sensibles soient utilisées dans le
-                  cadre du site
+                  J&apos;accepte que mes données sensibles soient utilisées dans
+                  le cadre du site.
                 </span>
               </label>
             </div>
@@ -417,7 +491,7 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
               type="submit"
               disabled={uploading || submitting}
               className="w-full py-2 rounded text-white hover:opacity-90 disabled:opacity-60"
-              style={{ background: "var(--paleGreen, #98FB98)" }}
+              style={{ background: "#59FF72" }} // paleGreen
             >
               {submitting ? "Enregistrement…" : "Terminer"}
             </button>
@@ -426,4 +500,6 @@ const lightFile = new File([blob], picked.name, { type: "image/jpeg" });
       </div>
     </main>
   );
-}
+};
+
+export default PresignupPage;
