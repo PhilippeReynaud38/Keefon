@@ -874,11 +874,7 @@ export default function MesCoupsDeCoeur() {
               <span className="text-black/70 text-xl">({matchRows.length})</span>
             </div>
 
-            {loadingActifs ? (
-              <div className="rounded-2xl bg-white/70 ring-1 ring-gray-200 p-6 text-center text-gray-700">
-                Chargement…
-              </div>
-            ) : matchRows.length === 0 ? (
+            {loadingActifs ? null : matchRows.length === 0 ? (
               <div className="rounded-2xl bg-white/70 ring-1 ring-gray-200 p-6 text-center text-gray-700">
                 Aucun match pour l’instant.
               </div>
@@ -913,11 +909,7 @@ export default function MesCoupsDeCoeur() {
               </p>
             )}
 
-            {loadingActifs ? (
-              <div className="rounded-2xl bg-white/70 ring-1 ring-gray-200 p-6 text-center text-gray-700">
-                Chargement…
-              </div>
-            ) : receivedTotal === 0 ? (
+            {loadingActifs ? null : receivedTotal === 0 ? (
               <div className="rounded-2xl bg-white/70 ring-1 ring-gray-200 p-6 text-center text-gray-700">
                 Aucun keef reçu pour l’instant.
               </div>
@@ -963,11 +955,7 @@ export default function MesCoupsDeCoeur() {
               </h2>
             </div>
 
-            {loadingActifs ? (
-              <div className="rounded-2xl bg-white/70 ring-1 ring-gray-200 p-6 text-center text-gray-700">
-                Chargement…
-              </div>
-            ) : sent.length === 0 ? (
+            {loadingActifs ? null : sent.length === 0 ? (
               <div className="rounded-2xl bg-white/70 ring-1 ring-gray-200 p-6 text-center text-gray-700">
                 Aucun pour l’instant.
               </div>

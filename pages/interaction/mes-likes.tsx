@@ -215,8 +215,10 @@ export default function MesLikes() {
             Les profils que tu as likés récemment.
           </p>
 
-          {loading && <p className="text-2xl text-gray-700">Chargement…</p>}
-          {error && !loading && <p className="text-2xl text-red-600">Erreur : {error}</p>}
+          {/* Plus de texte "Chargement…" : on affiche seulement une erreur éventuelle,
+             puis l'état vide ou la liste une fois le chargement terminé. */}
+          {error && <p className="text-2xl text-red-600">Erreur : {error}</p>}
+
           {!loading && !error && !hasData && (
             <p className="text-2xl text-gray-700">Tu n’as encore liké personne.</p>
           )}
