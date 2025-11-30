@@ -4,9 +4,11 @@
 // Objet : page d’aide centrée sur les interactions :
 //  - Signification des boutons 👍❤️📣🧡💬🛡️🚩
 //  - Fonctionnement de la page Messages (Conversations en cours / Messages reçus)
-// Règles : page statique, sans accès base de données, texte court et clair, facile à maintenir.
+//  - Bouton d’installation PWA (même logique que sur /parametres)
+// Règles : page statique, sans accès base de données, texte court et clair.
 
 import Link from "next/link";
+import { InstallIconButton } from "@/components/InstallIconButton";
 
 export default function Aide() {
   return (
@@ -27,8 +29,30 @@ export default function Aide() {
           </p>
         </header>
 
+        {/* Icône Keefon sur l’écran d’accueil (PWA) */}
+        <section className="mt-4 text-sm text-gray-800">
+          <h2 className="font-semibold text-purple-700">
+            Icône sur l&apos;écran d&apos;accueil
+          </h2>
+          <p className="mt-1">
+            Tu peux ajouter Keefon sur l&apos;écran d&apos;accueil de ton
+            téléphone pour y accéder comme une appli.
+          </p>
+
+          <div className="mt-3">
+            {/* Même bouton que sur /parametres : lance le process PWA */}
+            <InstallIconButton />
+          </div>
+
+          <p className="mt-3 text-xs text-gray-600">
+            Sur la plupart des téléphones, ouvre Keefon dans ton navigateur puis
+            utilise l&apos;option <b>&quot;Ajouter à l&apos;écran d&apos;accueil&quot;</b>{" "}
+            pour créer un raccourci.
+          </p>
+        </section>
+
         {/* 1. Légende des boutons */}
-        <section className="mt-4 space-y-4 text-sm text-gray-800">
+        <section className="mt-6 space-y-4 text-sm text-gray-800">
           <div>
             <h2 className="font-semibold text-purple-700">
               1. Les boutons d&apos;action sur les profils
@@ -131,7 +155,7 @@ export default function Aide() {
             </ul>
           </div>
 
-          {/* 3. Indicateurs visuels (ex. pastille "Nouveau") */}
+          {/* 3. Indicateurs visuels */}
           <div>
             <h2 className="font-semibold text-purple-700">
               3. Indicateurs de nouveaux messages
@@ -148,7 +172,7 @@ export default function Aide() {
           </div>
         </section>
 
-        {/* Bas de page : retour simple */}
+        {/* Bas de page : retour */}
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <Link
             href="/dashboard"

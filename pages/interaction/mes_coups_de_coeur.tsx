@@ -630,6 +630,14 @@ export default function MesCoupsDeCoeur() {
   async function archive(row: { direction: "received" | "sent"; other_user: string }) {
     if (!me) return;
 
+    // ⚠️ Confirmation avant mise à la corbeille (action réversible)
+    if (typeof window !== "undefined") {
+      const ok = window.confirm(
+        "Mettre ce keef à la corbeille ?\n\nTu pourras le retrouver dans l’historique."
+      );
+      if (!ok) return;
+    }
+
     // 1) Tentative via RPC (atomique)
     try {
       const rpc = await supabase.rpc("hearts_archive_v1", {

@@ -611,15 +611,11 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Abonnement en haut + bouton Aide visible mobile/desktop */}
-        <div className="mt-2 text-sm text-gray-800 w-full max-w-sm mx-auto flex items-center justify-between">
-          <span>
-            Abonnement : <strong>{planLabel}</strong>
-          </span>
-          {/* Bouton Aide : lien simple, fond vert paleGreen #59FF72 */}
+        {/* Bouton Aide seul, centré sous le badge */}
+        <div className="mt-2 w-full max-w-sm mx-auto flex justify-center">
           <Link
             href="/aide"
-            className="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:opacity-90 text-green-900"
+            className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-semibold shadow hover:opacity-90 text-green-900"
             style={{ backgroundColor: "#59FF72" }}
           >
             <span className="mr-1 font-bold">?</span>

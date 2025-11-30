@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-// pages/interaction/mes-likes.tsx — Vivaya
+// pages/interaction/mes-likes.tsx — Vivaya/Keefon
 //
 // Liste des profils que J'AI likés.
 // Schéma likes confirmé : from_user uuid, to_user uuid, created_at timestamptz.
@@ -163,6 +163,12 @@ export default function MesLikes() {
 
   // Suppression d’un like (from_user = moi ; to_user = id ciblé)
   async function deleteLike(targetId: string) {
+    // ⚠️ Confirmation avant suppression définitive
+    if (typeof window !== "undefined") {
+      const ok = window.confirm("Supprimer ce like de ta liste ?");
+      if (!ok) return;
+    }
+
     try {
       const {
         data: { user },
@@ -229,7 +235,7 @@ export default function MesLikes() {
                 <li
                   key={it.id + it.likedAt}
                   onClick={() => router.push(`/profileplus/${it.id}`)}
-                  className="cursor-pointer rounded-2xl bg-white/90 ring-1 ring-gray-200 shadow-sm p-3 flex items-center gap-4 hover:shadow hover:bg-gray-50 transition"
+                  className="cursor-pointer rounded-2xl bg-[#d1fff0] ring-1 ring-gray-200 shadow-sm p-3 flex items-center gap-4 hover:shadow hover:bg-gray-50 transition"
                 >
                   <div className="h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ring-1 ring-gray-200 bg-gray-100 shrink-0">
                     {it.avatarUrl ? (
