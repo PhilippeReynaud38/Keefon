@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 // Fichier : /pages/recherche.tsx
-// Projet  : Vivaya
+// Projet  : Keefon parfois il s'appel Vivaya
 //
 // Rôle : Page de recherche de profils avec filtres de base + filtres avancés
 //        (réservés aux abonnés via useSubscription). Cette version remplace
@@ -22,7 +22,7 @@
 //       * get_viewer_is_certified() -> boolean
 //   - Aucune RLS élargie côté client.
 //
-// Règles Vivaya : robustesse, simplicité, commentaires conservés, UTF-8.
+// Règles Keefon : robustesse, simplicité, commentaires conservés, UTF-8.
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";

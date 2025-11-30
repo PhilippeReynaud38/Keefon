@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 // ============================================================================
-// Vivaya | Page
+// Keefon | Page
 // Fichier : pages/boutique.tsx
 // Objet   : Boutique pour gérer les packs de crédits (cœurs & échos)
 //           en s'appuyant sur l'abstraction de paiement (getPaymentProvider).
@@ -27,17 +27,14 @@ interface Product {
 }
 
 const PRODUCTS: Product[] = [
-  // Cœurs
   { id: 'heart-1', label: '+1 ❤️cœur', description: '', category: 'hearts', hearts: 1, echos: 0, price: 0.99 },
   { id: 'heart-5', label: '+5 ❤️cœurs', description: '', category: 'hearts', hearts: 5, echos: 0, price: 3.49 },
   { id: 'heart-10', label: '+10 ❤️cœurs', description: '', category: 'hearts', hearts: 10, echos: 0, price: 5.99 },
 
-  // Échos
   { id: 'echo-1', label: '+1 📣écho', description: '', category: 'echos', hearts: 0, echos: 1, price: 0.79 },
   { id: 'echo-5', label: '+5 📣échos', description: '', category: 'echos', hearts: 0, echos: 5, price: 2.99 },
   { id: 'echo-10', label: '+10 📣échos', description: '', category: 'echos', hearts: 0, echos: 10, price: 4.99 },
 
-  // Mixtes
   {
     id: 'bundle-1-1',
     label: '+1 ❤️cœur + 1 📣écho',
@@ -95,7 +92,8 @@ export default function BoutiquePage() {
 
   const selectedHeartProduct =
     heartProducts.find((p) => p.id === selectedHeartId) ?? heartProducts[0] ?? null
-  const selectedEchoProduct = echoProducts.find((p) => p.id === selectedEchoId) ?? echoProducts[0] ?? null
+  const selectedEchoProduct =
+    echoProducts.find((p) => p.id === selectedEchoId) ?? echoProducts[0] ?? null
   const selectedBundleProduct =
     bundleProducts.find((p) => p.id === selectedBundleId) ?? bundleProducts[0] ?? null
 
@@ -107,7 +105,7 @@ export default function BoutiquePage() {
         if (!on) return
         setUserId(data?.user?.id ?? null)
       } finally {
-        // rien d’autre à faire ici
+        // rien de plus
       }
     })()
     return () => {
@@ -199,7 +197,7 @@ export default function BoutiquePage() {
       <div className="mx-auto max-w-5xl p-6">
         <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Boutique Vivaya</h1>
+            <h1 className="text-2xl font-bold">Boutique Keefon</h1>
             <p className="mt-1 text-sm text-gray-700">
               Packs de cœurs et d’échos pour booster tes rencontres.
             </p>
@@ -223,9 +221,14 @@ export default function BoutiquePage() {
           </div>
         </header>
 
-        {/* Bandeau d’information : mode découverte (achats désactivés) */}
-        <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-100 px-4 py-3 text-sm text-yellow-900">
-          <strong>Actuellement en mode découverte :</strong> achats désactivés pour l’instant.
+        {/* GROS bandeau jaune bien visible */}
+        <div className="mb-6 flex items-center gap-3 rounded-2xl border-2 border-yellow-500 bg-yellow-300/95 px-4 py-4 text-sm text-black shadow-md md:py-5 md:text-base">
+          <span className="text-2xl" aria-hidden>
+            ⚠️
+          </span>
+          <p>
+            <strong>Actuellement en mode découverte :</strong> achats désactivés pour l’instant.
+          </p>
         </div>
 
         {(lastMessage || lastError) && (
@@ -429,7 +432,6 @@ function ProductCard({ product, disabled, pending, onBuy }: ProductCardProps) {
   const { label, description, price } = product
   const hasDescription = description && description.trim().length > 0
 
-  // Ici : pas de couleur de fond propre -> on garde celle de la "grande carte"
   return (
     <div className="flex flex-col rounded-xl border border-black/5 bg-transparent p-3 shadow-sm">
       <h3 className="mb-1 text-sm font-semibold">{label}</h3>

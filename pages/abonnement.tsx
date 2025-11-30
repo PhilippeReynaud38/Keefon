@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 // ============================================================================
-// Vivaya | Page
+// Keefon | Page   
 // Fichier : pages/abonnement.tsx
 // Objet   : Offres, lecture du plan effectif, gestion d'abonnement (sans PSP).
 // Règles  : robuste, simple, logique, commentaires conservés, UTF-8.
@@ -26,7 +26,7 @@
 // CHANGELOG (2025-11-26):
 //   - Distinction “plan de base” (profiles.subscription_tier) vs plan effectif
 //     (user_plans_effective_v.effective_tier).
-//   - Si base = free et effectif ≠ free → badge = “Accès partiel” (période offerte)
+//   - Si base = free et effectif ≠ free → badge = “Accès partiel Essentiel / Keefon+”
 //     au lieu d’afficher “Essentiel” ou “Keefon+”. Keefon+ reste le 4e état réel.
 //   - Affichage explicite : “Accès partiel Essentiel / Keefon+” dans le badge.
 // CHANGELOG (2025-11-29):
@@ -42,13 +42,11 @@ import { getPaymentProvider } from '@/lib/payments'
 type UiTier = 'free' | 'essential' | 'elite'
 type Billing = 'monthly' | 'quarterly'
 
-// -- Tarifs d’affichage (EUR) ------------------------------------------------
 const PRICES = {
   essential: { monthly: 9.9, quarterly: 29.7 },
   elite: { monthly: 29.9, quarterly: 89.7 },
 } as const
 
-// -- Limites (centralisées) --------------------------------------------------
 const LIMITS = {
   freeHearts: 1,
   essentialHearts: 4,
@@ -66,7 +64,6 @@ const euro = (n: number) =>
 const labelFromUiTier = (t: UiTier) =>
   t === 'elite' ? 'Keefon+' : t === 'essential' ? 'Essentiel' : 'Gratuit'
 
-// Lecture générique d’un palier texte -> UiTier (vue effectif)
 const mapEffectiveFromView = (raw: string | null): UiTier => {
   const s = (raw || '').trim().toLowerCase()
   if (s === 'elite' || s === 'keefon+' || s === 'keefonplus') return 'elite'
@@ -74,7 +71,6 @@ const mapEffectiveFromView = (raw: string | null): UiTier => {
   return 'free'
 }
 
-// Lecture d’un palier depuis profiles.subscription_tier (plan “de base”)
 const mapProfileTierFromRaw = (raw: string | null): UiTier => {
   const s = (raw || '').trim().toLowerCase()
   if (s === 'elite' || s === 'keefon+' || s === 'keefonplus') return 'elite'
@@ -86,22 +82,14 @@ export default function AbonnementPage() {
   const router = useRouter()
 
   const [billing, setBilling] = useState<Billing>('monthly')
-
-  // Plan effectif (ce que la vue calcule) et plan “de base” (profil)
   const [effective, setEffective] = useState<UiTier>('free')
   const [baseTier, setBaseTier] = useState<UiTier>('free')
-
   const [loadingPlan, setLoadingPlan] = useState(true)
   const [pending, setPending] = useState<UiTier | null>(null)
-
-  // Utilisateur courant (pour les appels au provider de paiement).
   const [userId, setUserId] = useState<string | null>(null)
-
-  // Messages d'action (facultatif, utile en mode DEV sans paiement réel).
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
-  // -- Lecture du palier effectif + palier de base --------------------------
   type PlanState = { effective: UiTier; base: UiTier }
 
   const loadPlanState = async (): Promise<PlanState> => {
@@ -113,7 +101,6 @@ export default function AbonnementPage() {
     }
     setUserId(uid)
 
-    // On lit en parallèle : vue “effectif” + profil brut.
     const [effRes, profRes] = await Promise.all([
       supabase
         .from('user_plans_effective_v')
@@ -138,14 +125,12 @@ export default function AbonnementPage() {
       base = mapProfileTierFromRaw((profRes.data as any).subscription_tier ?? null)
     }
 
-    // Fallback de sécurité : si rien en base, on aligne le “base” sur l’effectif
     if (base === 'free' && eff !== 'free') {
-      // Cas intéressant pour nous : base free + effectif non-free = accès offert/partiel.
-      // On laisse base = free pour que la UI puisse le détecter.
+      // Accès offert : on garde base = free pour détecter l'accès partiel en UI
     } else if (base === 'free' && eff === 'free') {
-      // OK : tout est free.
+      // tout free
     } else if (base !== 'free') {
-      // OK : vrai abonnement enregistré en base.
+      // abo normal, OK
     } else {
       base = eff
     }
@@ -161,7 +146,7 @@ export default function AbonnementPage() {
         if (!on) return
         setEffective(st.effective)
         setBaseTier(st.base)
-      } catch (e) {
+      } catch {
         if (on) {
           setEffective('free')
           setBaseTier('free')
@@ -175,13 +160,8 @@ export default function AbonnementPage() {
     }
   }, [])
 
-  // -- Changement de plan via provider de paiement (abstraction) -------------
   const changePlan = async (target: UiTier) => {
-    if (target === 'free') {
-      // Pour l’instant, pas de “downgrade” direct ici.
-      // Ça pourra être géré plus tard (via paramètres ou provider).
-      return
-    }
+    if (target === 'free') return
 
     if (!userId) {
       alert('Impossible de trouver ton compte. Réessaie après reconnexion.')
@@ -197,18 +177,17 @@ export default function AbonnementPage() {
       const payment = getPaymentProvider()
       const result = await payment.subscribeToPlan({
         userId,
-        // On suppose que PlanId dans lib/payments.ts est 'free' | 'essential' | 'elite'.
         planId: target,
       })
 
       if (!result.success) {
         console.error(result.message)
-        setActionError(result.message || "Impossible de mettre à jour l'abonnement.")
-        alert(result.message || "Impossible de mettre à jour l'abonnement.")
+        const msg = result.message || "Impossible de mettre à jour l'abonnement."
+        setActionError(msg)
+        alert(msg)
         return
       }
 
-      // En mode DEV : on recharge simplement le plan effectif + base.
       const st = await loadPlanState()
       setEffective(st.effective)
       setBaseTier(st.base)
@@ -227,14 +206,9 @@ export default function AbonnementPage() {
     }
   }
 
-  // Helpers d’UI
   const isActive = (t: UiTier) => effective === t
   const isCurrentForUi = (t: UiTier) => isActive(t)
 
-  // ⚙️ Badge affiché en haut :
-  // - si chargement : “Chargement…”
-  // - si base = free et effectif ≠ free : période offerte → “Accès partiel Essentiel / Keefon+”
-  // - sinon : “Gratuit” / “Essentiel” / “Keefon+”
   const hasPartialAccess = !loadingPlan && effective !== 'free' && baseTier === 'free'
   const planBadge = loadingPlan
     ? 'Chargement…'
@@ -250,11 +224,9 @@ export default function AbonnementPage() {
       style={{ backgroundImage: `url('/bg-abonnement-ext.png')` }}
     >
       <div className="mx-auto max-w-5xl rounded-2xl bg-white/85 p-6 shadow">
-        {/* En-tête */}
         <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Abonnement Vivaya</h1>
+          <h1 className="text-2xl font-bold">Abonnement Keefon</h1>
           <div className="flex items-center gap-2">
-            {/* ← Retour (jaune) */}
             <button
               type="button"
               onClick={() => router.back()}
@@ -265,7 +237,6 @@ export default function AbonnementPage() {
               <span>Retour</span>
             </button>
 
-            {/* Tableau de bord → (vert) */}
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-1 rounded-lg bg-paleGreen px-2.5 py-1.5 text-xs font-semibold text-black shadow-sm hover:opacity-90 sm:px-3 sm:py-2 sm:text-sm"
@@ -278,12 +249,16 @@ export default function AbonnementPage() {
           </div>
         </div>
 
-        {/* Bandeau d’information : mode découverte (achats désactivés) */}
-        <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-100 px-4 py-3 text-sm text-yellow-900">
-          <strong>Actuellement en mode découverte :</strong> achats désactivés pour l’instant.
+        {/* GROS bandeau jaune bien visible */}
+        <div className="mb-6 flex items-center gap-3 rounded-2xl border-2 border-yellow-500 bg-yellow-300/95 px-4 py-4 text-sm text-black shadow-md md:py-5 md:text-base">
+          <span className="text-2xl" aria-hidden>
+            ⚠️
+          </span>
+          <p>
+            <strong>Actuellement en mode découverte :</strong> achats désactivés pour l’instant.
+          </p>
         </div>
 
-        {/* Plan actuel */}
         <div
           className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-800"
           aria-busy={loadingPlan}
@@ -299,7 +274,6 @@ export default function AbonnementPage() {
           )}
         </div>
 
-        {/* Messages d’action (mode DEV / info) */}
         {(actionMessage || actionError) && (
           <div className="mb-4 text-xs">
             {actionMessage && <p className="text-green-700">{actionMessage}</p>}
@@ -307,7 +281,6 @@ export default function AbonnementPage() {
           </div>
         )}
 
-        {/* Choix facturation (UI) */}
         <div className="mb-6 flex items-center gap-3">
           <div className="text-sm text-gray-700">Facturation :</div>
           <div className="inline-flex rounded-xl bg-gray-100 p-1">
@@ -334,9 +307,7 @@ export default function AbonnementPage() {
           </div>
         </div>
 
-        {/* Grille des paliers */}
         <div className="grid gap-4 md:grid-cols-3">
-          {/* Gratuit */}
           <PlanCard
             title="Gratuit"
             tagline="— pour tester l’expérience"
@@ -354,7 +325,6 @@ export default function AbonnementPage() {
             current={isActive('free')}
           />
 
-          {/* Essentiel */}
           <PlanCard
             title="Essentiel"
             tagline="— pour vraiment avancer"
@@ -384,7 +354,6 @@ export default function AbonnementPage() {
             current={isCurrentForUi('essential')}
           />
 
-          {/* Keefon+ */}
           <PlanCard
             title="Keefon+"
             tagline="— liberté totale de contact"
@@ -409,13 +378,13 @@ export default function AbonnementPage() {
           />
         </div>
 
-        {/* Mentions & FAQ */}
         <div className="mt-8 space-y-6">
           <details className="rounded-lg border border-gray-200 bg-white p-4">
             <summary className="cursor-pointer select-none font-semibold">
               Questions fréquentes
             </summary>
             <div className="mt-3 space-y-4 text-sm text-gray-800">
+              {/* … (FAQ inchangée) … */}
               <div>
                 <p className="font-medium">Comment arrêter mon abonnement&nbsp;?</p>
                 <p>
@@ -429,7 +398,6 @@ export default function AbonnementPage() {
                   .
                 </p>
               </div>
-
               <div>
                 <p className="font-medium">Le renouvellement est-il automatique&nbsp;?</p>
                 <p>
@@ -437,7 +405,6 @@ export default function AbonnementPage() {
                   ou autre). Les règles seront affichées clairement avant tout engagement payant.
                 </p>
               </div>
-
               <div>
                 <p className="font-medium">
                   Puis-je changer de formule ou de fréquence&nbsp;?
@@ -448,7 +415,6 @@ export default function AbonnementPage() {
                   affiché avant validation.
                 </p>
               </div>
-
               <div>
                 <p className="font-medium">
                   Mon accès «&nbsp;offert&nbsp;» est-il un abonnement&nbsp;?
@@ -459,7 +425,6 @@ export default function AbonnementPage() {
                   paiement sera disponible.
                 </p>
               </div>
-
               <div>
                 <p className="font-medium">Reçus et factures</p>
                 <p>
@@ -472,7 +437,6 @@ export default function AbonnementPage() {
                   .
                 </p>
               </div>
-
               <div>
                 <p className="font-medium">Carte expirée / paiement refusé</p>
                 <p>
@@ -480,7 +444,6 @@ export default function AbonnementPage() {
                   détaillées seront précisées au moment de l’activation des abonnements payants.
                 </p>
               </div>
-
               <div>
                 <p className="font-medium">Supprimer mon compte</p>
                 <p>
@@ -508,9 +471,6 @@ export default function AbonnementPage() {
   )
 }
 
-// ============================================================================
-// Carte d’offre (composant pur UI)
-// ============================================================================
 type PlanCardProps = {
   title: string
   tagline?: string
