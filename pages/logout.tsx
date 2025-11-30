@@ -17,7 +17,7 @@ export default function Logout() {
       try {
         await supabase.auth.signOut();
       } finally {
-        if (!done) router.replace("/"); // ← redirection vers l'accueil
+        if (!done) router.replace("/login"); // ← redirection vers l'accueil
       }
     })();
     return () => {
