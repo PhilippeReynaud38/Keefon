@@ -4,14 +4,7 @@
 // Bouton permanent pour proposer d'ajouter Keefon
 // sur l'écran d'accueil (PWA / icône comme une appli).
 //
-// - Bouton toujours visible sur la page où il est utilisé.
-// - Vert (style Keefon) au lieu de noir.
-// - Pas de popup alert() : si le navigateur ne gère pas
-//   l'installation, on affiche juste une petite phrase
-//   sous le bouton.
-// - Quand l'app sera une vraie PWA (manifest + SW + HTTPS),
-//   le navigateur enverra beforeinstallprompt et le bouton
-//   ouvrira la boîte d'installation système.
+// ...
 
 import React, { useEffect, useState } from "react";
 
@@ -32,7 +25,6 @@ export const InstallIconButton: React.FC = () => {
     const checkStandalone = () => {
       let standalone = false;
 
-      // Android / desktop PWA
       if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) {
         standalone = true;
       }
@@ -43,6 +35,7 @@ export const InstallIconButton: React.FC = () => {
         standalone = true;
       }
 
+      console.log("[Keefon] Mode standalone :", standalone);
       setIsInstalled(standalone);
     };
 
@@ -63,10 +56,9 @@ export const InstallIconButton: React.FC = () => {
 
     const handler = (e: Event) => {
       const ev = e as BeforeInstallPromptEvent;
-      // On empêche la popup automatique, on la déclenchera avec notre bouton
       ev.preventDefault();
+      console.log("[Keefon] beforeinstallprompt capturé");
       setDeferredPrompt(ev);
-      // On efface éventuellement un ancien message d'info
       setInfo(null);
     };
 
@@ -82,29 +74,26 @@ export const InstallIconButton: React.FC = () => {
       return;
     }
 
-    // Cas idéal : le navigateur a envoyé beforeinstallprompt
     if (deferredPrompt) {
       try {
+        console.log("[Keefon] Ouverture de la boîte d'installation PWA…");
         await deferredPrompt.prompt();
         if (deferredPrompt.userChoice) {
           const choice = await deferredPrompt.userChoice;
+          console.log("[Keefon] Résultat userChoice :", choice.outcome);
           if (choice.outcome === "accepted") {
             setIsInstalled(true);
-          } else {
-            // Refusé : on laisse le bouton dispo, sans message agressif.
           }
         }
       } catch (e) {
         console.error("Install prompt error:", e);
       } finally {
-        // Après un prompt, beaucoup de navigateurs "consomment" l'événement
         setDeferredPrompt(null);
       }
       return;
     }
 
-    // Fallback : le navigateur ne propose pas (encore) d'installation automatique.
-    // Pas de popup, juste une mention sous le bouton.
+    console.log("[Keefon] Fallback install : beforeinstallprompt absent.");
     setInfo(
       "L’installation automatique n’est pas disponible sur ce navigateur. Quand Keefon sera installable, ce bouton ouvrira la fenêtre d’ajout."
     );
@@ -129,9 +118,7 @@ export const InstallIconButton: React.FC = () => {
         onClick={handleClick}
         className="px-3 py-2 rounded-md text-sm bg-[#59FF72] text-black hover:bg-[#7CFF90] transition-colors"
       >
-        <span className="font-semibold">
-          📱 Envie d’un accès rapide ?
-        </span>
+        <span className="font-semibold">📱 Envie d’un accès rapide ?</span>
         <br />
         <span className="text-xs">
           Ajouter l’icône <span className="font-semibold">Keefon</span> sur l’écran d’accueil.

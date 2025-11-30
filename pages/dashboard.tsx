@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-// Vivaya — pages/dashboard.tsx
+// Vivaya/Keefon — pages/dashboard.tsx
 //
 // Objet : tableau de bord avec suggestions proches.
 // Règles : code robuste, simple, lisible ; UTF-8 ; commentaires conservés ; pas d’usine à gaz.

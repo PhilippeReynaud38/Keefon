@@ -575,10 +575,12 @@ export default function Parametres() {
               className="mt-6"
             >
               <details ref={deleteDetailsRef} className="group">
-                <summary className="cursor-pointer select-none text-sm text-gray-600 group-open:text-red-700">
+                {/* 🔽 Ligne rendue plus discrète : bleu très clair + taille réduite */}
+                <summary className="cursor-pointer select-none text-xs text-sky-300 hover:text-sky-400">
                   <span className="underline">Supprimer mon compte</span>{" "}
-                  (définitif)
+                  <span className="opacity-80">(définitif)</span>
                 </summary>
+
                 <div className="mt-3 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-800 space-y-2">
                   <p>
                     Cette action est <b>difficilement réversible</b>. Tes

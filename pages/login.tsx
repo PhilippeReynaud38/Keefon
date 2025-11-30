@@ -1,33 +1,33 @@
 // -*- coding: utf-8 -*-
-// Fichier : /pages/login.tsx — Vivaya
+// Fichier : /pages/login.tsx — Vivaya / Keefon
 // Objet   : Page de connexion. Affiche un BANDEAU haut persistant si ?account_deleted=1,
-//           et gère la connexion classique.
+//           et gère la connexion classique Supabase.
 // Règles  : simple, robuste, commenté, UTF-8.
-// Dernière MàJ : 2025-11-06 (UTC+1)
 
-import { FormEvent, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { supabase } from '../lib/supabaseClient';
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { supabase } from "../lib/supabaseClient";
 
 // --- Bandeau dismissible, large et lisible (fixe en haut)
 function DismissibleBanner({
   text,
-  kind = 'success',
+  kind = "success",
   onClose,
 }: {
   text: string;
-  kind?: 'success' | 'info' | 'error';
+  kind?: "success" | "info" | "error";
   onClose: () => void;
 }) {
   const base =
-    'fixed top-3 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,720px)] rounded-xl border px-4 py-3 shadow';
+    "fixed top-3 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,720px)] rounded-xl border px-4 py-3 shadow";
   const style =
-    kind === 'success'
-      ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
-      : kind === 'error'
-      ? 'bg-red-50 text-red-900 border-red-200'
-      : 'bg-blue-50 text-blue-900 border-blue-200';
+    kind === "success"
+      ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+      : kind === "error"
+      ? "bg-red-50 text-red-900 border-red-200"
+      : "bg-blue-50 text-blue-900 border-blue-200";
+
   return (
     <div role="status" aria-live="polite" className={`${base} ${style}`}>
       <div className="flex items-start gap-3">
@@ -48,36 +48,40 @@ function DismissibleBanner({
 export default function Login() {
   const router = useRouter();
 
-  const prefill = typeof router.query.email === 'string' ? router.query.email : '';
-  const checkMail = router.query.checkMail === '1';
+  const prefill = typeof router.query.email === "string" ? router.query.email : "";
+  const checkMail = router.query.checkMail === "1";
 
   const [email, setEmail] = useState(prefill);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👈 nouvel état
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // État du bandeau haut
-  const [banner, setBanner] = useState<{ text: string; kind?: 'success' | 'info' | 'error' } | null>(null);
+  // État du bandeau haut (compte supprimé)
+  const [banner, setBanner] = useState<{
+    text: string;
+    kind?: "success" | "info" | "error";
+  } | null>(null);
 
-  // Si ?account_deleted=1 → afficher un BANNDEAU haut persistant (jusqu’à fermeture),
-  // puis nettoyer l’URL sans recharge.
   useEffect(() => {
     if (!router.isReady) return;
 
     const sp = new URLSearchParams(window.location.search);
-    const flag = sp.get('account_deleted');
+    const flag = sp.get("account_deleted");
 
-    if (flag === '1' || flag === 'true') {
+    if (flag === "1" || flag === "true") {
       setBanner({
-        text: 'Compte supprimé avec succès. Tu peux te reconnecter ou créer un nouveau compte.',
-        kind: 'success',
+        text: "Compte supprimé avec succès. Tu peux te reconnecter ou créer un nouveau compte.",
+        kind: "success",
       });
 
-      sp.delete('account_deleted');
-      const newUrl = `${router.pathname}${sp.toString() ? '?' + sp.toString() : ''}${window.location.hash}`;
+      sp.delete("account_deleted");
+      const newUrl = `${router.pathname}${
+        sp.toString() ? "?" + sp.toString() : ""
+      }${window.location.hash}`;
       router.replace(newUrl, undefined, { shallow: true });
     }
-  }, [router.isReady]);
+  }, [router.isReady, router.pathname, router]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -88,16 +92,15 @@ export default function Login() {
     setLoading(false);
 
     if (error) {
-      if (error.message && error.message.includes('Email not confirmed')) {
-        setError('Merci de confirmer ton e-mail avant de te connecter.');
+      if (error.message && error.message.includes("Email not confirmed")) {
+        setError("Merci de confirmer ton e-mail avant de te connecter.");
       } else {
-        setError('E-mail ou mot de passe incorrect.');
+        setError("E-mail ou mot de passe incorrect.");
       }
       return;
     }
 
-    // ✅ Redirection après connexion
-    router.replace('/dashboard');
+    await router.replace("/dashboard");
   }
 
   return (
@@ -124,9 +127,12 @@ export default function Login() {
         )}
 
         {error && (
-          <p className="bg-red-100 text-red-700 p-3 rounded text-sm text-center">{error}</p>
+          <p className="bg-red-100 text-red-700 p-3 rounded text-sm text-center">
+            {error}
+          </p>
         )}
 
+        {/* Champ e-mail */}
         <input
           type="email"
           value={email}
@@ -136,27 +142,45 @@ export default function Login() {
           className="input"
         />
 
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          placeholder="Mot de passe"
-          className="input"
-        />
+        {/* Champ mot de passe + bouton œil */}
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Mot de passe"
+            className="input pr-10"
+          />
+          <button
+            type="button"
+            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute inset-y-0 right-2 flex items-center text-xs text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? "🙈" : "👁"}
+          </button>
+        </div>
 
         <button
           type="submit"
           disabled={loading}
           className="w-full bg-paleGreen text-white font-semibold py-2 px-4 rounded hover:opacity-90 disabled:opacity-60"
         >
-          {loading ? 'Connexion…' : 'Se connecter'}
+          {loading ? "Connexion…" : "Se connecter"}
         </button>
 
         <p className="text-center text-sm">
-          Pas encore inscrit ?{' '}
+          Pas encore inscrit ?{" "}
           <Link href="/signup" className="text-blue-600 hover:underline">
             Créer un compte
+          </Link>
+        </p>
+
+        {/* Lien "Mot de passe oublié ?" */}
+        <p className="mt-2 text-center text-xs text-gray-600">
+          <Link href="/forgot-password" className="underline hover:text-pink-600">
+            Mot de passe oublié ?
           </Link>
         </p>
       </form>

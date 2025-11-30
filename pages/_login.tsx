@@ -19,6 +19,11 @@ export default function LoginPage() {
           Entrer
         </button>
       </form>
+
+      {/* Lien d’aide / reset */}
+      <p style={{ marginTop: '8px', fontSize: '0.9rem' }}>
+        <a href="/forgot-password">Mot de passe oublié ?</a>
+      </p>
     </div>
   )
 }

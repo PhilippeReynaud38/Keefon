@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-// Vivaya — pages/aide.tsx
+// Vivaya/Keefon — pages/aide.tsx
 //
 // Objet : page d’aide centrée sur les interactions :
 //  - Signification des boutons 👍❤️📣🧡💬🛡️🚩

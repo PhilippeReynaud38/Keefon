@@ -1,14 +1,13 @@
-
-
 {
-      "_meta": {
+  "_meta": {
     "file": "public/manifest.json",
-    "purpose": "PWA manifest pour Keefon (icône + couleurs + mode standalone). Pour Créé le Racourci Sur le Bureau",
-    "last_updated": "2025-11-28"
+    "purpose": "PWA manifest pour Keefon (icône + couleurs + mode standalone). Pour créer le raccourci sur le bureau",
+    "last_updated": "2025-11-30"
   },
   "name": "Keefon",
   "short_name": "Keefon",
   "description": "Keefon, le rendez-vous des âmes compatibles.",
+  "id": "/keefon-v2",             
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
