@@ -4,6 +4,9 @@
 // Fichier : pages/boutique.tsx
 // Objet   : Boutique pour gérer les packs de crédits (cœurs & échos)
 //           en s'appuyant sur l'abstraction de paiement (getPaymentProvider).
+// ----------------------------------------------------------------------------
+// CHANGELOG (2025-11-29):
+//   - Ajout d’un bandeau d’avertissement “mode découverte” (paiements désactivés).
 // ============================================================================
 
 import React, { useEffect, useState } from 'react'
@@ -194,11 +197,11 @@ export default function BoutiquePage() {
       style={{ backgroundImage: `url('/bg-boutique-ext.png')` }}
     >
       <div className="mx-auto max-w-5xl p-6">
-        <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold">Boutique Vivaya</h1>
             <p className="mt-1 text-sm text-gray-700">
-              Packs de cœurs et d’échos pour booster tes rencontres. Actuellement en mode test : NON utilisable.
+              Packs de cœurs et d’échos pour booster tes rencontres.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -219,6 +222,11 @@ export default function BoutiquePage() {
             </Link>
           </div>
         </header>
+
+        {/* Bandeau d’information : mode découverte (achats désactivés) */}
+        <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-100 px-4 py-3 text-sm text-yellow-900">
+          <strong>Actuellement en mode découverte :</strong> achats désactivés pour l’instant.
+        </div>
 
         {(lastMessage || lastError) && (
           <section className="mb-4 text-xs">
@@ -359,8 +367,6 @@ export default function BoutiquePage() {
             </div>
 
             <div className="p-4">
-
-
               <div className="mt-3 space-y-3">
                 <div className="flex flex-wrap gap-2">
                   {bundleProducts.map((p) => (
@@ -394,7 +400,6 @@ export default function BoutiquePage() {
         </section>
 
         <footer className="mt-8 text-xs text-gray-600">
-
           <p className="mt-2">
             Pour toute question, tu peux nous écrire à{' '}
             <a className="underline" href="mailto:contact@keefon.com">

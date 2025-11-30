@@ -29,6 +29,8 @@
 //   - Si base = free et effectif ≠ free → badge = “Accès partiel” (période offerte)
 //     au lieu d’afficher “Essentiel” ou “Keefon+”. Keefon+ reste le 4e état réel.
 //   - Affichage explicite : “Accès partiel Essentiel / Keefon+” dans le badge.
+// CHANGELOG (2025-11-29):
+//   - Ajout d’un bandeau d’avertissement “mode découverte” (paiements désactivés).
 // ============================================================================
 
 import React, { useEffect, useState } from 'react'
@@ -274,6 +276,11 @@ export default function AbonnementPage() {
               <span aria-hidden>→</span>
             </Link>
           </div>
+        </div>
+
+        {/* Bandeau d’information : mode découverte (achats désactivés) */}
+        <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-100 px-4 py-3 text-sm text-yellow-900">
+          <strong>Actuellement en mode découverte :</strong> achats désactivés pour l’instant.
         </div>
 
         {/* Plan actuel */}
