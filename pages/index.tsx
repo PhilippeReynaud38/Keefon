@@ -11,7 +11,7 @@ export default function HomeRedirect() {
 
   useEffect(() => {
     // Redirection immédiate vers la page vitrine France
-    router.replace("/rencontres/france");
+    router.replace("/rencontres/France");
   }, [router]);
 
   return (
@@ -26,8 +26,8 @@ export default function HomeRedirect() {
         <noscript>
           <p className="mt-3 text-sm text-gray-800">
             JavaScript est désactivé. Clique ici&nbsp;:{" "}
-            <a href="/rencontres/france" className="underline font-semibold">
-              /rencontres/france
+            <a href="/rencontres/France" className="underline font-semibold">
+              /rencontres/France
             </a>
           </p>
         </noscript>
