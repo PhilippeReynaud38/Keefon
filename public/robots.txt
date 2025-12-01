@@ -1,9 +1,2 @@
 User-agent: *
-Disallow: /profile
-Disallow: /chat
-Disallow: /messages
-Disallow: /admin
-Disallow: /api/
-Allow: /
-
-Sitemap: https://keefon.com/sitemap.xml
+Disallow: /
