@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/grenoble.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Grenoble / Métropole
- * MAJ : 2025-11-19 — Version basée sur lyon.tsx, adaptée à Grenoble + métropole
+ * MAJ : 2025-12-01 — Remplacement next/image → <img> pour les avatars locaux
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Grenoble / Métropole, en plus de la page générale France.
@@ -9,7 +9,7 @@
  * - Pas de promesse de filtres avancés : on parle de “Grenoble et sa métropole” de façon large.
  *
  * Dépendances :
- * - next/head, next/image, next/link
+ * - next/head, next/link
  * - Tailwind pour les classes utilitaires
  *
  * Données lues :
@@ -24,7 +24,6 @@
  */
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
@@ -123,7 +122,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -208,7 +207,7 @@ function ProfileTeaserBand() {
     },
     {
       pseudo: "Rio",
-      ageVille: "27 ans Villard-De-Lans",
+      ageVille: "27 ans — Villard-de-Lans",
       badges: ["Essentiel"],
       phrase:
         "Je passe beaucoup de temps dehors, en rando ou en ski. Je voulais un espace simple pour rencontrer des gens qui comprennent ce rythme-là.",
@@ -218,7 +217,7 @@ function ProfileTeaserBand() {
     },
     {
       pseudo: "Simon",
-      ageVille: "36 ans Bernin",
+      ageVille: "36 ans — Bernin",
       badges: ["Free"],
       phrase:
         "Après plusieurs années sur des applis très bruyantes, j’avais besoin de quelque chose de plus calme et lisible.",
@@ -227,7 +226,7 @@ function ProfileTeaserBand() {
     },
     {
       pseudo: "Sonia",
-      ageVille: "52 ans Uriage",
+      ageVille: "52 ans — Uriage",
       badges: ["Essentiel"],
       phrase:
         "Je ne cherche pas à collectionner les matchs. Je préfère quelques échanges sincères avec des personnes respectueuses.",
@@ -241,11 +240,11 @@ function ProfileTeaserBand() {
       <div className="container mx-auto max-w-5xl px-4">
         {/* Mention discrète (bulle jaune pâle) */}
         <div
-          className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] sm:text-[13px] leading-relaxed"
+          className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] leading-relaxed sm:text-[13px]"
           style={{ color: "#FEFF93" }}
         >
-          Profils fictifs inspirés de vraies personnes. Chaque membre décide
-          ce qu'il partage et reste protégé par les lois françaises.
+          Profils fictifs inspirés de vraies personnes. Chaque membre décide ce
+          qu&apos;il partage et reste protégé par les lois françaises.
         </div>
 
         <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
@@ -255,13 +254,11 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <Image
+                <img
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
-                  priority={Boolean((p as any).priority)}
+                  className="object-cover w-full h-full"
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -361,7 +358,7 @@ export default function GrenobleRencontresPage() {
               <div className="mb-2 flex items-center justify-center">
                 <span
                   aria-hidden="true"
-                  className="leading-none text-5xl font-extrabold tracking-tight sm:text-6xl"
+                  className="text-5xl font-extrabold leading-none tracking-tight sm:text-6xl"
                   style={{
                     color: "#93ef09ff",
                     textShadow:
@@ -384,16 +381,16 @@ export default function GrenobleRencontresPage() {
               </h1>
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Keefon s'adresse aux personnes qui vivent à Grenoble,
-                Saint-Martin-d'Hères, Échirolles et dans les communes autour, et
-                qui préfèrent des rencontres plus calmes, sans course aux matchs
-                ni swipe infini.
+                Keefon s&apos;adresse aux personnes qui vivent à Grenoble,
+                Saint-Martin-d&apos;Hères, Échirolles et dans les communes
+                autour, et qui préfèrent des rencontres plus calmes, sans course
+                aux matchs ni swipe infini.
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
                 Keefon est pensée et hébergée en France, avec une attention
-                particulière portée à la protection de la vie privée (RGPD, CNIL,
-                droits de l'individu).
+                particulière portée à la protection de la vie privée (RGPD,
+                CNIL, droits de l&apos;individu).
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -433,7 +430,7 @@ export default function GrenobleRencontresPage() {
                 </h3>
                 <p className="text-sm leading-relaxed">
                   Tu ajoutes une photo, ce que tu recherches, et quelques infos
-                  simples pour te présenter. Pas besoin d'un roman pour
+                  simples pour te présenter. Pas besoin d&apos;un roman pour
                   commencer.
                 </p>
               </article>
@@ -444,7 +441,7 @@ export default function GrenobleRencontresPage() {
                 <p className="text-sm leading-relaxed">
                   Centre-ville, quartiers proches des campus, vallée du
                   Grésivaudan ou communes voisines : tu situes ta zone sans
-                  avoir besoin d'être ultra précis.
+                  avoir besoin d&apos;être ultra précis.
                 </p>
               </article>
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -472,9 +469,10 @@ export default function GrenobleRencontresPage() {
                 Pas de swipe mécanique
               </p>
               <p className="text-sm leading-relaxed">
-                L'objectif n'est pas de te faire scroller toute la soirée entre
-                deux trams ou deux montées en téléphérique. Tu ouvres quelques
-                conversations claires et tu vois si ça colle, sans bruit autour.
+                L&apos;objectif n&apos;est pas de te faire scroller toute la
+                soirée entre deux trams ou deux montées en téléphérique. Tu
+                ouvres quelques conversations claires et tu vois si ça colle,
+                sans bruit autour.
               </p>
 
               <p className="mt-4 mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -482,7 +480,7 @@ export default function GrenobleRencontresPage() {
               </p>
               <p className="text-sm leading-relaxed">
                 Les Échos et Keefon+ créent des opportunités supplémentaires
-                pour les profils Free. L'abonnement Essentiel reste
+                pour les profils Free. L&apos;abonnement Essentiel reste
                 volontairement raisonnable, pour aller un peu plus loin si tu en
                 as envie, sans pression financière.
               </p>
@@ -501,7 +499,7 @@ export default function GrenobleRencontresPage() {
               différents : étudiants, personnes en reconversion, passionnés de
               sport outdoor, familles. Keefon te permet de garder un cadre
               humain, où tu peux croiser des personnes qui partagent ton rythme
-              de vie plutôt qu'une liste infinie de profils anonymes.
+              de vie plutôt qu&apos;une liste infinie de profils anonymes.
             </p>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -530,7 +528,6 @@ export default function GrenobleRencontresPage() {
           </div>
         </section>
 
-
         {/* Idées de sorties locales (Grenoble) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
@@ -540,22 +537,21 @@ export default function GrenobleRencontresPage() {
               </h2>
               <ul className="list-disc space-y-1 pl-4">
                 <li>
-                  Visite du chateaux de Vizille, le petit train de la Mure.
+                  Visite du château de Vizille, ou balade avec le petit train de
+                  La Mure.
                 </li>
                 <li>
-                  Téléphérique de la Bastille, vue sur la ville puis
-                  petite marche sur les sentiers autour du fort.
+                  Téléphérique de la Bastille, vue sur la ville puis petite
+                  marche sur les sentiers autour du fort.
+                </li>
+                <li>Visite des cuves de Sassenage.</li>
+                <li>
+                  Sortie rando à la demi-journée dans le Vercors, la Chartreuse
+                  ou Belledonne quand la météo s&apos;y prête.
                 </li>
                 <li>
-                  Visite des cuves de Sassenage.
-                </li>
-                <li>
-                  Sortie rando à la demi-journée dans le Vercors, la
-                  Chartreuse ou Belledonne quand la météo s’y prête.
-                </li>
-                <li>
-                  Verre ou concert dans un bar du centre.
-                  Sortie canyonng l'été, le ski hiver.'
+                  Verre ou concert dans un bar du centre. Sortie canyoning
+                  l&apos;été, ski l&apos;hiver.
                 </li>
               </ul>
               <p className="mt-2">
@@ -566,14 +562,12 @@ export default function GrenobleRencontresPage() {
           </div>
         </section>
 
-
         {/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
               <p className="mb-2">
-                Tu peux aussi explorer la vue d’ensemble&nbsp;:
-                {" "}
+                Tu peux aussi explorer la vue d’ensemble&nbsp;:{" "}
                 <Link
                   href="/rencontres/France"
                   className="font-semibold underline-offset-2 hover:underline"
@@ -626,9 +620,9 @@ export default function GrenobleRencontresPage() {
         {/* Footer (mentions légales / CGU) */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
-            <p className="mt-2 text-[11px] text-center text-slate-900">
+            <p className="mt-2 text-center text-[11px] text-slate-900">
               <Link href="/cgu" className="hover:underline">
-                Conditions Générales d’Utilisation
+                Conditions Générales d&apos;Utilisation
               </Link>
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">

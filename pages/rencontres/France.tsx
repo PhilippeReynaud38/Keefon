@@ -1,11 +1,10 @@
 /**
- * Fichier : pages/rencontres/france.tsx
+ * Fichier : pages/rencontres/France.tsx
  * Module : Pages publiques / SEO — Rencontres en France
- * MAJ : 2025-11-24 — Badge prononciation Keefon + correction preload avatars
+ * MAJ : 2025-12-01 — Remplacement next/image → <img> pour les avatars locaux
  */
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
@@ -18,40 +17,125 @@ const SEO = {
   ogImage: "https://keefon.com/og/rencontres-france.jpg",
   keywords: [
     // Intent + features
-    "rencontre","site de rencontre","site de rencontre gratuit","rencontres bienveillantes","site de rencontre français","appli de rencontre française",
-    "rencontre sérieuse","rencontres sérieuses","rencontre locale","rencontres locales",
-    "chat gratuit","chat rencontre gratuit","messagerie gratuite","discussion rencontre",
-    "profils certifiés","profil certifié","vérification profil",
-    "respect et sécurité","rencontre respectueuse","anti harcèlement",
-    "sans swipe","sans swipe infini","sans algorithme opaque","anti addiction",
-    "plateforme RGPD","respect CNIL","protection des données",
-    "dating France","site de dating France","rencontre adultes consentants",
-    "slow dating","dating bienveillant",
+    "rencontre",
+    "site de rencontre",
+    "site de rencontre gratuit",
+    "rencontres bienveillantes",
+    "site de rencontre français",
+    "appli de rencontre française",
+    "rencontre sérieuse",
+    "rencontres sérieuses",
+    "rencontre locale",
+    "rencontres locales",
+    "chat gratuit",
+    "chat rencontre gratuit",
+    "messagerie gratuite",
+    "discussion rencontre",
+    "profils certifiés",
+    "profil certifié",
+    "vérification profil",
+    "respect et sécurité",
+    "rencontre respectueuse",
+    "anti harcèlement",
+    "sans swipe",
+    "sans swipe infini",
+    "sans algorithme opaque",
+    "anti addiction",
+    "plateforme RGPD",
+    "respect CNIL",
+    "protection des données",
+    "dating France",
+    "site de dating France",
+    "rencontre adultes consentants",
+    "slow dating",
+    "dating bienveillant",
 
     // Longue traîne
-    "site de rencontre sans swipe","site de rencontre bienveillant France",
-    "application de rencontre française sérieuse","chat rencontre gratuit France",
-    "rencontre proche de chez moi","rencontre par ville","rencontre par région",
-    "rencontre après 30 ans","rencontre après 40 ans","rencontre après 50 ans",
+    "site de rencontre sans swipe",
+    "site de rencontre bienveillant France",
+    "application de rencontre française sérieuse",
+    "chat rencontre gratuit France",
+    "rencontre proche de chez moi",
+    "rencontre par ville",
+    "rencontre par région",
+    "rencontre après 30 ans",
+    "rencontre après 40 ans",
+    "rencontre après 50 ans",
 
     // Régions
-    "Île-de-France","Auvergne-Rhône-Alpes","Occitanie","Provence-Alpes-Côte d’Azur",
-    "Nouvelle-Aquitaine","Hauts-de-France","Grand Est","Bretagne","Normandie",
-    "Pays de la Loire","Bourgogne-Franche-Comté","Centre-Val de Loire","Corse",
+    "Île-de-France",
+    "Auvergne-Rhône-Alpes",
+    "Occitanie",
+    "Provence-Alpes-Côte d’Azur",
+    "Nouvelle-Aquitaine",
+    "Hauts-de-France",
+    "Grand Est",
+    "Bretagne",
+    "Normandie",
+    "Pays de la Loire",
+    "Bourgogne-Franche-Comté",
+    "Centre-Val de Loire",
+    "Corse",
 
     // Grandes villes
-    "Paris","Lyon","Marseille","Toulouse","Nice","Nantes","Strasbourg","Montpellier",
-    "Bordeaux","Lille","Rennes","Reims","Toulon","Grenoble","Dijon","Angers","Nîmes",
-    "Villeurbanne","Clermont-Ferrand","Saint-Étienne","Le Havre","Aix-en-Provence",
-    "Brest","Tours","Amiens","Limoges","Metz","Besançon","Perpignan","Orléans",
-    "Mulhouse","Rouen","Boulogne-Billancourt","Nancy","Argenteuil","Saint-Denis",
+    "Paris",
+    "Lyon",
+    "Marseille",
+    "Toulouse",
+    "Nice",
+    "Nantes",
+    "Strasbourg",
+    "Montpellier",
+    "Bordeaux",
+    "Lille",
+    "Rennes",
+    "Reims",
+    "Toulon",
+    "Grenoble",
+    "Dijon",
+    "Angers",
+    "Nîmes",
+    "Villeurbanne",
+    "Clermont-Ferrand",
+    "Saint-Étienne",
+    "Le Havre",
+    "Aix-en-Provence",
+    "Brest",
+    "Tours",
+    "Amiens",
+    "Limoges",
+    "Metz",
+    "Besançon",
+    "Perpignan",
+    "Orléans",
+    "Mulhouse",
+    "Rouen",
+    "Boulogne-Billancourt",
+    "Nancy",
+    "Argenteuil",
+    "Saint-Denis",
 
     // Combinaisons courtes utiles
-    "rencontre Paris","rencontre Lyon","rencontre Marseille","rencontre Toulouse",
-    "rencontre Montpellier","rencontre Bordeaux","rencontre Nantes","rencontre Lille",
-    "rencontre Nice","rencontre Rennes","rencontre Strasbourg","rencontre Toulon",
-    "rencontre Grenoble","rencontre Dijon","rencontre Angers","rencontre Nîmes",
-    "rencontre Clermont-Ferrand","rencontre Reims","rencontre Metz","rencontre Rouen"
+    "rencontre Paris",
+    "rencontre Lyon",
+    "rencontre Marseille",
+    "rencontre Toulouse",
+    "rencontre Montpellier",
+    "rencontre Bordeaux",
+    "rencontre Nantes",
+    "rencontre Lille",
+    "rencontre Nice",
+    "rencontre Rennes",
+    "rencontre Strasbourg",
+    "rencontre Toulon",
+    "rencontre Grenoble",
+    "rencontre Dijon",
+    "rencontre Angers",
+    "rencontre Nîmes",
+    "rencontre Clermont-Ferrand",
+    "rencontre Reims",
+    "rencontre Metz",
+    "rencontre Rouen",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://keefon.com/" },
@@ -77,7 +161,7 @@ function FreeTopBar() {
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
-        boxShadow: "0 8px 28px rgba(0,0,0,.22)", // ombre légèrement renforcée
+        boxShadow: "0 8px 28px rgba(0,0,0,.22)",
       }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
@@ -124,7 +208,7 @@ function FreeReminderCard() {
           style={{
             borderColor: "#F9E13A",
             background: COLORS.bannerGrad,
-            boxShadow: "0 10px 28px rgba(0,0,0,.18)", // ombre renforcée, cohérente avec la ligne jaune
+            boxShadow: "0 10px 28px rgba(0,0,0,.18)",
           }}
         >
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -208,7 +292,7 @@ function ProfileTeaserBand() {
       ageVille: "55 ans — Dijon (21)",
       badges: ["Essentiel"],
       phrase:
-        "Après 50 ans, je ne cherche plus à collectionner les matchs. Ici je prends le temps d’échanger vraiment, sans pression c'est très different des autres sites..",
+        "Après 50 ans, je ne cherche plus à collectionner les matchs. Ici je prends le temps d’échanger vraiment, sans pression, c'est très différent des autres sites.",
       avatarSrc: "/avatars_France/France/Claire_lys.png",
       avatarAlt: "Profil fictif Claire_lys",
     },
@@ -237,13 +321,11 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <Image
+                <img
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
-                  priority={Boolean((p as any).priority)}
+                  className="object-cover w-full h-full"
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -375,7 +457,7 @@ export default function FranceRencontresPage() {
                   style={{
                     color: "#93ef09ff",
                     textShadow:
-                      "0 2px 10px rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.22)", // ombre renforcée pour le mot KEEFON
+                      "0 2px 10px rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.22)",
                   }}
                 >
                   KEEFON

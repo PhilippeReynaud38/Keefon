@@ -9,7 +9,7 @@
  * - Pas de promesse de filtres ultra précis : on parle de “zone Toulouse / aire toulousaine” de façon large.
  *
  * Dépendances :
- * - next/head, next/image, next/link
+ * - next/head, next/link
  * - Tailwind CSS pour les classes utilitaires.
  *
  * Données lues :
@@ -24,12 +24,12 @@
  */
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (Toulouse / ville rose)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Toulouse et dans l’aire toulousaine | Keefon",
+  title:
+    "Rencontres bienveillantes à Toulouse et dans l’aire toulousaine | Keefon",
   description:
     "Keefon Toulouse rassemble celles et ceux qui vivent dans la ville rose et autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
   canonical: "https://keefon.com/rencontres/Toulouse",
@@ -193,7 +193,8 @@ function ProfileTeaserBand() {
       phrase:
         "Je partage mon temps entre le boulot et les sorties dans la ville rose. Je préfère quelques échanges de qualité plutôt que des matchs à la chaîne.",
       avatarSrc: "/avatars_France/Toulouse/Fred.png",
-      avatarAlt: "Profil fictif Fred_31 (homme à Toulouse, rue en briques roses)",
+      avatarAlt:
+        "Profil fictif Fred_31 (homme à Toulouse, rue en briques roses)",
       priority: true,
     },
     {
@@ -203,7 +204,8 @@ function ProfileTeaserBand() {
       phrase:
         "Je n’ai pas envie d’une appli qui me pousse à rester scotchée à l’écran. Ici je peux discuter posément et voir si le courant passe.",
       avatarSrc: "/avatars_France/Toulouse/Brigitte.png",
-      avatarAlt: "Profil fictif Brigitte_Tlse (femme à Toulouse, quartier résidentiel)",
+      avatarAlt:
+        "Profil fictif Brigitte_Tlse (femme à Toulouse, quartier résidentiel)",
       priority: true,
     },
     {
@@ -247,13 +249,11 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <Image
+                <img
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
-                  priority={Boolean((p as any).priority)}
+                  className="h-full w-full object-cover"
+                  loading={Boolean((p as any).priority) ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -428,7 +428,8 @@ export default function ToulouseRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Toulouse / aire toulousaine
+                  2. Tu indiques que tu es sur la zone Toulouse / aire
+                  toulousaine
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement

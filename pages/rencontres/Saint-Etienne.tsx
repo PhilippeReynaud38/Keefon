@@ -10,7 +10,7 @@
  * - Pas de promesse de filtres avancés : on parle de “zone Saint-Étienne / Loire” de façon large.
  *
  * Dépendances :
- * - next/head, next/image, next/link
+ * - next/head, next/link
  * - Tailwind pour les classes utilitaires
  *
  * Données lues :
@@ -26,7 +26,6 @@
  */
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
@@ -203,8 +202,7 @@ function ProfileTeaserBand() {
       pseudo: "Lilian",
       ageVille: "35 ans — Saint-Étienne",
       badges: ["Free"],
-      phrase:
-        "Sur Keefon on rencontre vraiment du monde, j'aime beaucoup.",
+      phrase: "Sur Keefon on rencontre vraiment du monde, j'aime beaucoup.",
       avatarSrc: "/avatars_France/Saint-etienne/Lilian.png",
       avatarAlt:
         "Profil fictif Lilian (homme souriant dans une rue de ville stéphanoise)",
@@ -262,13 +260,11 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <Image
+                <img
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
-                  priority={Boolean((p as any).priority)}
+                  className="h-full w-full object-cover"
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">

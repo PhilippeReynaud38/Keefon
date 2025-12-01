@@ -24,7 +24,6 @@
  */
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
@@ -200,7 +199,7 @@ function ProfileTeaserBand() {
       badges: ["Essentiel"],
       phrase:
         "Je sors beaucoup au resto et au théâtre, mais je n’aime pas les applis agressives. Ici je peux échanger calmement.",
-      avatarSrc: "/avatars_France/Lille/Valerie.png",
+      avatarSrc: "/avatars_France/Lille/Valérie.png",
       avatarAlt:
         "Profil fictif Valerie_Lille (femme à Lille en fin de journée)",
       priority: true,
@@ -221,7 +220,7 @@ function ProfileTeaserBand() {
       badges: ["Free"],
       phrase:
         "Je travaille souvent en horaires décalés. Keefon me permet de discuter à mon rythme, sans me sentir pressée ou jugée.",
-      avatarSrc: "/avatars_France/Lille/Gaelle.png",
+      avatarSrc: "/avatars_France/Lille/Gaëlle.png",
       avatarAlt:
         "Profil fictif Gaelle_Nuit (jeune femme souriante dans une rue animée le soir)",
     },
@@ -231,7 +230,7 @@ function ProfileTeaserBand() {
       badges: ["Essentiel"],
       phrase:
         "Entre les friteries, les concerts et les potes, j’avais envie d’un endroit plus simple pour faire des rencontres, ici c’est très différent des autres sites.",
-      avatarSrc: "/avatars_France/Lille/Remi.png",
+      avatarSrc: "/avatars_France/Lille/Rémi.png",
       avatarAlt: "Profil fictif Remi (homme souriant devant un snack lumineux)",
     },
   ];
@@ -255,13 +254,11 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <Image
+                <img
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
-                  priority={Boolean((p as any).priority)}
+                  className="object-cover w-full h-full"
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">

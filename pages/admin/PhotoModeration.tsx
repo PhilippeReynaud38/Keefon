@@ -1,14 +1,16 @@
 // -*- coding: utf-8 -*-
-// pages/admin/PhotoModeration.tsx — Vivaya (mode compact + interactions email)
+// pages/admin/PhotoModeration.tsx — Vivaya (mode compact + interactions email + filtre photos principales)
 //
 // RÔLE
 //   Modération des photos (table `photos`) avec :
 //   • Filtre par statut (pending/approved/rejected)
+//   • Filtre par type de photo (toutes / principales / autres via is_main)
 //   • Sélection multiple, Approbation/Suppression en lot
 //   • Pagination simple
 //   • 📧 Email propriétaire par photo (mapping user_id -> email)
 //   • 🧱 Grille compacte (densité réglable) + lazy-loading
 //   • 🖱️ Email interactif : clic GAUCHE = OUVRIR le profil public, clic DROIT = COPIER l’email
+//   • 🏷️ Badge “PRINCIPALE” sur les photos is_main = true
 //
 // Règles Vivaya : robustesse, simplicité, UTF-8, commentaires conservés, pas d’usine à gaz.
 //
@@ -27,6 +29,7 @@ interface PhotoWithUser {
   status: "pending" | "approved" | "rejected";
   moderation_note?: string | null;
   email: string;
+  is_main: boolean; // TRUE = photo principale
 }
 
 type DensityKey = "xcompact" | "compact" | "standard";
@@ -64,6 +67,9 @@ async function copyToClipboardSafe(text: string): Promise<boolean> {
   }
 }
 
+type StatusFilter = "pending" | "approved" | "rejected";
+type MainFilter = "all" | "main" | "gallery"; // toutes / principales / autres
+
 export default function PhotoModeration() {
   // --- État UI principal ---
   const [photos, setPhotos] = useState<PhotoWithUser[]>([]);
@@ -74,7 +80,8 @@ export default function PhotoModeration() {
   const [loading, setLoading] = useState(true);
   const [allChecked, setAllChecked] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<"pending" | "approved" | "rejected">("pending");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("pending");
+  const [mainFilter, setMainFilter] = useState<MainFilter>("all"); // nouveau filtre type de photo
   const [error, setError] = useState<string | null>(null);
 
   // --- Contrôles compacité ---
@@ -93,12 +100,21 @@ export default function PhotoModeration() {
     setLoading(true);
     setError(null);
     try {
-      const { data: rawPhotos, error } = await supabase
+      // Base : filtre par statut
+      let query = supabase
         .from("photos")
-        .select("id, user_id, url, status, moderation_note, created_at")
+        .select("id, user_id, url, status, moderation_note, created_at, is_main")
         .eq("status", statusFilter)
-        .order("created_at", { ascending: false })
-        .range(from, to);
+        .order("created_at", { ascending: false });
+
+      // Filtre type de photo (is_main)
+      if (mainFilter === "main") {
+        query = query.eq("is_main", true);
+      } else if (mainFilter === "gallery") {
+        query = query.eq("is_main", false);
+      }
+
+      const { data: rawPhotos, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -108,6 +124,7 @@ export default function PhotoModeration() {
         url: string | null;
         status: any;
         moderation_note?: string | null;
+        is_main: boolean;
       }>;
 
       // mapping user_id -> email via helper
@@ -122,6 +139,7 @@ export default function PhotoModeration() {
         status: p.status,
         moderation_note: p.moderation_note ?? "",
         email: emailMap[p.user_id] || "(email inconnu)",
+        is_main: !!p.is_main,
       }));
 
       // init notes locales
@@ -145,7 +163,7 @@ export default function PhotoModeration() {
   useEffect(() => {
     fetchPhotos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, statusFilter, pageSize]);
+  }, [page, statusFilter, pageSize, mainFilter]);
 
   // --- sélection ---
   const toggleCheckbox = (id: string) => {
@@ -247,13 +265,30 @@ export default function PhotoModeration() {
               value={statusFilter}
               onChange={(e) => {
                 setPage(1);
-                setStatusFilter(e.target.value as PhotoWithUser["status"]);
+                setStatusFilter(e.target.value as StatusFilter);
               }}
               className="bg-slate-800 border border-slate-700 rounded px-2 py-1"
             >
               <option value="pending">En attente</option>
               <option value="approved">Approuvées</option>
               <option value="rejected">Rejetées</option>
+            </select>
+          </label>
+
+          {/* Nouveau filtre : type de photo (is_main) */}
+          <label className="flex items-center gap-2">
+            <span className="text-slate-200">Type :</span>
+            <select
+              value={mainFilter}
+              onChange={(e) => {
+                setPage(1);
+                setMainFilter(e.target.value as MainFilter);
+              }}
+              className="bg-slate-800 border border-slate-700 rounded px-2 py-1"
+            >
+              <option value="all">Toutes les photos</option>
+              <option value="main">Photos principales</option>
+              <option value="gallery">Autres photos</option>
             </select>
           </label>
 
@@ -332,7 +367,7 @@ export default function PhotoModeration() {
           <div className="grid gap-3" style={gridStyle}>
             {photos.map((p) => (
               <div key={p.id} className="relative bg-slate-800 border border-slate-700 rounded-md overflow-hidden">
-                {/* Bandeau haut : checkbox + EMAIL INTERACTIF */}
+                {/* Bandeau haut : checkbox + EMAIL INTERACTIF + badge principale */}
                 <div className="absolute top-0 left-0 right-0 z-10 flex items-center gap-2 bg-slate-900/70 px-1.5 py-1">
                   <input
                     type="checkbox"
@@ -346,7 +381,7 @@ export default function PhotoModeration() {
                   <span
                     role="button"
                     tabIndex={0}
-                    className="text-[11px] text-slate-100 truncate underline decoration-dotted cursor-pointer"
+                    className="flex-1 text-[11px] text-slate-100 truncate underline decoration-dotted cursor-pointer"
                     title="Clic : ouvrir le profil — Clic droit : copier l’email"
                     onClick={(e) => {
                       e.preventDefault();
@@ -371,6 +406,13 @@ export default function PhotoModeration() {
                   >
                     {p.email}
                   </span>
+
+                  {/* Badge photo principale */}
+                  {p.is_main && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400 text-slate-900 font-semibold">
+                      PRINCIPALE
+                    </span>
+                  )}
 
                   {/* Feedback "Copié ✓" (apparaît après clic droit) */}
                   {copiedId === p.id && <span className="ml-1 text-[11px] text-emerald-300">Copié ✓</span>}

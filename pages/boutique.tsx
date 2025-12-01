@@ -28,12 +28,12 @@ interface Product {
 
 const PRODUCTS: Product[] = [
   { id: 'heart-1', label: '+1 ❤️cœur', description: '', category: 'hearts', hearts: 1, echos: 0, price: 0.99 },
-  { id: 'heart-5', label: '+5 ❤️cœurs', description: '', category: 'hearts', hearts: 5, echos: 0, price: 3.49 },
-  { id: 'heart-10', label: '+10 ❤️cœurs', description: '', category: 'hearts', hearts: 10, echos: 0, price: 5.99 },
+  { id: 'heart-5', label: '+5 ❤️cœurs', description: '', category: 'hearts', hearts: 5, echos: 0, price: 3.90 },
+  { id: 'heart-10', label: '+10 ❤️cœurs', description: '', category: 'hearts', hearts: 10, echos: 0, price: 6.99 },
 
-  { id: 'echo-1', label: '+1 📣écho', description: '', category: 'echos', hearts: 0, echos: 1, price: 0.79 },
-  { id: 'echo-5', label: '+5 📣échos', description: '', category: 'echos', hearts: 0, echos: 5, price: 2.99 },
-  { id: 'echo-10', label: '+10 📣échos', description: '', category: 'echos', hearts: 0, echos: 10, price: 4.99 },
+  { id: 'echo-1', label: '+1 📣écho', description: '', category: 'echos', hearts: 0, echos: 1, price: 1.39 },
+  { id: 'echo-5', label: '+5 📣échos', description: '', category: 'echos', hearts: 0, echos: 5, price: 5.99 },
+  { id: 'echo-10', label: '+10 📣échos', description: '', category: 'echos', hearts: 0, echos: 10, price: 9.99 },
 
   {
     id: 'bundle-1-1',
@@ -42,7 +42,7 @@ const PRODUCTS: Product[] = [
     category: 'bundle',
     hearts: 1,
     echos: 1,
-    price: 1.49,
+    price: 2.2,
   },
   {
     id: 'bundle-5-5',
@@ -51,7 +51,7 @@ const PRODUCTS: Product[] = [
     category: 'bundle',
     hearts: 5,
     echos: 5,
-    price: 5.49,
+    price: 9.90,
   },
   {
     id: 'bundle-10-10',
@@ -60,7 +60,7 @@ const PRODUCTS: Product[] = [
     category: 'bundle',
     hearts: 10,
     echos: 10,
-    price: 9.49,
+    price: 17.99,
   },
 ]
 
