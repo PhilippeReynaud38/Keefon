@@ -42,7 +42,7 @@ const PRODUCTS: Product[] = [
     category: 'bundle',
     hearts: 1,
     echos: 1,
-    price: 2.2,
+    price: 1.99,
   },
   {
     id: 'bundle-5-5',
@@ -51,7 +51,7 @@ const PRODUCTS: Product[] = [
     category: 'bundle',
     hearts: 5,
     echos: 5,
-    price: 9.90,
+    price: 8.90,
   },
   {
     id: 'bundle-10-10',
@@ -60,7 +60,7 @@ const PRODUCTS: Product[] = [
     category: 'bundle',
     hearts: 10,
     echos: 10,
-    price: 17.99,
+    price: 14.99,
   },
 ]
 
