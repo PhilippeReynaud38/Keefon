@@ -483,13 +483,13 @@ export default function FranceRencontresPage() {
                   textShadow: "0 2px 6px rgba(0,0,0,.25)",
                 }}
               >
-                Rencontres bienveillantes partout en France
+                Rencontres bienveillantes, partout en France
               </h1>
 
               <p className="mt-3 text-sm leading-relaxed sm:text-base text-center">
-                Une plateforme française pour celles et ceux qui veulent du
-                vrai, du respect et du temps de qualité. Sans swipe infini,
-                sans surjeu, sans cirque.
+                Keefon est un espace de rencontres français pour celles et ceux
+                qui veulent du vrai, du respect et du temps de qualité — sans
+                swipe infini, sans surjeu, sans cirque.
               </p>
 
               <p className="mt-2 text-xs leading-relaxed text-slate-800 sm:text-[13px] text-center">
@@ -501,15 +501,16 @@ export default function FranceRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Créer mon profil gratuitement"
-                  title="Créer mon profil gratuitement"
+                  aria-label="Commencer gratuitement sur Keefon"
+                  title="Commencer gratuitement sur Keefon"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                  Commencer gratuitement
                 </a>
                 <p className="text-xs text-slate-700">
-                  Inscription rapide. Tu gardes la main à chaque étape.
+                  Inscription en quelques minutes. Tu restes maître de ce que tu
+                  partages.
                 </p>
               </div>
 
@@ -650,8 +651,7 @@ export default function FranceRencontresPage() {
         {/* Footer légal discret */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
-            <p className="mt-2 text-[11px] text-center text-slate-9
-00">
+            <p className="mt-2 text-[11px] text-center text-slate-900">
               <Link href="/cgu" className="hover:underline">
                 Conditions Générales d&apos;Utilisation
               </Link>
