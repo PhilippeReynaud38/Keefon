@@ -533,25 +533,49 @@ export default function FranceRencontresPage() {
 
         {/* Comment ça marche */}
         <section className="py-10">
-          <div className="container mx-auto max-w-5xl px-4">
-            <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche&nbsp;?
-            </h2>
-            <div className="mt-6 grid gap-6 md:grid-cols-3">
-              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
-                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  1. Tu crées ton profil
-                </h3>
-                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu dis ce que tu cherches
-                </h3>
-                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  3. Tu échanges simplement
-                </h3>
-              </article>
-            </div>
-          </div>
-        </section>
+  <div className="container mx-auto max-w-5xl px-4">
+    <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
+      Comment ça marche&nbsp;?
+    </h2>
+
+    <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
+      L’idée est simple : tu crées ton profil, tu expliques ce que tu cherches,
+      puis tu échanges avec des personnes qui ont la même démarche que toi.
+    </p>
+
+    <div className="mt-6 grid gap-6 md:grid-cols-3">
+      <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+        <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+          1. Tu crées ton profil
+        </h3>
+        <p className="text-sm leading-relaxed text-slate-800">
+          Quelques questions simples, une ou deux photos, et c’est tout.
+          Tu peux compléter ton profil petit à petit, à ton rythme.
+        </p>
+      </article>
+
+      <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+        <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+          2. Tu dis ce que tu cherches
+        </h3>
+        <p className="text-sm leading-relaxed text-slate-800">
+          Relation sérieuse, amitié, reprendre confiance, discuter près de chez toi…
+          Tu coches ce qui te correspond, sans avoir à tout raconter d’un coup.
+        </p>
+      </article>
+
+      <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+        <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+          3. Tu échanges en confiance
+        </h3>
+        <p className="text-sm leading-relaxed text-slate-800">
+          Tu envoies des messages, tu réponds, tu peux bloquer si quelqu’un dépasse les limites.
+          La modération est là pour garder un cadre bienveillant.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
 
         {/* Pourquoi Keefon */}
         <section className="py-10">
