@@ -1,14 +1,7 @@
 // /pages/index.tsx — UTF-8
 //
 // Page racine de Keefon.
-// 👉 Rôle unique : rediriger proprement vers la vraie entrée de l’app.
-//
-// Comportement :
-//  - dès que la page charge, on fait router.replace("/login")
-//  - si JS est désactivé, on affiche un lien vers /login
-//
-// ⚠️ On ne touche à rien d’autre dans le projet (manifest, PWA, etc.).
-// Le PWA peut garder start_url: "/" : il arrivera ici puis ira sur /login.
+// 👉 Rôle unique : rediriger proprement vers la page vitrine /rencontres/france.
 
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -17,8 +10,8 @@ export default function HomeRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirection immédiate vers la page de connexion
-    router.replace("/login");
+    // Redirection immédiate vers la page vitrine France
+    router.replace("/rencontres/france");
   }, [router]);
 
   return (
@@ -28,13 +21,13 @@ export default function HomeRedirect() {
           Keefon
         </h1>
         <p className="mt-2 text-sm md:text-base text-gray-800">
-          Redirection vers la page de connexion…
+          Redirection vers la page d’accueil Keefon France…
         </p>
         <noscript>
           <p className="mt-3 text-sm text-gray-800">
             JavaScript est désactivé. Clique ici&nbsp;:{" "}
-            <a href="/login" className="underline font-semibold">
-              /login
+            <a href="/rencontres/france" className="underline font-semibold">
+              /rencontres/france
             </a>
           </p>
         </noscript>
