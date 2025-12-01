@@ -416,6 +416,12 @@ export default function StrasbourgRencontresPage() {
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
+                <p className="mt-2 text-xs text-slate-800 text-center">
+  Déjà membre ?{" "}
+  <a href="/login" className="font-semibold underline">
+    Se connecter
+  </a>
+</p>
               </div>
             </div>
           </div>

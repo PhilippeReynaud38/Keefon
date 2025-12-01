@@ -406,6 +406,12 @@ export default function GrenobleRencontresPage() {
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
+                <p className="mt-2 text-xs text-slate-800 text-center">
+  Déjà membre ?{" "}
+  <a href="/login" className="font-semibold underline">
+    Se connecter
+  </a>
+</p>
               </div>
             </div>
           </div>

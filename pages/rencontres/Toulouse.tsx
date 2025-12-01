@@ -403,8 +403,14 @@ export default function ToulouseRencontresPage() {
                   Créer mon profil gratuitement
                 </a>
                 <p className="text-xs text-slate-700">
-                  Inscription simple. Tu peux compléter ton profil à ton rythme.
+                  Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
+        <p className="mt-2 text-xs text-slate-800 text-center">
+  Déjà membre ?{" "}
+  <a href="/login" className="font-semibold underline">
+    Se connecter
+  </a>
+</p>        
               </div>
             </div>
           </div>
