@@ -18,6 +18,8 @@ class MyDocument extends Document {
         <Head>
           {/* Manifest PWA */}
           <link rel="manifest" href="/manifest.json" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#000000" />
 
           {/* Couleur de thème (barre navigateur, Android, etc.) */}
           <meta name="theme-color" content="#59FF72" />
