@@ -292,7 +292,7 @@ function ProfileTeaserBand() {
       ageVille: "55 ans — Dijon (21)",
       badges: ["Essentiel"],
       phrase:
-        "Après 50 ans, je ne cherche plus à collectionner les matchs. Ici je prends le temps d’échanger vraiment, sans pression, c'est très différent des autres sites.",
+        "Après 50 ans, je ne cherche plus à collecter des matchs. Ici je prends le temps d’échanger vraiment, sans pression, c'est très différent des autres sites.",
       avatarSrc: "/avatars_France/France/Claire_lys.png",
       avatarAlt: "Profil fictif Claire_lys",
     },
@@ -512,6 +512,14 @@ export default function FranceRencontresPage() {
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
               </div>
+
+              {/* Lien ajouté : déjà membre ? Se connecter */}
+              <p className="mt-2 text-xs text-slate-800 text-center">
+                Déjà membre ?{" "}
+                <Link href="/login" className="font-semibold underline">
+                  Se connecter
+                </Link>
+              </p>
             </div>
           </div>
         </header>
@@ -642,7 +650,8 @@ export default function FranceRencontresPage() {
         {/* Footer légal discret */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
-            <p className="mt-2 text-[11px] text-center text-slate-900">
+            <p className="mt-2 text-[11px] text-center text-slate-9
+00">
               <Link href="/cgu" className="hover:underline">
                 Conditions Générales d&apos;Utilisation
               </Link>
