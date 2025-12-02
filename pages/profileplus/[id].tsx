@@ -85,14 +85,28 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
         setProfile(p ?? null);
         if (!p) return;
 
-        const { data: main } = await supabase
-          .from("photos")
-          .select("url")
-          .eq("user_id", userId)
-          .eq("is_main", true)
-          .maybeSingle();
+        // fetch main + photos + localisation en parallèle
+        const [{ data: main }, { data: photos }, { data: loc }] = await Promise.all([
+          supabase
+            .from("photos")
+            .select("url")
+            .eq("user_id", userId)
+            .eq("is_main", true)
+            .maybeSingle(),
+          supabase
+            .from("photos")
+            .select("url,is_main")
+            .eq("user_id", userId),
+          supabase
+            .from("user_localisations")
+            .select("code_postal")
+            .eq("user_id", userId)
+            .maybeSingle(),
+        ]);
 
         if (!alive) return;
+
+        // Avatar principal
         if (main?.url) {
           const { data } = supabase.storage.from("avatars").getPublicUrl(main.url);
           setAvatarUrl(data?.publicUrl || null);
@@ -100,12 +114,8 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
           setAvatarUrl(null);
         }
 
-        const { data: photos } = await supabase
-          .from("photos")
-          .select("url,is_main")
-          .eq("user_id", userId);
-
-        if (alive && Array.isArray(photos)) {
+        // Galerie (non principales)
+        if (Array.isArray(photos)) {
           const urls = photos
             .filter((ph) => !ph.is_main)
             .map((ph) => supabase.storage.from("avatars").getPublicUrl(ph.url).data?.publicUrl)
@@ -114,17 +124,22 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
           setShowAllGallery(false);
         }
 
-        const { data: loc } = await supabase
-          .from("user_localisations")
-          .select("code_postal")
-          .eq("user_id", userId)
-          .maybeSingle();
-        if (alive) setPostal(loc?.code_postal ?? null);
+        // Code postal
+        setPostal(loc?.code_postal ?? null);
 
+        // Blocages
         if (alive && sessionUserId && userId) {
           const [a, b] = await Promise.all([
-            supabase.from("blocks").select("id").eq("user_id", sessionUserId).eq("blocked_user_id", userId),
-            supabase.from("blocks").select("id").eq("user_id", userId).eq("blocked_user_id", sessionUserId),
+            supabase
+              .from("blocks")
+              .select("id")
+              .eq("user_id", sessionUserId)
+              .eq("blocked_user_id", userId),
+            supabase
+              .from("blocks")
+              .select("id")
+              .eq("user_id", userId)
+              .eq("blocked_user_id", sessionUserId),
           ]);
           setIsBlockedEitherWay(Boolean(a.data?.length || b.data?.length));
         } else if (alive) {
@@ -172,8 +187,50 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
     };
   }, [router, sessionUserId, profileId]);
 
-  if (loading) return <p className="text-center mt-10 text-black">Chargement du profil…</p>;
-  if (!profile) return <p className="text-center mt-10 text-black">Profil non trouvé.</p>;
+  // --- NOUVEAU : écran de chargement avec le même layout ---
+  if (loading) {
+    return (
+      <>
+        <Head>
+          <title>Profil — Vivaya</title>
+          <meta name="robots" content="noindex,nofollow" />
+        </Head>
+
+        <div
+          aria-hidden
+          className="fixed inset-0 bg-no-repeat bg-cover bg-center pointer-events-none z-0"
+          style={{ backgroundImage: "url('/bg-profileplus-ext.png')" }}
+        />
+
+        <div className="relative z-10 min-h-screen flex flex-col items-center px-4 pt-6 pb-16">
+          {/* Barre haute skeleton */}
+          <div className="w-full flex justify-between mb-4 items-center">
+            <button
+              onClick={() => router.back()}
+              className="px-4 py-2 rounded-xl bg-yellowGreen text-black"
+            >
+              ← Retour
+            </button>
+            <div className="h-4 w-40 rounded-full bg-white/60 animate-pulse" />
+            <div className="h-8 w-20 rounded-xl bg-white/60 animate-pulse" />
+          </div>
+
+          {/* Avatar + textes skeleton */}
+          <div className="w-40 h-40 rounded-full bg-white/60 animate-pulse mb-4" />
+          <div className="h-6 w-48 rounded-full bg-white/70 animate-pulse mb-2" />
+          <div className="h-4 w-32 rounded-full bg-white/60 animate-pulse" />
+        </div>
+      </>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <p className="text-center mt-10 text-black">
+        Profil non trouvé.
+      </p>
+    );
+  }
 
   const isOwn = !!sessionUserId && !!profileId && sessionUserId === profileId;
   const age = calculateAge(profile?.birthday);
