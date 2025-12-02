@@ -44,6 +44,14 @@ function DismissibleBanner({
     </div>
   );
 }
+        {/* Lien "Mot de passe oublié ?" */}
+        {/* Fonction en maintenance tant que le flow Supabase "recovery" renvoie otp_expired */}
+        <p className="mt-2 text-center text-xs text-gray-600">
+          Mot de passe oublié ?
+          <br />
+          Fonction temporairement en maintenance. 
+          Si besoin, contacte le support Keefon pour récupérer l’accès à ton compte.
+        </p>
 
 export default function Login() {
   const router = useRouter();

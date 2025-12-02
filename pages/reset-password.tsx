@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
 
-  // 👇 états pour afficher / masquer les mots de passe
+  // afficher / masquer les mots de passe
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
 
@@ -53,16 +53,37 @@ export default function ResetPasswordPage() {
     }
 
     setStatus("saving");
-    const { error } = await supabase.auth.updateUser({ password });
 
-    if (error) {
-      console.error("[Keefon] updateUser error/reset", error);
-      setError(
-        "Impossible de mettre à jour le mot de passe. Merci de réessayer."
-      );
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+
+      if (error) {
+        const raw = String(error.message || "").toLowerCase();
+        let msg =
+          "Impossible de mettre à jour le mot de passe. Merci de réessayer.";
+
+        if (raw.includes("new password should be different")) {
+          msg = "Le nouveau mot de passe doit être différent de l’ancien.";
+        }
+
+        console.error("[Keefon] updateUser error/reset", error);
+        setError(msg);
+        setStatus("ready");
+      } else {
+        setStatus("done");
+      }
+    } catch (err: any) {
+      const raw = String(err?.message || "").toLowerCase();
+      let msg =
+        "Impossible de mettre à jour le mot de passe. Merci de réessayer.";
+
+      if (raw.includes("new password should be different")) {
+        msg = "Le nouveau mot de passe doit être différent de l’ancien.";
+      }
+
+      console.error("[Keefon] updateUser exception/reset", err);
+      setError(msg);
       setStatus("ready");
-    } else {
-      setStatus("done");
     }
   };
 
@@ -110,6 +131,7 @@ export default function ResetPasswordPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-paleGreen pr-10"
+                    autoComplete="new-password"
                     required
                   />
                   <button
@@ -136,6 +158,7 @@ export default function ResetPasswordPage() {
                     value={password2}
                     onChange={(e) => setPassword2(e.target.value)}
                     className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-paleGreen pr-10"
+                    autoComplete="new-password"
                     required
                   />
                   <button

@@ -1,0 +1,38 @@
+mot de passe oublié SOLUTION METHODE ET FICHIER PROVISOIRE .
+
+
+Modifier le template d’e-mail “Reset password” dans Supabase :
+au lieu de mettre directement {{ .ConfirmationURL }} dans le lien, on envoie l’utilisateur vers Keefon avec cette URL encapsulée :
+
+<p>
+  <a href="{{ .SiteURL }}/reset-password?confirmation_url={{ .ConfirmationURL }}">
+    Réinitialise ton mot de passe Keefon
+  </a>
+</p>
+
+
+(Ton Site URL est déjà https://keefon.com, donc ça pointera vers https://keefon.com/reset-password?....)
+
+→ Les robots de Gmail cliqueront juste sur Keefon, mais ils ne déclencheront pas tout seuls le vrai lien de confirmation.
+
+Adapter la page /reset-password :
+
+Si l’URL contient ?confirmation_url=... :
+on affiche un écran simple avec un bouton “Continuer” qui, au clic, fait window.location.href = confirmation_url;.
+
+Supabase vérifie alors le lien, et te renvoie sur https://keefon.com/reset-password (sans query), avec la session de récupération active.
+
+Cette fois, ta page /reset-password peut afficher le formulaire “Nouveau mot de passe / Confirmer” comme aujourd’hui, et supabase.auth.updateUser({ password }) fonctionne.
+
+Les pré-clics de Gmail ne font plus rien, parce qu’ils ne cliquent jamais sur ton bouton “Continuer”.
+
+
+
+Parfait, on part sur l’option B 👍
+On va faire deux modifs : 1) le mail Supabase, 2) la page /reset-password.
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  et reflection fait chatgpt à estimé que le bug suppabase est insurmontable pour le moment, on doit attendre une réponse du support, en attendant on modifi le fichier forgot-password.tsx .
