@@ -372,11 +372,8 @@ function ProfilePage() {
   const [city, setCity] = useState<string | null>(null);
   const [certified, setCertified] = useState(false);
   const [mainPhotoUrl, setMainPhotoUrl] = useState<string | null>(null);
-  // Indique si la photo principale est encore en cours de chargement.
-  // Cela évite d'afficher l’avatar par défaut + le message d’avertissement
-  // pendant le bref instant où la vraie photo n’a pas encore été récupérée.
-  const [isMainPhotoLoading, setIsMainPhotoLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMainPhotoLoading, setIsMainPhotoLoading] = useState<boolean>(true);
 
   useProtectedCompletedSignup();
 
@@ -388,49 +385,46 @@ function ProfilePage() {
     setUserId(uid);
 
     const fetchData = async () => {
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("username, certified_status")
-        .eq("id", uid)
-        .maybeSingle();
-      setUsername(prof?.username ?? null);
-      setCertified(prof?.certified_status === "approved");
-
-      const { data: v } = await supabase
-        .from("public_full_profiles")
-        .select("ville")
-        .eq("id", uid)
-        .maybeSingle();
-      setCity(v?.ville ?? null);
-
-      const { data: pre } = await supabase
-        .from("presignup_data")
-        .select("birthday")
-        .eq("user_id", uid)
-        .maybeSingle();
-      setBirthday(pre?.birthday ?? null);
-
-      // Chargement de la photo principale : on active le flag de chargement
-      // pour éviter un flash de l’avatar par défaut avant que la vraie photo
-      // n’arrive depuis Supabase.
       setIsMainPhotoLoading(true);
+      try {
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("username, certified_status")
+          .eq("id", uid)
+          .maybeSingle();
+        setUsername(prof?.username ?? null);
+        setCertified(prof?.certified_status === "approved");
 
-      const { data: photo } = await supabase
-        .from("photos")
-        .select("url")
-        .eq("user_id", uid)
-        .eq("is_main", true)
-        .maybeSingle();
+        const { data: v } = await supabase
+          .from("public_full_profiles")
+          .select("ville")
+          .eq("id", uid)
+          .maybeSingle();
+        setCity(v?.ville ?? null);
 
-      if (photo?.url) {
-        const key = toStorageKey(photo.url);
-        setMainPhotoUrl(publicUrlFromKey(key, galleryKey)); // cache-buster
-      } else {
-        setMainPhotoUrl(null);
+        const { data: pre } = await supabase
+          .from("presignup_data")
+          .select("birthday")
+          .eq("user_id", uid)
+          .maybeSingle();
+        setBirthday(pre?.birthday ?? null);
+
+        const { data: photo } = await supabase
+          .from("photos")
+          .select("url")
+          .eq("user_id", uid)
+          .eq("is_main", true)
+          .maybeSingle();
+
+        if (photo?.url) {
+          const key = toStorageKey(photo.url);
+          setMainPhotoUrl(publicUrlFromKey(key, galleryKey)); // cache-buster
+        } else {
+          setMainPhotoUrl(null);
+        }
+      } finally {
+        setIsMainPhotoLoading(false);
       }
-
-      // Qu’il y ait une photo ou non, le chargement est terminé.
-      setIsMainPhotoLoading(false);
     };
 
     fetchData();
@@ -535,33 +529,35 @@ function ProfilePage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-8">
         {/* Photo principale + infos */}
         <div className="flex flex-col items-center space-y-2">
-          {isMainPhotoLoading ? (
-            // Placeholder discret pendant le chargement de la vraie photo
-            <div className="w-32 h-32 rounded-full object-cover border border-gray-200 bg-gray-100 animate-pulse" />
-          ) : mainPhotoUrl ? (
-            <img
-              src={mainPhotoUrl}
-              alt="Photo principale"
-              className="w-32 h-32 rounded-full object-cover"
-            />
-          ) : (
-            <img
-              src="/default-avatar.png"
-              alt="Avatar par défaut"
-              className="w-32 h-32 rounded-full object-cover border border-gray-200 bg-white"
-            />
+          {/* On n’affiche la zone photo **qu’une fois le chargement terminé** */}
+          {!isMainPhotoLoading && (
+            <>
+              {mainPhotoUrl ? (
+                <img
+                  src={mainPhotoUrl}
+                  alt="Photo principale"
+                  className="w-32 h-32 rounded-full object-cover"
+                />
+              ) : (
+                <img
+                  src="/default-avatar.png"
+                  alt="Avatar par défaut"
+                  className="w-32 h-32 rounded-full object-cover border border-gray-200 bg-white"
+                />
+              )}
+
+              {/* Message d’avertissement si aucune photo principale n’est disponible */}
+              {!mainPhotoUrl && (
+                <p className="mt-1 text-xs text-yellow-800 bg-yellow-50 border border-yellow-200 rounded px-3 py-2 text-center max-w-xs">
+                  Ta photo principale est manquante ou a été refusée par la modération.
+                  Ton compte reste actif, mais merci d’ajouter une nouvelle photo qui respecte
+                  les règles (pas de visages d’enfants, pas de nudité, pas de violence, pas de célébrités).
+                </p>
+              )}
+            </>
           )}
 
-          {/* Message d’avertissement si aucune photo principale n’est disponible */}
-          {!isMainPhotoLoading && !mainPhotoUrl && (
-            <p className="mt-1 text-xs text-yellow-800 bg-yellow...order border-yellow-200 rounded px-3 py-2 text-center max-w-xs">
-              Ta photo principale est manquante ou a été refusée par la modération.
-              Ton compte reste actif, mais merci d’ajouter une nouvelle photo qui respecte
-              les règles (pas de visages d’enfants, pas de nudité, pas de violence, pas de célébrités).
-            </p>
-          )}
-
-{username && (
+          {username && (
             <>
               <p className="text-base font-semibold text-gray-700 flex items-center justify-center gap-2">
                 {username}
