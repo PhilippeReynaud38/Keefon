@@ -847,7 +847,7 @@ export default function MesCoupsDeCoeur() {
   return (
     <>
       <Head>
-        <title>Mes keefs — Vivaya</title>
+        <title>Mes keefs — Keefon</title>
         <meta name="robots" content="noindex,nofollow" />
       </Head>
 

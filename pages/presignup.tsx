@@ -459,33 +459,43 @@ const PresignupPage: React.FC = () => {
               />
             )}
 
-            <div className="space-y-2 text-sm mt-2">
-              <label className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  checked={acceptCgu}
-                  onChange={(e) => setAcceptCgu(e.target.checked)}
-                />
-                <span>
-                  J&apos;accepte les CGU (
-                  <Link href="/mentions-legales" className="underline">
-                    voir les mentions légales
-                  </Link>
-                  )
-                </span>
-              </label>
-              <label className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  checked={acceptData}
-                  onChange={(e) => setAcceptData(e.target.checked)}
-                />
-                <span>
-                  J&apos;accepte que mes données sensibles soient utilisées dans
-                  le cadre du site.
-                </span>
-              </label>
-            </div>
+<div className="space-y-2 text-sm mt-2">
+  <label className="flex items-start gap-2">
+    <input
+      type="checkbox"
+      checked={acceptCgu}
+      onChange={(e) => setAcceptCgu(e.target.checked)}
+    />
+    <span>
+      J&apos;accepte les{" "}
+      <Link href="/cgu" className="underline" target="_blank">
+        Conditions Générales d&apos;Utilisation
+      </Link>{" "}
+      et j&apos;ai lu la{" "}
+      <Link href="/confidentialite" className="underline" target="_blank">
+        Politique de confidentialité
+      </Link>
+      .
+    </span>
+  </label>
+
+  <label className="flex items-start gap-2">
+    <input
+      type="checkbox"
+      checked={acceptData}
+      onChange={(e) => setAcceptData(e.target.checked)}
+    />
+    <span>
+      J&apos;accepte que mes données sensibles soient utilisées dans le
+      cadre du site, conformément à la{" "}
+      <Link href="/confidentialite" className="underline" target="_blank">
+        Politique de confidentialité
+      </Link>
+      .
+    </span>
+  </label>
+</div>
+
 
             <button
               type="submit"

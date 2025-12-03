@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# VIVAYA — Spécification des paliers (plans)
+# Keefon — Spécification des paliers (plans)
 
 
 NE PAS EFFACER !!!!!!!!  PHILIPPE

@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen bg-gradient-to-br from-white to-paleGreen">
       {/* ✅ Header / bouton menu */}
       <div className="flex justify-between items-center p-4 bg-white shadow-md">
-        <h1 className="text-lg font-bold text-pink-600">Espace Vivaya</h1>
+        <h1 className="text-lg font-bold text-pink-600">Espace Keefon</h1>
         <button
           onClick={() => setMenuOpen((open) => !open)}
           className="bg-yellow-400 px-3 py-1 rounded text-white font-semibold"

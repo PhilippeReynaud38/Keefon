@@ -230,8 +230,16 @@ export default function SignupPage() {
             target="_blank"
           >
             Conditions Générales d’Utilisation
+          </Link>
+          , tu confirmes avoir pris connaissance de notre{' '}
+          <Link
+            href="/confidentialite"
+            className="text-blue-600 hover:underline"
+            target="_blank"
+          >
+            Politique de confidentialité
           </Link>{' '}
-          et tu confirmes avoir pris connaissance des{' '}
+          et des{' '}
           <Link
             href="/mentions-legales"
             className="text-blue-600 hover:underline"

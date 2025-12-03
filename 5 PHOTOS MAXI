@@ -1,6 +1,6 @@
 // SQL : EMPECHE QU'UN PROFILE MALIN AJOUTE PLUS QUE 5 PHOTOS. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 -- ============================================================
--- Vivaya — Sécurisation "max 5 photos par utilisateur"
+-- Keefon — Sécurisation "max 5 photos par utilisateur"
 -- Inclut la photo principale (is_main = true) dans le quota
 -- ============================================================
 

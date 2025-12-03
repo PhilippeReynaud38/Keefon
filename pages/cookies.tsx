@@ -14,7 +14,7 @@ export default function CookiesPolicy() {
 
       <section className="space-y-2 mb-6">
         <p>
-          Vivaya utilise des cookies strictement nécessaires au fonctionnement (session, préférences),
+          Keefon utilise des cookies strictement nécessaires au fonctionnement (session, préférences),
           et aucun cookie publicitaire ou d’analytics sans consentement préalable.
         </p>
       </section>
@@ -36,8 +36,20 @@ export default function CookiesPolicy() {
       </section>
 
       <p className="text-sm text-gray-500">
-        Voir aussi : <Link className="underline" href="/privacy">Politique de confidentialité</Link> • <Link className="underline" href="/legal">Mentions légales</Link> • <Link className="underline" href="/terms">CGU</Link>
-      </p>
+  Voir aussi :{" "}
+  <Link className="underline" href="/confidentialite">
+    Politique de confidentialité
+  </Link>{" "}
+  •{" "}
+  <Link className="underline" href="/mentions-legales">
+    Mentions légales
+  </Link>{" "}
+  •{" "}
+  <Link className="underline" href="/cgu">
+    CGU
+  </Link>
+</p>
+
     </main>
   );
 }

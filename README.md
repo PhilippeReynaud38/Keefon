@@ -1,5 +1,5 @@
 
-Vivaya est une application web de rencontres multilingue, conçue pour favoriser des connexions sincères et fun dans un environnement bienveillant. Ce projet est propulsé par **Next.js**, **Supabase**, et **TailwindCSS**.
+Keefon est une application web de rencontres multilingue, conçue pour favoriser des connexions sincères et fun dans un environnement bienveillant. Ce projet est propulsé par **Next.js**, **Supabase**, et **TailwindCSS**.
 
 ---
 

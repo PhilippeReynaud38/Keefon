@@ -68,7 +68,7 @@ export default function CertifiedBadge({ userId, className }: CertifiedBadgeProp
   return (
     <span
       className={`ml-2 inline-flex items-center text-green-600 text-sm ${className || ''}`}
-      title="Profil certifié par l’équipe Vivaya"
+      title="Profil certifié par l’équipe Keefon"
     >
       ✔ certifié
     </span>

@@ -1,4 +1,4 @@
-VIVAYA / KEEFORN – RÉSUMÉ DU SYSTÈME DE PAIEMENT (MODE ABSTRACTION)
+VIVAYA / KEEFON – RÉSUMÉ DU SYSTÈME DE PAIEMENT (MODE ABSTRACTION)
 
 Objectif général
 ----------------
@@ -66,7 +66,7 @@ Fichiers principaux impliqués
      ne sont pas liés au paiement, mais font partie de l’UX autour de l’abonnement.
 
 3) `pages/boutique.tsx`
-   - Nouvelle page “Boutique Vivaya”.
+   - Nouvelle page “Boutique Keefon”.
    - Accessible depuis le dashboard (menu “🧍 Mon espace” → “🛍️ Boutique”)
      et via les boutons en haut de la boutique :
        • “Gérer mon abonnement” (jaune) → `/abonnement`

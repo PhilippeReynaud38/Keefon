@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // ---------- UI Vivaya ----------
+        // ---------- UI Keefon ----------
         primary: '#f55057',
         secondary: '#ffcf00',
         accent: '#22d3ee',

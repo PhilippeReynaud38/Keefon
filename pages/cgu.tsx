@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-// /pages/cgu.tsx — Vivaya
+// /pages/cgu.tsx — Keefon
 // Conditions Générales d’Utilisation (version courte, à compléter selon besoin)
 
 import Head from "next/head";
@@ -10,7 +10,7 @@ export default function CGU() {
     <>
       <Head>
         <title>Conditions Générales d’Utilisation — Keefon</title>
-        <meta name="description" content="CGU du service Vivaya." />
+        <meta name="description" content="CGU du service Keefon." />
       </Head>
 
       <main className="min-h-screen bg-white/70">
@@ -25,7 +25,7 @@ export default function CGU() {
               <p>
                 Les présentes CGU encadrent l’accès et l’usage de <b>Keefon</b>,
                 un service de mise en relation entre personnes majeures, opéré
-                par <b>[Philippe Reynaud Rue Marjoera Varces]</b>.
+                par <b>Philippe Reynaud (Rue Marjoera, Varces)</b>.
               </p>
             </section>
 
@@ -60,8 +60,13 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">5. Abonnements & paiement</h2>
               <p>
-                Options payantes possibles (Essentiel, Keefon+, …). Prix
-                TTC. Paiement via <b>[ ACTUELLEMENT OFFERT ]</b>. Le renouvellement  est résiliable avant l’échéance depuis l’interface.
+                Le service Keefon est actuellement proposé en phase de
+                découverte,{" "}
+                <b>sans aucune option payante active</b> (accès gratuit). Des
+                abonnements ou options payantes (Essentiel, Keefon+, etc.)
+                pourront être ajoutés ultérieurement ; leurs tarifs et
+                conditions seront alors clairement indiqués avant tout paiement
+                et les présentes CGU pourront être mises à jour.
               </p>
             </section>
 
@@ -69,8 +74,14 @@ export default function CGU() {
               <h2 className="font-semibold">6. Contenus et droits</h2>
               <p>
                 L’utilisateur reste titulaire de ses contenus et concède à{" "}
-                <b>[Éditeur]</b> une licence non exclusive pour l’hébergement et
-                l’affichage dans le cadre du service.
+                <b>l’éditeur</b> une licence non exclusive pour l’hébergement et
+                l’affichage dans le cadre du service.{" "}
+                Pour plus d&apos;informations sur l&apos;utilisation des
+                cookies, tu peux consulter la page{" "}
+                <Link href="/cookies" className="underline">
+                  Politique cookies
+                </Link>
+                .
               </p>
             </section>
 
@@ -121,13 +132,14 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">12. Droit applicable</h2>
               <p>
-                Droit français. Tribunaux du ressort du <b>[siège social en attente ]</b>,
-                sous réserve de dispositions impératives.
+                Droit français. Tribunaux du ressort du{" "}
+                <b>[siège social en attente]</b>, sous réserve de dispositions
+                impératives.
               </p>
             </section>
 
             <p className="text-gray-500">
-              Dernière mise à jour : <b>[02/12/2025]</b>.
+              Dernière mise à jour : <b>02/12/2025</b>.
             </p>
           </div>
         </div>

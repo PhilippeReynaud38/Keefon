@@ -1,5 +1,5 @@
 // -*- coding: utf-8 -*-
-// next.config.js — Vivaya (propre/dev-safe)
+// next.config.js — Keefon (propre/dev-safe)
 
 const isProd = process.env.NODE_ENV === 'production';
 const enableHsts = process.env.ENABLE_HSTS !== 'false';
