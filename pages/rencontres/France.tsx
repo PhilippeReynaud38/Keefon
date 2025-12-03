@@ -506,7 +506,7 @@ export default function FranceRencontresPage() {
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Commencer gratuitement
+                  Je découvre Keefon
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription en quelques minutes. Tu restes maître de ce que tu
