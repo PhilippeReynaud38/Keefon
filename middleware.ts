@@ -1,24 +1,11 @@
 // -*- coding: utf-8 -*-
-// Fichier : /middleware.ts — Keefon
-//
-// Objet : Middleware global Next.js. Dans cette version, il ne
-//         bloque plus AUCUNE page publique : plus de login/mot
-//         de passe “secret” pour voir le site.
-//         On garde le fichier comme squelette pour de futures
-//         règles ciblées si besoin.
-//
-// Contexte : Next.js (pages router), déploiement Vercel + domaine
-//            https://www.keefon.com.
-// Entrée :  NextRequest (requête HTTP entrante).
-// Sortie :  NextResponse.next() (laisser passer la requête).
-//
-// Effets de bord : aucun.
-// Invariants :
-//   - Le site public est accessible sans authentification globale.
-//   - Les robots peuvent crawler toutes les pages hors /api/ et /admin
-//     (géré par robots.txt, pas ici).
-//
-// Dernière mise à jour : 2025-12-03
+// ============================================================================
+// Keefon | Middleware global
+// Fichier : /middleware.ts
+// Objet   : Laisser passer toutes les requêtes sans mot de passe global.
+//           On conserve le middleware comme squelette pour de futures règles.
+// Règles  : code simple, pas d’effets de bord, UTF-8.
+// ============================================================================
 
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -28,12 +15,8 @@ export function middleware(_req: NextRequest) {
   return NextResponse.next();
 }
 
-// Ici, matcher vide => le middleware est théoriquement prêt,
-// mais ne sert qu’à appliquer de futures règles ciblées.
-// Tu peux aussi supprimer complètement ce fichier si tu préfères.
+// ⚠ IMPORTANT : pas de "as string[]" ni d’astuces TypeScript ici.
+// Next.js lit cette config comme du simple JS.
 export const config = {
-  matcher: [] as string[],
+  matcher: [], // pas de routes ciblées pour l’instant
 };
-
-
-
