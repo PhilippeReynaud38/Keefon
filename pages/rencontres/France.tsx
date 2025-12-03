@@ -12,7 +12,7 @@ const SEO = {
   title: "Rencontres bienveillantes en France | Keefon",
   description:
     "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/france",
+  canonical: "https://keefon.com/rencontres/France",
   siteName: "Keefon",
   ogImage: "https://keefon.com/og/rencontres-france.jpg",
   keywords: [
@@ -140,7 +140,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://keefon.com/" },
     { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "France", url: "https://keefon.com/rencontres/france" },
+    { name: "France", url: "https://keefon.com/rencontres/France" },
   ],
 };
 

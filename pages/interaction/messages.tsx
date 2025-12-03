@@ -22,6 +22,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "@/lib/supabaseClient";
 import { pickMaskedAvatar } from "@/lib/maskedAvatars";
+import Link from "next/link";
 
 /* Constantes UI/domaine --------------------------------------------------- */
 const AGE_MIN_ABS = 18;
@@ -746,9 +747,17 @@ export default function MessagesPage() {
           )}
 
           {/* Lien légal discret CGU · Mentions légales */}
-          <div className="mt-10 text-center text-[11px] text-gray-700">
-            Conditions Générales d’Utilisation · Mentions légales
-          </div>
+ {/* Lien légal discret CGU · Mentions légales */}
+<footer className="mt-10 text-center text-[11px] text-gray-700">
+  <Link href="/cgu" className="hover:underline">
+    Conditions Générales d&apos;Utilisation
+  </Link>
+  {" · "}
+  <Link href="/mentions-legales" className="hover:underline">
+    Mentions légales
+  </Link>
+</footer>
+
         </div>
       </main>
 

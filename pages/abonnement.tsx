@@ -460,11 +460,16 @@ export default function AbonnementPage() {
             </div>
           </details>
 
-          <footer className="flex flex-wrap gap-4 text-xs text-gray-600">
-            <Link href="/legal" className="underline">
-              Mentions légales
-            </Link>
-          </footer>
+<footer className="flex flex-wrap gap-4 text-xs text-gray-600">
+  <Link href="/cgu" className="underline">
+    Conditions Générales d&apos;Utilisation
+  </Link>
+  <span aria-hidden>·</span>
+  <Link href="/mentions-legales" className="underline">
+    Mentions légales
+  </Link>
+</footer>
+
         </div>
       </div>
     </main>

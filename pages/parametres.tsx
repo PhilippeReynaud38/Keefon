@@ -631,6 +631,17 @@ export default function Parametres() {
               </details>
             </div>
           </section>
+          {/* Lien légal discret CGU · Mentions légales */}
+<footer className="mt-10 text-center text-[11px] text-gray-800">
+  <Link href="/cgu" className="hover:underline">
+    Conditions Générales d&apos;Utilisation
+  </Link>
+  {" · "}
+  <Link href="/mentions-legales" className="hover:underline">
+    Mentions légales
+  </Link>
+</footer>
+
         </div>
       </div>
     </>

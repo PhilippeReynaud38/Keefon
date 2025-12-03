@@ -8,7 +8,7 @@ export default function Confidentialite() {
   return (
     <>
       <Head>
-        <title>Politique de confidentialité — Vivaya</title>
+        <title>Politique de confidentialité — Keefon</title>
         <meta name="description" content="Politique de confidentialité (RGPD) de Vivaya." />
       </Head>
 
@@ -19,7 +19,7 @@ export default function Confidentialite() {
           <div className="space-y-5 text-sm leading-relaxed">
             <section>
               <h2 className="font-semibold">1. Qui sommes-nous ?</h2>
-              <p><b>Vivaya</b> est édité par <b>[Éditeur / Entreprise]</b>, <b>[forme juridique]</b>, <b>[adresse]</b> — contact : <b>[email/DPO]</b>.</p>
+              <p><b>Keefon</b> est édité par <b>[Philippe REYNAUD / Entreprise]</b>, <b>[forme juridique]</b>, <b>[adresse]</b> — contact : <b>[email/DPO]</b>.</p>
             </section>
 
             <section>
@@ -93,7 +93,7 @@ export default function Confidentialite() {
               <p><b>[Nom / DPO]</b> — <b>[email]</b> — <b>[adresse]</b>.</p>
             </section>
 
-            <p className="text-gray-500">Dernière mise à jour : <b>[JJ/MM/AAAA]</b>.</p>
+            <p className="text-gray-500">Dernière mise à jour : <b>[02/12/2025]</b>.</p>
           </div>
         </div>
       </main>

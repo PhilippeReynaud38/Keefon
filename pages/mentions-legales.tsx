@@ -21,7 +21,7 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">1. Objet</h2>
               <p>
-                Les présentes CGU encadrent l’accès et l’usage de <b>Vivaya</b>, un service de mise en relation entre
+                Les présentes CGU encadrent l’accès et l’usage de <b>Keefon</b>, un service de mise en relation entre
                 personnes majeures, opéré par <b>[Éditeur]</b>.
               </p>
             </section>
@@ -53,8 +53,8 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">5. Abonnements & paiement</h2>
               <p>
-                Options payantes possibles (Essentiel, Premium, Elite, …). Prix TTC. Paiement via <b>[Stripe/…]</b>. Le
-                renouvellement (si activé) est résiliable avant l’échéance depuis l’interface.
+               
+                  ...       .......... ACTUELLEMENT PARTIELLEMENT OFFERT
               </p>
             </section>
 
@@ -69,7 +69,7 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">7. Modération</h2>
               <p>
-                Vivaya peut retirer contenus et comptes contraires aux CGU ou à la loi, et coopérer avec les autorités.
+                Keefon peut retirer contenus et comptes contraires aux CGU ou à la loi, et coopérer avec les autorités.
               </p>
             </section>
 
@@ -87,7 +87,7 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">9. Disponibilité</h2>
               <p>
-                Vivaya vise une haute disponibilité sans garantie d’absence d’interruptions (maintenance, mises à jour,
+                Keefon vise une haute disponibilité sans garantie d’absence d’interruptions (maintenance, mises à jour,
                 incidents).
               </p>
             </section>
@@ -95,7 +95,7 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">10. Responsabilité</h2>
               <p>
-                Vivaya n’est pas responsable des rencontres/échanges entre utilisateurs ni des préjudices indirects.
+                Keefon n’est pas responsable des rencontres/échanges entre utilisateurs ni des préjudices indirects.
                 Chaque utilisateur est responsable de ses publications et interactions.
               </p>
             </section>
@@ -103,7 +103,7 @@ export default function CGU() {
             <section>
               <h2 className="font-semibold">11. Résiliation</h2>
               <p>
-                Suppression du compte depuis <i>Paramètres</i>. Vivaya peut résilier en cas de manquement grave ou
+                Suppression du compte depuis <i>Paramètres</i>. Keefon peut résilier en cas de manquement grave ou
                 usage frauduleux.
               </p>
             </section>

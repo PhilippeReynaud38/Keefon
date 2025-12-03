@@ -13,7 +13,7 @@ export default function Terms() {
 
       <section className="space-y-2 mb-6">
         <h2 className="text-xl font-semibold">1. Objet</h2>
-        <p>Ces CGU encadrent l’accès et l’usage du service Vivaya.</p>
+        <p>Ces CGU encadrent l’accès et l’usage du service Keefon.</p>
       </section>
 
       <section className="space-y-2 mb-6">
@@ -29,7 +29,7 @@ export default function Terms() {
         <ul className="list-disc pl-5">
           <li>Respect des lois et des autres utilisateurs.</li>
           <li>Interdits : contenus illégaux, harcèlement, usurpation d’identité, bots/spam, nudité explicite non autorisée, etc.</li>
-          <li>Modération : Vivaya peut supprimer ou suspendre des comptes en cas d’abus.</li>
+          <li>Modération : Keefon peut supprimer ou suspendre des comptes en cas d’abus.</li>
         </ul>
       </section>
 
@@ -40,17 +40,17 @@ export default function Terms() {
 
       <section className="space-y-2 mb-6">
         <h2 className="text-xl font-semibold">5. Disponibilité et responsabilité</h2>
-        <p>Service fourni “en l’état”. Vivaya met tout en œuvre pour assurer la disponibilité mais ne peut garantir l’absence d’interruption.</p>
+        <p>Service fourni “en l’état”. Keefon met tout en œuvre pour assurer la disponibilité mais ne peut garantir l’absence d’interruption.</p>
       </section>
 
       <section className="space-y-2 mb-6">
         <h2 className="text-xl font-semibold">6. Résiliation</h2>
-        <p>Tu peux supprimer ton compte à tout moment. Vivaya peut le résilier en cas de non-respect des CGU.</p>
+        <p>Tu peux supprimer ton compte à tout moment. Keefon peut le résilier en cas de non-respect des CGU.</p>
       </section>
 
       <section className="space-y-2 mb-6">
         <h2 className="text-xl font-semibold">7. Contact</h2>
-        <p>Pour toute question : <a className="underline" href="mailto:contact@vivaya.example">contact@vivaya.example</a></p>
+        <p>Pour toute question : <a className="underline" href="mailto:contact@Keefon">contact@Keefon</a></p>
       </section>
 
       <p className="text-sm text-gray-500">
