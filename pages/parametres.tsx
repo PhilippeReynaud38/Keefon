@@ -6,7 +6,7 @@
 //
 // Rèles Vivaya : code simple, robuste, commenté, pas d’usine à gaz, UTF-8.
 // Invariants : self-delete via /api/account/self-delete, aucune clé secrète exposée côté client.
-// Dernière MàJ : 2025-11-07 (UTC+1)
+// Dernière MàJ : 2025-12-03 (UTC+1)
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
@@ -67,7 +67,10 @@ export default function Parametres() {
     if (deleteDetailsRef.current) deleteDetailsRef.current.open = true;
     window.location.hash = "desinscription";
     requestAnimationFrame(() => {
-      deleteSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      deleteSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     });
   };
 
@@ -296,12 +299,42 @@ export default function Parametres() {
     if (!sure) return;
 
     try {
-      const res = await fetch("/api/account/self-delete", { method: "POST" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      // On récupère la session courante pour obtenir le jeton JWT
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.access_token) {
+        console.error(
+          "deleteAccount: session introuvable ou expirée",
+          sessionError
+        );
+        showToast(
+          "Session expirée. Merci de te reconnecter puis de réessayer.",
+          "error"
+        );
+        return;
+      }
+
+      const res = await fetch("/api/account/self-delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        console.error("deleteAccount: HTTP", res.status);
+        throw new Error("HTTP " + res.status);
+      }
+
       showToast("Compte supprimé. À bientôt peut-être.", "success");
       await supabase.auth.signOut();
       router.push("/");
-    } catch {
+    } catch (e) {
+      console.error("deleteAccount error", e);
       showToast(
         "Impossible de supprimer le compte pour le moment.",
         "error"
