@@ -1,12 +1,12 @@
 /**
- * Fichier : pages/rencontres/saint-etienne.tsx
+ * Fichier : pages/rencontres/Saint-Etienne.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Saint-Étienne et alentours
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Saint-Étienne (métropole & Loire).
+ * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Saint-Étienne et alentours (Saint-Étienne, Saint-Chamond, Firminy,
  *   Andrézieux-Bouthéon, plaine du Forez…).
- * - Même design et même logique que pages/rencontres/france.tsx, paris.tsx et marseille.tsx.
+ * - Même design et même logique que pages/rencontres/France.tsx, Paris.tsx et Marseille.tsx.
  * - Pas de promesse de filtres avancés : on parle de “zone Saint-Étienne / Loire” de façon large.
  *
  * Dépendances :
@@ -20,7 +20,7 @@
  * - Aucun (uniquement rendu React côté front).
  *
  * Invariants :
- * - Garder la cohérence visuelle avec france.tsx / paris.tsx / marseille.tsx (bandeau jaune,
+ * - Garder la cohérence visuelle avec France.tsx / Paris.tsx / Marseille.tsx (bandeau jaune,
  *   carte rappel, structure des sections).
  * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n’existent pas encore.
  */
@@ -33,9 +33,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Saint-Étienne et autour | Keefon",
   description:
     "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Saint-Etienne",
+  canonical: "https://www.keefon.com/rencontres/Saint-Etienne",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-saint-etienne.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-saint-etienne.jpg",
   keywords: [
     // Intent + features
     "rencontre Saint-Étienne",
@@ -87,11 +87,11 @@ const SEO = {
     "rencontre après 50 ans Loire",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Saint-Étienne",
-      url: "https://keefon.com/rencontres/Saint-Etienne",
+      url: "https://www.keefon.com/rencontres/Saint-Etienne",
     },
   ],
 };
@@ -126,7 +126,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -305,10 +305,10 @@ export default function SaintEtienneRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -318,7 +318,7 @@ export default function SaintEtienneRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -407,22 +407,22 @@ export default function SaintEtienneRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Créer mon profil gratuitement"
-                  title="Créer mon profil gratuitement"
+                  aria-label="Je crée mon profil, c'est gratuit"
+                  title="Je crée mon profil, c'est gratuit"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                  Je crée mon profil, c&apos;est gratuit
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
                 <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -538,12 +538,12 @@ export default function SaintEtienneRencontresPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Créer mon profil gratuitement"
-                title="Créer mon profil gratuitement"
+                aria-label="Je crée mon profil, c'est gratuit"
+                title="Je crée mon profil, c'est gratuit"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Créer mon profil gratuitement
+                Je crée mon profil, c&apos;est gratuit
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux commencer gratuitement, compléter ton profil à ton
@@ -651,7 +651,7 @@ export default function SaintEtienneRencontresPage() {
           </div>
         </section>
 
-        {/* Mention légale / CGU */}
+        {/* Mention légale / CGU / Confidentialité / Cookies */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
@@ -661,6 +661,14 @@ export default function SaintEtienneRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

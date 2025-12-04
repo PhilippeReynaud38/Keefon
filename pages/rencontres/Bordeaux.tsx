@@ -31,9 +31,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Bordeaux et autour | Keefon",
   description:
     "Keefon Bordeaux est une page dédiée aux rencontres bienveillantes à Bordeaux et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Bordeaux",
+  canonical: "https://www.keefon.com/rencontres/Bordeaux",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-bordeaux.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-bordeaux.jpg",
   keywords: [
     // Intent + features
     "rencontre Bordeaux",
@@ -85,9 +85,9 @@ const SEO = {
     "rencontre après 50 ans Bordeaux",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Bordeaux", url: "https://keefon.com/rencontres/bordeaux" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Bordeaux", url: "https://www.keefon.com/rencontres/Bordeaux" },
   ],
 };
 
@@ -242,7 +242,7 @@ function ProfileTeaserBand() {
           style={{ color: "#FEFF93" }}
         >
           Profils fictifs inspirés de vraies personnes. Chaque membre décide
-          ce qu'il partage et reste protégé par les lois françaises.
+          ce qu&apos;il partage et reste protégé par les lois françaises.
         </div>
 
         <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
@@ -297,10 +297,10 @@ export default function BordeauxRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -310,7 +310,7 @@ export default function BordeauxRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -393,7 +393,7 @@ export default function BordeauxRencontresPage() {
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
                 Keefon est créée et hébergée en France, dans le cadre des lois
                 françaises de protection de la vie privée (RGPD, CNIL, droits
-                de l'individu).
+                de l&apos;individu).
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -410,11 +410,11 @@ export default function BordeauxRencontresPage() {
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
                 <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -460,7 +460,7 @@ export default function BordeauxRencontresPage() {
               </p>
               <p className="text-sm leading-relaxed">
                 Pas de défilement infini pour te garder accroché à l’écran.
-                Le but, c'est la rencontre, pas l’addiction. Les comportements
+                Le but, c&apos;est la rencontre, pas l’addiction. Les comportements
                 toxiques sont hors-jeu et peuvent être signalés facilement.
               </p>
 
@@ -616,11 +616,19 @@ export default function BordeauxRencontresPage() {
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
               <Link href="/cgu" className="hover:underline">
-                Conditions Générales d’Utilisation
+                Conditions Générales d&apos;Utilisation
               </Link>
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

@@ -1,13 +1,13 @@
 /**
- * Fichier : pages/rencontres/Strasbourg.tsx
- * Module : Pages publiques / SEO — Rencontres sur la zone Strasbourg et alentours
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Strasbourg (Eurométropole & Alsace).
+ * Fichier : pages/rencontres/Saint-Etienne.tsx
+ * Module : Pages publiques / SEO — Rencontres sur la zone Saint-Étienne et alentours
+ * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
  *
  * Contexte :
- * - Page vitrine dédiée à la zone Strasbourg et alentours (Strasbourg, Illkirch, Schiltigheim,
- *   Kehl côté allemand, etc.).
+ * - Page vitrine dédiée à la zone Saint-Étienne et alentours (Saint-Étienne, Saint-Chamond, Firminy,
+ *   Andrézieux-Bouthéon, plaine du Forez…).
  * - Même design et même logique que pages/rencontres/France.tsx, Paris.tsx et Marseille.tsx.
- * - Pas de promesse de filtres avancés : on parle de “zone Strasbourg / Alsace” de façon large.
+ * - Pas de promesse de filtres avancés : on parle de “zone Saint-Étienne / Loire” de façon large.
  *
  * Dépendances :
  * - next/head, next/link
@@ -20,8 +20,8 @@
  * - Aucun (uniquement rendu React côté front).
  *
  * Invariants :
- * - Garder la cohérence visuelle avec France.tsx / Paris.tsx / Marseille.tsx
- *   (bandeau jaune, carte rappel, structure des sections).
+ * - Garder la cohérence visuelle avec France.tsx / Paris.tsx / Marseille.tsx (bandeau jaune,
+ *   carte rappel, structure des sections).
  * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n’existent pas encore.
  */
 
@@ -30,27 +30,26 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Strasbourg et autour | Keefon",
+  title: "Rencontres bienveillantes à Saint-Étienne et autour | Keefon",
   description:
-    "Keefon Strasbourg est une page dédiée aux rencontres bienveillantes à Strasbourg et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Strasbourg",
+    "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+  canonical: "https://www.keefon.com/rencontres/Saint-Etienne",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-strasbourg.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-saint-etienne.jpg",
   keywords: [
     // Intent + features
-    "rencontre Strasbourg",
-    "rencontres Strasbourg",
-    "site de rencontre Strasbourg",
-    "rencontres bienveillantes Strasbourg",
-    "rencontre locale Strasbourg",
-    "rencontre proche de chez moi Strasbourg",
-    "rencontre Bas-Rhin",
-    "rencontres Bas-Rhin",
-    "rencontres Alsace",
-    "rencontres Grand Est",
-    "chat gratuit Strasbourg",
-    "chat rencontre gratuit Strasbourg",
-    "messagerie gratuite Strasbourg",
+    "rencontre Saint-Étienne",
+    "rencontres Saint-Étienne",
+    "site de rencontre Saint-Étienne",
+    "rencontres bienveillantes Saint-Étienne",
+    "rencontre locale Saint-Étienne",
+    "rencontre proche de chez moi Saint-Étienne",
+    "rencontre Loire",
+    "rencontres Loire",
+    "rencontres Auvergne-Rhône-Alpes",
+    "chat gratuit Saint-Étienne",
+    "chat rencontre gratuit Saint-Étienne",
+    "messagerie gratuite Saint-Étienne",
     "profils certifiés",
     "profil certifié",
     "vérification profil",
@@ -64,32 +63,36 @@ const SEO = {
     "plateforme RGPD",
     "respect CNIL",
     "protection des données",
-    "dating Strasbourg",
-    "dating Alsace",
+    "dating Saint-Étienne",
+    "dating Loire",
     "rencontre adultes consentants",
     "slow dating",
     "dating bienveillant",
 
     // Villes / zone (SEO, pas promesse de filtres)
-    "Strasbourg",
-    "Illkirch-Graffenstaden",
-    "Schiltigheim",
-    "Bischheim",
-    "Lingolsheim",
-    "Kehl",
-    "Eurométropole de Strasbourg",
-    "Bas-Rhin",
+    "Saint-Étienne",
+    "Saint-Chamond",
+    "Firminy",
+    "Andrézieux-Bouthéon",
+    "La Talaudière",
+    "Roche-la-Molière",
+    "Montbrison",
+    "Plaine du Forez",
+    "Pilat",
 
     // Combinaisons courtes utiles
-    "rencontre sérieuse Strasbourg",
-    "rencontre après 30 ans Strasbourg",
-    "rencontre après 40 ans Strasbourg",
-    "rencontre après 50 ans Alsace",
+    "rencontre sérieuse Saint-Étienne",
+    "rencontre après 30 ans Saint-Étienne",
+    "rencontre après 40 ans Loire",
+    "rencontre après 50 ans Loire",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Strasbourg", url: "https://keefon.com/rencontres/Strasbourg" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    {
+      name: "Saint-Étienne",
+      url: "https://www.keefon.com/rencontres/Saint-Etienne",
+    },
   ],
 };
 
@@ -123,7 +126,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -186,57 +189,55 @@ function FreeReminderCard() {
   );
 }
 
-/* ===========================  Bandeau “exemples de profils” — Strasbourg  =========================== */
+/* ===========================  Bandeau “exemples de profils” — Saint-Étienne  =========================== */
 function ProfileTeaserBand() {
   /**
-   * ⚠️ Fichiers à placer dans : /public/avatars_France/Strasbourg/
+   * ⚠️ Fichiers à placer dans : /public/avatars_France/Saint-etienne/
    * IMPORTANT :
-   *  - pas d’accents ni d’espaces dans les noms de fichiers (Catherine.png, Franck.png,
-   *    Mandie.png, Simon.png par exemple)
+   *  - pas d’accents ni d’espaces dans les noms de fichiers (Lilian.png, Sophie.png, Anna.png, Gilles.png)
    *  - tu peux renommer les images côté disque, le chemin doit suivre ces valeurs.
    */
   const profiles = [
     {
-      pseudo: "Catherine",
-      ageVille: "47 ans — Strasbourg centre",
+      pseudo: "Lilian",
+      ageVille: "35 ans — Saint-Étienne",
       badges: ["Free"],
-      phrase:
-        "Je travaille en ville et j’adore flâner entre la cathédrale et la Petite France. Keefon est parfait pour rencontrer d'autres personnes.",
-      avatarSrc: "/avatars_France/Strasbourg/Catherine.png",
+      phrase: "Sur Keefon on rencontre vraiment du monde, j'aime beaucoup.",
+      avatarSrc: "/avatars_France/Saint-etienne/Lilian.png",
       avatarAlt:
-        "Profil fictif Catherine (femme souriante dans une rue de centre-ville)",
+        "Profil fictif Lilian (homme souriant dans une rue de ville stéphanoise)",
       priority: true,
     },
     {
-      pseudo: "Franck",
-      ageVille: "45 ans — Strasbourg",
+      pseudo: "Sophie",
+      ageVille: "27 ans — Saint-Étienne",
       badges: ["Essentiel"],
       phrase:
-        "Entre le boulot, les trajets en tram et les sorties entre amis, je n’ai pas envie de passer mes soirées à swiper. Je préfère quelques échanges humains et clairs.",
-      avatarSrc: "/avatars_France/Strasbourg/Franck.png",
+        "Entre le boulot, les sorties et le sport, je n’ai pas envie de passer mes soirées à swiper. Je préfère quelques échanges humains et clairs.",
+      avatarSrc: "/avatars_France/Saint-etienne/Sophie.png",
       avatarAlt:
-        "Profil fictif Franck (homme souriant dans une rue de ville européenne)",
+        "Profil fictif Sophie (jeune femme souriante dans une rue animée)",
       priority: true,
     },
     {
-      pseudo: "Mandie",
-      ageVille: "26 ans — Strasbourg Krutenau",
+      pseudo: "Anna",
+      ageVille: "50 ans — proches montagnes",
       badges: ["Free"],
       phrase:
-        "Je bouge beaucoup entre les cafés, les études et les sorties culture. Keefon reste souple, à un prix raisonnable.",
-      avatarSrc: "/avatars_France/Strasbourg/Mandie.png",
+        "Je passe mon temps entre la ville, les sentiers et mon chien. Ici, je peux parler tranquillement sans me sentir jugée.",
+      avatarSrc: "/avatars_France/Saint-etienne/Anna.png",
       avatarAlt:
-        "Profil fictif Mandie (jeune femme souriante dans une rue animée)",
+        "Profil fictif Anna (femme souriante en randonnée avec son chien)",
     },
     {
-      pseudo: "Simon",
-      ageVille: "29 ans — rive du Rhin",
+      pseudo: "Gilles",
+      ageVille: "54 ans — Loire",
       badges: ["Essentiel"],
       phrase:
-        "Je passe mon temps entre Strasbourg, les pistes cyclables et parfois l’Allemagne. Keefon m’aide à garder des échanges simples, c&apos;est très différent des autres sites.",
-      avatarSrc: "/avatars_France/Strasbourg/Simon.png",
+        "Je bouge beaucoup entre le travail, les déplacements et la famille. Keefon m’aide à garder des échanges simples, ici c'est très différent des autres sites.",
+      avatarSrc: "/avatars_France/Saint-etienne/Gilles.png",
       avatarAlt:
-        "Profil fictif Simon (homme souriant en extérieur avec un sac à dos)",
+        "Profil fictif Gilles (homme souriant avec un sac à dos près d’un paysage nature)",
     },
   ];
 
@@ -263,7 +264,7 @@ function ProfileTeaserBand() {
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
                   className="h-full w-full object-cover"
-                  loading={Boolean((p as any).priority) ? "eager" : "lazy"}
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -297,17 +298,17 @@ function ProfileTeaserBand() {
 }
 
 /* ===========================  Page  =========================== */
-export default function StrasbourgRencontresPage() {
+export default function SaintEtienneRencontresPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -317,7 +318,7 @@ export default function StrasbourgRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -349,7 +350,7 @@ export default function StrasbourgRencontresPage() {
         /**
          * Image de fond :
          *  - pour l’instant on réutilise bg-France-ext.png (déjà présent dans /public)
-         *  - tu pourras remplacer plus tard par un visuel type “bg-Strasbourg-ext.png”
+         *  - tu pourras remplacer plus tard par un visuel type “bg-SaintEtienne-ext.png”
          *    en ne changeant QUE la valeur de backgroundImage.
          */
         className="min-h-screen"
@@ -387,14 +388,14 @@ export default function StrasbourgRencontresPage() {
                   textShadow: "0 2px 6px rgba(0,0,0,0.25)",
                 }}
               >
-                Rencontres bienveillantes à Strasbourg et autour
+                Rencontres bienveillantes à Saint-Étienne et autour
               </h1>
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
                 Une plateforme française pour celles et ceux qui vivent à
-                Strasbourg et dans les villes autour (Illkirch, Schiltigheim,
-                plaine du Rhin…) et qui veulent des rencontres plus humaines,
-                sans swipe toxique.
+                Saint-Étienne et dans les villes autour (Loire, plaine du Forez,
+                Pilat…) et qui veulent des rencontres plus humaines, sans swipe
+                toxique.
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
@@ -406,22 +407,22 @@ export default function StrasbourgRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Créer mon profil gratuitement"
-                  title="Créer mon profil gratuitement"
+                  aria-label="Je crée mon profil, c'est gratuit"
+                  title="Je crée mon profil, c'est gratuit"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                  Je crée mon profil, c&apos;est gratuit
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
                 <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -430,14 +431,14 @@ export default function StrasbourgRencontresPage() {
         {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Exemples de profils (Strasbourg) */}
+        {/* Exemples de profils (Saint-Étienne) */}
         <ProfileTeaserBand />
 
         {/* Comment ça marche ? */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche à Strasbourg&nbsp;?
+              Comment ça marche à Saint-Étienne&nbsp;?
             </h2>
             <div className="mt-6 grid gap-6 md:grid-cols-3">
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -445,7 +446,7 @@ export default function StrasbourgRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Strasbourg / Alsace
+                  2. Tu indiques que tu es sur la zone Saint-Étienne / Loire
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -459,7 +460,7 @@ export default function StrasbourgRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Pourquoi Keefon est différent à Strasbourg&nbsp;?
+              Pourquoi Keefon est différent à Saint-Étienne&nbsp;?
             </h2>
             <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
               <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -479,45 +480,44 @@ export default function StrasbourgRencontresPage() {
                 Les Échos et Keefon+ créent des ouvertures supplémentaires pour
                 les profils Free. L&apos;abonnement Essentiel reste
                 volontairement abordable pour aller plus loin sans exploser ton
-                budget, même dans une ville frontalière où la vie peut monter
-                vite.
+                budget, même quand on compte chaque euro.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Strasbourg ancrée dans le réel */}
+        {/* Saint-Étienne ancrée dans le réel */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Rencontrer à Strasbourg, sans se perdre dans la masse
+              Rencontrer à Saint-Étienne, sans se perdre dans la masse
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Une grande ville européenne, beaucoup de monde, deux langues,
-              beaucoup de mouvement. Keefon te permet d&apos;ouvrir des portes
+              Entre une ville qui bouge, des quartiers différents et les verts
+              autour, il y a du monde. Keefon te permet d&apos;ouvrir des portes
               sans te perdre dans une marée de profils anonymes.
             </p>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Grande Île, Neudorf, Krutenau…
+                  Centre-ville, quartiers, collines…
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Que tu vives en centre-ville, à la Krutenau, à Neudorf ou un
-                  peu plus loin, tu peux croiser des personnes qui partagent la
-                  même ville et la même énergie que toi.
+                  Que tu vives en centre-ville, vers Châteaucreux, Montplaisir,
+                  Bellevue ou plus loin, tu peux croiser des personnes qui
+                  partagent la même ville et la même énergie que toi.
                 </p>
               </article>
 
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Et le reste de l’Alsace si tu bouges
+                  Et le reste de la Loire si tu bouges
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Si tu te déplaces souvent vers Illkirch, Schiltigheim,
-                  Haguenau ou de l&apos;autre côté du Rhin, tu peux aussi
-                  utiliser Keefon dans ces zones, avec les mêmes principes de
-                  respect et de clarté.
+                  Si tu te déplaces souvent vers Saint-Chamond, Firminy,
+                  Andrézieux, Montbrison ou le Pilat, tu peux aussi utiliser
+                  Keefon dans ces zones, avec les mêmes principes de respect et
+                  de clarté.
                 </p>
               </article>
             </div>
@@ -528,23 +528,22 @@ export default function StrasbourgRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Envie de rencontres plus humaines à Strasbourg&nbsp;?
+              Envie de rencontres plus humaines à Saint-Étienne&nbsp;?
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
               Keefon s&apos;adresse à celles et ceux qui préfèrent un espace
               plus calme, plus clair, plus respectueux que les applis
-              classiques, tout en restant connectés à la réalité de
-              l&apos;Eurométropole.
+              classiques, tout en gardant les pieds dans le réel, dans la Loire.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Créer mon profil gratuitement"
-                title="Créer mon profil gratuitement"
+                aria-label="Je crée mon profil, c'est gratuit"
+                title="Je crée mon profil, c'est gratuit"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Créer mon profil gratuitement
+                Je crée mon profil, c&apos;est gratuit
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux commencer gratuitement, compléter ton profil à ton
@@ -554,37 +553,38 @@ export default function StrasbourgRencontresPage() {
           </div>
         </section>
 
-        {/* Idées de sorties locales (Strasbourg & alentours) */}
+        {/* Idées de sorties locales (Saint-Étienne & Loire) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-900 shadow-sm backdrop-blur-[2px]">
               <h2 className="mb-1 text-xs font-semibold text-chatOuter">
-                Quelques idées de sorties autour de Strasbourg
+                Quelques idées de sorties autour de Saint-Étienne
               </h2>
               <ul className="list-disc space-y-1 pl-4">
                 <li>
-                  Balade dans la Petite France ou autour de la cathédrale, avec
-                  un café en terrasse pour discuter dans un lieu public.
+                  Balade en centre-ville, autour des rues piétonnes et des
+                  places, avec un café en terrasse pour discuter dans un lieu
+                  public.
                 </li>
                 <li>
-                  Promenade le long des quais ou sur les berges de l&apos;Ill,
-                  pour parler au calme tout en restant dans un endroit
-                  fréquenté.
+                  Promenade dans un parc ou un espace vert (parc de l&apos;Europe,
+                  parc François-Mitterrand…) pour parler au calme tout en
+                  restant dans un endroit fréquenté.
                 </li>
                 <li>
-                  Sortie au parc de l&apos;Orangerie ou dans un autre parc de
-                  l&apos;Eurométropole, si vous préférez un cadre un peu plus
-                  vert.
+                  Marche dans un quartier que vous aimez tous les deux, avec la
+                  possibilité de s’arrêter dans un café ou un petit resto si le
+                  feeling passe.
                 </li>
                 <li>
-                  Flânerie dans un quartier que vous aimez tous les deux
-                  (Krutenau, Neudorf, centre historique…) avec la possibilité de
-                  s’arrêter dans un café ou un petit resto si le feeling passe.
+                  Balade du côté de la plaine du Forez, des gorges de la Loire
+                  ou d&apos;un village proche, en choisissant un lieu simple
+                  d&apos;accès et public.
                 </li>
                 <li>
-                  Si vous bougez en transports, petite escapade dans une ville
-                  voisine ou un village proche, en gardant toujours un point de
-                  rendez-vous simple, public et facile à retrouver.
+                  Si vous aimez la nature, petite sortie vers le Pilat ou un
+                  sentier accessible, en restant sur des chemins connus et
+                  fréquentés.
                 </li>
               </ul>
               <p className="mt-2">
@@ -616,14 +616,6 @@ export default function StrasbourgRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     href="/rencontres/Lyon"
                     className="underline-offset-2 hover:underline"
                   >
@@ -632,18 +624,26 @@ export default function StrasbourgRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Strasbourg"
+                    href="/rencontres/Grenoble"
                     className="underline-offset-2 hover:underline"
                   >
-                    Rencontres à Strasbourg
+                    Rencontres à Grenoble
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Metz"
+                    href="/rencontres/Marseille"
                     className="underline-offset-2 hover:underline"
                   >
-                    Rencontres à Metz
+                    Rencontres à Marseille
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/rencontres/Nice"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Nice
                   </Link>
                 </li>
               </ul>
@@ -651,7 +651,7 @@ export default function StrasbourgRencontresPage() {
           </div>
         </section>
 
-        {/* Mention légale / CGU */}
+        {/* Mention légale / CGU / Confidentialité / Cookies */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
@@ -661,6 +661,14 @@ export default function StrasbourgRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

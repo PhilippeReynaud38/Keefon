@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/Nice.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Nice & Côte d’Azur
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Nice / Cannes / Côte d’Azur.
+ * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Nice et alentours (Cannes, Antibes, Menton, arrière-pays azuréen…).
@@ -32,9 +32,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Nice et sur la Côte d’Azur | Keefon",
   description:
     "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes, Menton et sur la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Nice",
+  canonical: "https://www.keefon.com/rencontres/Nice",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-nice.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-nice.jpg",
   keywords: [
     // Intent + features
     "rencontre Nice",
@@ -87,9 +87,9 @@ const SEO = {
     "rencontre après 50 ans Alpes-Maritimes",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Nice", url: "https://keefon.com/rencontres/Nice" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Nice", url: "https://www.keefon.com/rencontres/Nice" },
   ],
 };
 
@@ -123,7 +123,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -307,10 +307,10 @@ export default function NiceRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -320,7 +320,7 @@ export default function NiceRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -410,22 +410,22 @@ export default function NiceRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Créer mon profil gratuitement"
-                  title="Créer mon profil gratuitement"
+                  aria-label="Je crée mon profil, c'est gratuit"
+                  title="Je crée mon profil, c'est gratuit"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                  Je crée mon profil, c&apos;est gratuit
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
                 <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -509,8 +509,8 @@ export default function NiceRencontresPage() {
                   Que tu vives à Nice même, vers le port, la Prom&apos; ou dans
                   un quartier plus en hauteur, ou que tu sois plutôt côté
                   Cannes, Antibes ou Menton, tu peux croiser des personnes qui
-                  partagent la même région et la même envie de rencontres
-                  plus simples.
+                  partagent la même région et la même envie de rencontres plus
+                  simples.
                 </p>
               </article>
 
@@ -544,12 +544,12 @@ export default function NiceRencontresPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Créer mon profil gratuitement"
-                title="Créer mon profil gratuitement"
+                aria-label="Je crée mon profil, c'est gratuit"
+                title="Je crée mon profil, c'est gratuit"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Créer mon profil gratuitement
+                Je crée mon profil, c&apos;est gratuit
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux commencer gratuitement, compléter ton profil à ton
@@ -658,6 +658,14 @@ export default function NiceRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

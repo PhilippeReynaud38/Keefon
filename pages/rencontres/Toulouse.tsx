@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/Toulouse.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Toulouse / aire toulousaine
- * MAJ : 2025-11-19 — Version basée sur france.tsx / paris.tsx / lille.tsx, adaptée à Toulouse.
+ * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Toulouse et à l’aire toulousaine (“ville rose” + proches communes).
@@ -19,7 +19,7 @@
  * - Aucun (rendu React uniquement).
  *
  * Invariants :
- * - Rester cohérent avec france.tsx / paris.tsx / lille.tsx (bandeau jaune, rappel, structure de sections).
+ * - Rester cohérent avec France.tsx / Paris.tsx / Lille.tsx (bandeau jaune, rappel, structure de sections).
  * - Ne pas sur-promettre de fonctionnalités de recherche qui n’existent pas encore.
  */
 
@@ -32,11 +32,11 @@ const SEO = {
     "Rencontres bienveillantes à Toulouse et dans l’aire toulousaine | Keefon",
   description:
     "Keefon Toulouse rassemble celles et ceux qui vivent dans la ville rose et autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
-  canonical: "https://keefon.com/rencontres/Toulouse",
+  canonical: "https://www.keefon.com/rencontres/Toulouse",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-toulouse.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-toulouse.jpg",
   keywords: [
-    // Intent + fonctionnalités (variante par rapport aux autres pages)
+    // Intent + fonctionnalités
     "rencontre Toulouse",
     "rencontres Toulouse",
     "site de rencontre Toulouse",
@@ -74,11 +74,11 @@ const SEO = {
     "Muret",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Toulouse / aire toulousaine",
-      url: "https://keefon.com/rencontres/Toulouse",
+      url: "https://www.keefon.com/rencontres/Toulouse",
     },
   ],
 };
@@ -205,7 +205,7 @@ function ProfileTeaserBand() {
         "Je n’ai pas envie d’une appli qui me pousse à rester scotchée à l’écran. Ici je peux discuter posément et voir si le courant passe.",
       avatarSrc: "/avatars_France/Toulouse/Brigitte.png",
       avatarAlt:
-        "Profil fictif Brigitte_Tlse (femme à Toulouse, quartier résidentiel)",
+        "Profil fictif Brigitte (femme à Toulouse, quartier résidentiel)",
       priority: true,
     },
     {
@@ -216,7 +216,7 @@ function ProfileTeaserBand() {
         "Je suis souvent en vadrouille entre le boulot, le sport et les amis. Keefon me permet de rencontrer du monde, j'aime bien ce site.",
       avatarSrc: "/avatars_France/Toulouse/Paul.png",
       avatarAlt:
-        "Profil fictif Paul_Garonne (jeune homme devant la Garonne, ambiance ensoleillée)",
+        "Profil fictif Paul (jeune homme devant la Garonne, ambiance ensoleillée)",
     },
     {
       pseudo: "Miloue",
@@ -226,7 +226,7 @@ function ProfileTeaserBand() {
         "J’aime quand les échanges restent simples et respectueux. Keefon m’aide à rencontrer des gens qui partagent cette façon de voir les choses.",
       avatarSrc: "/avatars_France/Toulouse/Miloue.png",
       avatarAlt:
-        "Profil fictif Milou_VilleRose (jeune femme souriante près d’un pont à Toulouse)",
+        "Profil fictif Miloue (jeune femme souriante près d’un pont à Toulouse)",
     },
   ];
 
@@ -253,7 +253,7 @@ function ProfileTeaserBand() {
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
                   className="h-full w-full object-cover"
-                  loading={Boolean((p as any).priority) ? "eager" : "lazy"}
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -294,10 +294,10 @@ export default function ToulouseRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -307,7 +307,7 @@ export default function ToulouseRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -327,6 +327,7 @@ export default function ToulouseRencontresPage() {
         <script
           key="ld-json"
           type="application/ld+json"
+          // JSON-LD statique, pas d’injection de données utilisateur
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </Head>
@@ -395,22 +396,22 @@ export default function ToulouseRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Créer mon profil gratuitement"
-                  title="Créer mon profil gratuitement"
+                  aria-label="Je crée mon profil, c'est gratuit"
+                  title="Je crée mon profil, c'est gratuit"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                  Je crée mon profil, c&apos;est gratuit
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
-        <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>        
+                <p className="mt-2 w-full text-center text-xs text-slate-800">
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -467,8 +468,8 @@ export default function ToulouseRencontresPage() {
               </p>
               <p className="text-sm leading-relaxed">
                 Les Échos et Keefon+ ajoutent des opportunités pour les profils
-                Free. L&apos;abonnement Essentiel reste volontairement raisonnable
-                pour aller plus loin sans exploser ton budget.
+                Free. L&apos;abonnement Essentiel reste volontairement
+                raisonnable pour aller plus loin sans exploser ton budget.
               </p>
             </div>
           </div>
@@ -526,12 +527,12 @@ export default function ToulouseRencontresPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Créer mon profil gratuitement"
-                title="Créer mon profil gratuitement"
+                aria-label="Je crée mon profil, c'est gratuit"
+                title="Je crée mon profil, c'est gratuit"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Créer mon profil gratuitement
+                Je crée mon profil, c&apos;est gratuit
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux tester l&apos;appli gratuitement, voir comment tu te
@@ -639,6 +640,7 @@ export default function ToulouseRencontresPage() {
           </div>
         </section>
 
+        {/* Footer légal complet */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
@@ -648,6 +650,14 @@ export default function ToulouseRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

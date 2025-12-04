@@ -1,94 +1,85 @@
 /**
- * Fichier : pages/rencontres/marseille.tsx
- * Module : Pages publiques / SEO — Rencontres sur la zone Marseille et alentours
- * MAJ : 2025-12-04 — Alignement domaine www.keefon.com + CTA + footer légal
+ * Fichier : pages/rencontres/Rennes.tsx
+ * Module : Pages publiques / SEO — Rencontres sur la zone Rennes & Bretagne
+ * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
  *
  * Contexte :
- * - Page vitrine dédiée à la zone Marseille et alentours (Marseille, Aubagne, Aix, côte méditerranéenne…).
- * - Même design et même logique que pages/rencontres/france.tsx et paris.tsx pour rester simple à maintenir.
- * - Pas de promesse de filtres avancés : on parle de “zone Marseille / Provence” de façon large.
+ * - Page vitrine dédiée à la zone Rennes et alentours (Rennes, Cesson-Sévigné, Saint-Jacques-de-la-Lande,
+ *   Bruz, Chantepie, etc.).
+ * - Même design et même logique que les autres pages de zone (Paris, Toulouse, Strasbourg…).
+ * - Pas de promesse de filtres ultra-précis : on parle de “zone Rennes / Bretagne” de façon large.
  *
  * Dépendances :
  * - next/head, next/link
- * - Tailwind pour les classes utilitaires
+ * - Tailwind CSS pour les classes utilitaires
  *
  * Données lues :
- * - Aucune (page purement statique, pas de fetch).
+ * - Aucune (page purement statique).
  *
  * Effets de bord :
- * - Aucun (uniquement rendu React côté front).
+ * - Aucun (rendu React uniquement).
  *
  * Invariants :
- * - Garder la cohérence visuelle avec france.tsx / paris.tsx (bandeau jaune, carte rappel, structure des sections).
- * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n’existent pas encore.
+ * - Garder la cohérence visuelle avec France.tsx / Paris.tsx / Toulouse.tsx.
+ * - Ne PAS promettre des fonctionnalités de recherche qui n’existent pas encore.
  */
 
 import Head from "next/head";
 import Link from "next/link";
 
-/* ===========================  SEO (mots-clés & libellés)  =========================== */
+/* ===========================  SEO (Rennes / Bretagne)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Marseille et autour | Keefon",
+  title: "Rencontres bienveillantes à Rennes et en Bretagne | Keefon",
   description:
-    "Keefon Marseille est une page dédiée aux rencontres bienveillantes à Marseille et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Marseille",
+    "Keefon Rennes rassemble celles et ceux qui vivent à Rennes et dans les villes autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
+  canonical: "https://www.keefon.com/rencontres/Rennes",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-marseille.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-rennes.jpg",
   keywords: [
-    // Intent + features
-    "rencontre Marseille",
-    "rencontres Marseille",
-    "site de rencontre Marseille",
-    "rencontres bienveillantes Marseille",
-    "rencontre locale Marseille",
-    "rencontre proche de chez moi Marseille",
-    "rencontre Bouches-du-Rhône",
-    "rencontres PACA",
-    "chat gratuit Marseille",
-    "chat rencontre gratuit Marseille",
-    "messagerie gratuite Marseille",
-    "profils certifiés",
+    // Intent + fonctionnalités
+    "rencontre Rennes",
+    "rencontres Rennes",
+    "site de rencontre Rennes",
+    "rencontres Ille-et-Vilaine",
+    "rencontres Bretagne",
+    "rencontre locale Rennes",
+    "rencontre proche de chez moi Rennes",
+    "chat rencontre Rennes",
+    "chat gratuit Rennes",
+    "rencontres bienveillantes Rennes",
+    "rencontres respectueuses",
     "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
-    "rencontre respectueuse",
+    "profils certifiés",
+    "vérification de profil",
     "anti harcèlement",
-    "sans swipe",
     "sans swipe infini",
     "sans algorithme opaque",
-    "anti addiction",
     "plateforme RGPD",
     "respect CNIL",
     "protection des données",
-    "dating Marseille",
-    "dating PACA",
-    "rencontre adultes consentants",
     "slow dating",
-    "dating bienveillant",
+    "rencontre après 30 ans Rennes",
+    "rencontre après 40 ans Rennes",
+    "rencontre après 50 ans Rennes",
 
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Marseille",
-    "Aubagne",
-    "Aix-en-Provence",
-    "La Ciotat",
-    "Cassis",
-    "Martigues",
-    "Vitrolles",
-    "Plan-de-Cuques",
-    "Allauch",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Marseille",
-    "rencontre après 30 ans Marseille",
-    "rencontre après 40 ans Marseille",
-    "rencontre après 50 ans Marseille",
+    // Villes / zone
+    "Rennes",
+    "Cesson-Sévigné",
+    "Saint-Jacques-de-la-Lande",
+    "Bruz",
+    "Chantepie",
+    "Pacé",
+    "Vern-sur-Seiche",
+    "Betton",
+    "Ille-et-Vilaine",
+    "Bretagne",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com/" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
-      name: "Marseille",
-      url: "https://www.keefon.com/rencontres/Marseille",
+      name: "Rennes",
+      url: "https://www.keefon.com/rencontres/Rennes",
     },
   ],
 };
@@ -146,7 +137,7 @@ function FreeTopBarSpacer() {
   return <div className="h-[72px] w-full sm:h-[84px]" />;
 }
 
-/* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
+/* ===========================  Carte rappel période gratuite  =========================== */
 function FreeReminderCard() {
   if (!FREE_MODE) return null;
   return (
@@ -166,8 +157,8 @@ function FreeReminderCard() {
                 Accès 100% gratuit — chat ouvert à tous.
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
-                Tu peux créer ton profil, échanger librement et tester Keefon
-                sans carte bancaire. Offre temporaire.
+                Tu peux créer ton profil, échanger librement et découvrir Keefon
+                sans carte bancaire. Offre à durée limitée.
               </p>
             </div>
             <a
@@ -186,55 +177,57 @@ function FreeReminderCard() {
   );
 }
 
-/* ===========================  Bandeau “exemples de profils” — Marseille  =========================== */
+/* ===========================  Exemples de profils — Rennes  =========================== */
 function ProfileTeaserBand() {
   /**
-   * ⚠️ Fichiers à placer dans : /public/avatars_France/Marseille/
+   * ⚠️ Fichiers à placer dans : /public/avatars_France/Rennes/
    * IMPORTANT :
-   *  - pas d’accents ni d’espaces dans les noms de fichiers (Fani.png, Ninou.png, Sany.png, Zoizou.png)
-   *  - tu peux renommer les images côté disque, le chemin doit suivre ces valeurs.
+   *  - pas d’accents ni d’espaces dans les noms de fichiers
+   *    (Claire.png, Malo.png, Lea.png, Yvan.png)
+   *  - rester cohérent entre ces chemins et les fichiers réels.
    */
   const profiles = [
     {
-      pseudo: "Fani",
-      ageVille: "29 ans — Marseille",
+      pseudo: "Claire",
+      ageVille: "32 ans — Rennes centre",
       badges: ["Free"],
       phrase:
-        "Je travaille en centre-ville et je sors beaucoup sur le Vieux-Port. Et Keefon j'adore ce site, il faut l'utiliser pour comprendre.",
-      avatarSrc: "/avatars_France/Marseille/Fani.png",
-      avatarAlt: "Profil fictif Fani (jeune femme dans une rue de Marseille)",
+        "Je travaille en ville et j’aime les cafés calmes, les balades et les concerts. J’avais besoin d’une appli qui ne me donne pas l’impression d’être un produit.",
+      avatarSrc: "/avatars_France/Rennes/Claire.png",
+      avatarAlt:
+        "Profil fictif Claire (femme souriante dans une rue pavée de centre-ville)",
       priority: true,
     },
     {
-      pseudo: "Ninou",
-      ageVille: "34 ans — Marseille",
+      pseudo: "Malo_35",
+      ageVille: "35 ans — Rennes",
       badges: ["Essentiel"],
       phrase:
-        "Entre le boulot, la mer et les amis, je n’ai pas envie de passer mes soirées à swiper. Je préfère quelques échanges humains et clairs.",
-      avatarSrc: "/avatars_France/Marseille/Ninou.png",
+        "Entre le boulot, les trajets et les sorties entre potes, je n’ai pas envie de passer mes soirées à swiper sur des centaines de profils.",
+      avatarSrc: "/avatars_France/Rennes/Malo.png",
       avatarAlt:
-        "Profil fictif Ninou (femme souriante au soleil dans une grande place méditerranéenne)",
+        "Profil fictif Malo (homme souriant près d’un parc urbain, ciel légèrement gris)",
       priority: true,
     },
     {
-      pseudo: "Sany",
-      ageVille: "37 ans — Marseille",
+      pseudo: "Lea",
+      ageVille: "27 ans — proche Rennes",
       badges: ["Free"],
       phrase:
-        "Je passe ma vie entre le port, les collines et les cafés. Ici, j’aime bien pouvoir parler tranquillement sans me sentir jugé.",
-      avatarSrc: "/avatars_France/Marseille/Sany.png",
+        "Je bouge entre Rennes et les communes autour. J’aime pouvoir discuter tranquillement avant d’envisager une rencontre.",
+      avatarSrc: "/avatars_France/Rennes/Lea.png",
       avatarAlt:
-        "Profil fictif Sany (homme souriant sur un bateau avec vue sur Marseille)",
+        "Profil fictif Lea (jeune femme en manteau, en extérieur dans une ville bretonne)",
     },
     {
-      pseudo: "Zoizou",
-      ageVille: "42 ans — Martigues",
+      pseudo: "Yvan",
+      ageVille: "44 ans — Ille-et-Vilaine",
       badges: ["Essentiel"],
       phrase:
-        "Je bouge beaucoup pour le travail dans les Bouches-du-Rhône. Keefon m’aide à garder des échanges simples, à un prix raisonnable.",
-      avatarSrc: "/avatars_France/Marseille/Zoizou.png",
+        "Je voulais une plateforme qui ne joue pas avec mes nerfs ou mon temps. Ici, chacun sait pourquoi il est là.",
+      avatarSrc: "/avatars_France/Rennes/Yvan.png",
       avatarAlt:
-        "Profil fictif Zoizou (homme souriant sur un bateau avec la ville en arrière-plan)",
+        "Profil fictif Yvan (homme souriant, ambiance sobre, lumière naturelle)",
     },
   ];
 
@@ -261,7 +254,7 @@ function ProfileTeaserBand() {
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
                   className="h-full w-full object-cover"
-                  loading={Boolean((p as any).priority) ? "eager" : "lazy"}
+                  loading={p.priority ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -294,8 +287,8 @@ function ProfileTeaserBand() {
   );
 }
 
-/* ===========================  Page  =========================== */
-export default function MarseilleRencontresPage() {
+/* ===========================  Page principale  =========================== */
+export default function RennesRencontresPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -311,11 +304,11 @@ export default function MarseilleRencontresPage() {
       },
       {
         "@type": "WebPage",
-        name: SEO.title,
-        url: SEO.canonical,
-        description: SEO.description,
-        inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com#website" },
+          name: SEO.title,
+          url: SEO.canonical,
+          description: SEO.description,
+          inLanguage: "fr-FR",
+          isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -346,9 +339,9 @@ export default function MarseilleRencontresPage() {
       <main
         /**
          * Image de fond :
-         *  - pour l’instant on réutilise bg-France-ext.png (déjà présent dans /public)
-         *  - tu pourras remplacer plus tard par un visuel type “bg-Marseille-ext.png”
-         *    en ne changeant QUE la valeur de backgroundImage.
+         *  - Pour l’instant on réutilise bg-France-ext.png, déjà présent dans /public.
+         *  - Tu pourras remplacer plus tard par une image plus “Rennes”
+         *    (par exemple bg-Rennes-ext.png) en ne changeant QUE backgroundImage.
          */
         className="min-h-screen"
         style={{
@@ -362,7 +355,7 @@ export default function MarseilleRencontresPage() {
         <header className="py-10">
           <div className="container mx-auto flex justify-center px-4">
             <div className="w-full max-w-3xl rounded-3xl border border-sky-200 bg-sky-50/65 px-6 py-6 text-slate-900 shadow-xl backdrop-blur-[2px]">
-              {/* KEEFON centré et coloré (visuel) */}
+              {/* Logo texte KEEFON */}
               <div className="mb-2 flex items-center justify-center">
                 <span
                   aria-hidden="true"
@@ -385,20 +378,20 @@ export default function MarseilleRencontresPage() {
                   textShadow: "0 2px 6px rgba(0,0,0,0.25)",
                 }}
               >
-                Rencontres bienveillantes à Marseille et autour
+                Rencontres bienveillantes à Rennes et autour
               </h1>
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Une plateforme française pour celles et ceux qui vivent à
-                Marseille et dans les villes autour (Aubagne, Aix, côte
-                méditerranéenne…) et qui veulent des rencontres plus humaines,
-                sans swipe toxique.
+                Une plateforme française pour celles et ceux qui vivent à Rennes
+                ou dans les communes autour, et qui veulent des rencontres plus
+                humaines, loin des applis centrées sur la consommation de
+                profils.
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
-                Keefon est créée et hébergée en France, dans le cadre des lois
-                françaises de protection de la vie privée (RGPD, CNIL, droits
-                de l&apos;individu).
+                Keefon est pensée et hébergée en France, dans le respect des
+                lois françaises sur la vie privée (RGPD, CNIL, droits de
+                l&apos;individu).
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -412,9 +405,9 @@ export default function MarseilleRencontresPage() {
                   Je crée mon profil, c&apos;est gratuit
                 </a>
                 <p className="text-xs text-slate-700">
-                  Inscription rapide. Tu gardes la main à chaque étape.
+                  Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
-                <p className="mt-2 text-xs text-slate-800 text-center">
+                <p className="mt-2 w-full text-center text-xs text-slate-800">
                   Déjà membre ?{" "}
                   <a href="/login" className="font-semibold underline">
                     Se connecter
@@ -425,17 +418,17 @@ export default function MarseilleRencontresPage() {
           </div>
         </header>
 
-        {/* Carte rappel période gratuite */}
+        {/* Rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Exemples de profils (Marseille) */}
+        {/* Exemples de profils (Rennes) */}
         <ProfileTeaserBand />
 
         {/* Comment ça marche ? */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche à Marseille&nbsp;?
+              Comment ça marche sur la zone Rennes&nbsp;?
             </h2>
             <div className="mt-6 grid gap-6 md:grid-cols-3">
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -443,7 +436,7 @@ export default function MarseilleRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Marseille / Provence
+                  2. Tu indiques que tu es sur la zone Rennes / Ille-et-Vilaine
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -457,7 +450,7 @@ export default function MarseilleRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Pourquoi Keefon est différent à Marseille&nbsp;?
+              Pourquoi Keefon est différent à Rennes&nbsp;?
             </h2>
             <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
               <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -466,54 +459,54 @@ export default function MarseilleRencontresPage() {
               <p className="text-sm leading-relaxed">
                 Pas de défilement infini pour te garder accroché à l&apos;écran.
                 Le but, c&apos;est la rencontre, pas l&apos;addiction. Les
-                comportements toxiques sont hors-jeu et peuvent être signalés
-                facilement.
+                comportements irrespectueux peuvent être signalés et sont
+                incompatibles avec l&apos;esprit du site.
               </p>
 
               <p className="mt-4 mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                Plus d&apos;opportunités pour tous
+                Plus d&apos;ouvertures pour tous
               </p>
               <p className="text-sm leading-relaxed">
-                Les Échos et Keefon+ créent des ouvertures supplémentaires pour
-                les profils Free. L&apos;abonnement Essentiel reste
-                volontairement abordable pour aller plus loin sans exploser ton
-                budget.
+                Les Échos et Keefon+ ajoutent des opportunités pour les profils
+                Free. L&apos;abonnement Essentiel reste volontairement
+                raisonnable pour aller plus loin sans exploser ton budget.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Marseille ancrée dans le réel */}
+        {/* Rennes ancrée dans le réel */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Rencontrer à Marseille, sans se perdre dans la masse
+              Rencontrer sur Rennes, sans se perdre dans la masse
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Une grande ville, beaucoup de monde, beaucoup de bruit. Keefon te
-              permet d&apos;ouvrir des portes sans te perdre dans une marée de
-              profils anonymes.
+              Entre le centre-ville, les quartiers étudiants, les parcs et les
+              communes autour, il y a du monde. Keefon t&apos;aide à ouvrir des
+              portes sans te noyer dans une liste interminable de profils
+              anonymes.
             </p>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Vieux-Port, quartiers, collines…
+                  Rennes et les communes voisines
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Que tu vives près du port, dans les quartiers nord, sud ou en
-                  périphérie, tu peux croiser des personnes qui partagent la
-                  même ville et la même énergie que toi.
+                  Que tu sois en centre-ville, à Villejean, à Cesson-Sévigné,
+                  Saint-Jacques-de-la-Lande, Bruz ou plus loin, tu peux croiser
+                  des personnes qui vivent sur la même grande zone que toi.
                 </p>
               </article>
 
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Et le reste de la Provence si tu bouges
+                  Et le reste de la Bretagne quand tu bouges
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Si tu te déplaces souvent vers Aix, Cassis, La Ciotat ou
-                  ailleurs, tu peux aussi utiliser Keefon dans ces zones, avec
-                  les mêmes principes de respect et de clarté.
+                  Si tu te déplaces régulièrement vers d&apos;autres villes
+                  bretonnes, tu peux aussi utiliser Keefon ailleurs, avec les
+                  mêmes règles de clarté et de respect.
                 </p>
               </article>
             </div>
@@ -524,12 +517,12 @@ export default function MarseilleRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Envie de rencontres plus humaines à Marseille&nbsp;?
+              Envie de rencontres plus humaines à Rennes&nbsp;?
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Keefon s&apos;adresse à celles et ceux qui préfèrent un espace
-              plus calme, plus clair, plus respectueux que les applis
-              classiques, tout en profitant de l&apos;ambiance méditerranéenne.
+              Keefon s&apos;adresse à celles et ceux qui préfèrent un cadre plus
+              calme et plus clair que les applis classiques, tout en restant
+              connectés à la vie rennaise.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
@@ -542,50 +535,44 @@ export default function MarseilleRencontresPage() {
                 Je crée mon profil, c&apos;est gratuit
               </a>
               <p className="text-xs text-slate-800">
-                Tu peux commencer gratuitement, compléter ton profil à ton
-                rythme, et voir ensuite jusqu&apos;où tu veux aller.
+                Tu peux tester l&apos;appli gratuitement, voir comment tu te
+                sens, puis décider si tu veux aller plus loin.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Idées de sorties locales (Marseille & alentours) */}
+        {/* Idées de sorties locales (Rennes & alentours) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-900 shadow-sm backdrop-blur-[2px]">
               <h2 className="mb-1 text-xs font-semibold text-chatOuter">
-                Quelques idées de sorties autour de Marseille
+                Quelques idées de sorties autour de Rennes
               </h2>
               <ul className="list-disc space-y-1 pl-4">
                 <li>
-                  Balade en fin de journée sur le Vieux-Port, avec un café en
-                  terrasse pour prendre le temps de discuter face aux bateaux.
+                  Balade en centre-ville, autour des places et des rues
+                  piétonnes, avec un café en terrasse pour discuter dans un lieu
+                  public.
                 </li>
                 <li>
-                  Promenade le long de la Corniche ou vers le{" "}
-                  <span className="whitespace-nowrap">Parc Borély</span>, pour
-                  parler au calme en bord de mer ou dans un grand espace vert.
+                  Promenade au parc du Thabor ou dans un autre parc rennais,
+                  pour parler un peu plus au calme.
                 </li>
                 <li>
-                  Découverte d&apos;une petite adresse de quartier (restaurant,
-                  snack, bar tranquille) dans le centre ou près du port, sans
-                  obligation de “grand rendez-vous”.
+                  Marche le long des quais ou d&apos;un canal proche, en restant
+                  sur des portions fréquentées et bien éclairées.
                 </li>
                 <li>
-                  Marche dans le quartier du Panier ou autour du Mucem, en
-                  choisissant un point de rendez-vous public et simple à
-                  retrouver pour que chacun se sente à l&apos;aise.
-                </li>
-                <li>
-                  Si vous aimez marcher, sortie vers une calanque accessible ou
-                  un sentier côtier, en restant sur des zones fréquentées et en
-                  respectant les conditions d&apos;accès et de sécurité.
+                  Si vous êtes en périphérie, petite balade dans le
+                  centre-ville d&apos;une commune voisine, avec un café ou un
+                  lieu public comme point de repère.
                 </li>
               </ul>
               <p className="mt-2">
-                Ce ne sont que des exemples : chacun choisit ses lieux de
-                rencontre, son rythme et ses limites, en gardant le confort et
-                la sécurité comme priorité.
+                Ce ne sont que des idées : chacun choisit ses lieux de
+                rencontre, son rythme et ses limites, avec le confort et la
+                sécurité en priorité.
               </p>
             </div>
           </div>
@@ -611,26 +598,18 @@ export default function MarseilleRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
+                    href="/rencontres/Nantes"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Nantes
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     href="/rencontres/Paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/Lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/Nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
                   </Link>
                 </li>
                 <li>
@@ -641,12 +620,20 @@ export default function MarseilleRencontresPage() {
                     Rencontres à Bordeaux
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/rencontres/Strasbourg"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Strasbourg
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
         </section>
 
-        {/* Footer / mentions légales */}
+        {/* Footer légal complet */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">

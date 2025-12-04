@@ -12,9 +12,9 @@ const SEO = {
   title: "Rencontres bienveillantes en France | Keefon",
   description:
     "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/France",
+  canonical: "https://www.keefon.com/rencontres/France",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-france.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-france.jpg",
   keywords: [
     // Intent + features
     "rencontre",
@@ -138,9 +138,9 @@ const SEO = {
     "rencontre Rouen",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "France", url: "https://keefon.com/rencontres/France" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "France", url: "https://www.keefon.com/rencontres/France" },
   ],
 };
 
@@ -366,10 +366,10 @@ export default function FranceRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -381,7 +381,7 @@ export default function FranceRencontresPage() {
         isPartOf: {
           "@type": "WebSite",
           name: SEO.siteName,
-          url: "https://keefon.com",
+          url: "https://www.keefon.com",
         },
       },
       {
@@ -501,8 +501,8 @@ export default function FranceRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Commencer gratuitement sur Keefon"
-                  title="Commencer gratuitement sur Keefon"
+                  aria-label="Découvrir Keefon gratuitement"
+                  title="Découvrir Keefon gratuitement"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
@@ -533,49 +533,52 @@ export default function FranceRencontresPage() {
 
         {/* Comment ça marche */}
         <section className="py-10">
-  <div className="container mx-auto max-w-5xl px-4">
-    <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-      Comment ça marche&nbsp;?
-    </h2>
+          <div className="container mx-auto max-w-5xl px-4">
+            <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
+              Comment ça marche&nbsp;?
+            </h2>
 
-    <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-      L’idée est simple : tu crées ton profil, tu expliques ce que tu cherches,
-      puis tu échanges avec des personnes qui ont la même démarche que toi.
-    </p>
+            <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
+              L’idée est simple : tu crées ton profil, tu expliques ce que tu
+              cherches, puis tu échanges avec des personnes qui ont la même
+              démarche que toi.
+            </p>
 
-    <div className="mt-6 grid gap-6 md:grid-cols-3">
-      <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
-        <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-          1. Tu crées ton profil
-        </h3>
-        <p className="text-sm leading-relaxed text-slate-800">
-          Quelques questions simples, une ou deux photos, et c’est tout.
-          Tu peux compléter ton profil petit à petit, à ton rythme.
-        </p>
-      </article>
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  1. Tu crées ton profil
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-800">
+                  Quelques questions simples, une ou deux photos, et c’est tout.
+                  Tu peux compléter ton profil petit à petit, à ton rythme.
+                </p>
+              </article>
 
-      <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
-        <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-          2. Tu dis ce que tu cherches
-        </h3>
-        <p className="text-sm leading-relaxed text-slate-800">
-          Relation sérieuse, amitié, reprendre confiance, discuter près de chez toi…
-          Tu coches ce qui te correspond, sans avoir à tout raconter d’un coup.
-        </p>
-      </article>
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  2. Tu dis ce que tu cherches
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-800">
+                  Relation sérieuse, amitié, reprendre confiance, discuter près
+                  de chez toi… Tu coches ce qui te correspond, sans avoir à
+                  tout raconter d’un coup.
+                </p>
+              </article>
 
-      <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
-        <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-          3. Tu échanges en confiance
-        </h3>
-        <p className="text-sm leading-relaxed text-slate-800">
-          Tu envoies des messages, tu réponds, tu peux bloquer si quelqu’un dépasse les limites.
-          La modération est là pour garder un cadre bienveillant.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  3. Tu échanges en confiance
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-800">
+                  Tu envoies des messages, tu réponds, tu peux bloquer si
+                  quelqu’un dépasse les limites. La modération est là pour
+                  garder un cadre bienveillant.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
 
         {/* Pourquoi Keefon */}
         <section className="py-10">
@@ -624,8 +627,9 @@ export default function FranceRencontresPage() {
                   Partout en France
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Des membres de toute la France métropolitaine et d&apos;outre-mer.
-                  À toi de choisir : proche de chez toi ou plus loin.
+                  Des membres de toute la France métropolitaine et
+                  d&apos;outre-mer. À toi de choisir : proche de chez toi ou
+                  plus loin.
                 </p>
               </article>
 
@@ -658,7 +662,7 @@ export default function FranceRencontresPage() {
               <a
                 href="/signup"
                 aria-label="Créer mon profil gratuitement"
-                title="Créer mon profil gratuitement"
+                title="Je découvre Keefon"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
@@ -682,6 +686,14 @@ export default function FranceRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

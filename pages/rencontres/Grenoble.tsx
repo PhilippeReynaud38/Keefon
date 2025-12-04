@@ -31,9 +31,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Grenoble et dans la métropole | Keefon",
   description:
     "Keefon Grenoble est une page dédiée aux rencontres bienveillantes à Grenoble et dans sa métropole : échanges respectueux, profils protégés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/grenoble",
+  canonical: "https://www.keefon.com/rencontres/Grenoble",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-grenoble.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-grenoble.jpg",
   keywords: [
     // Intent + features (adapté à Grenoble / métropole)
     "rencontre Grenoble",
@@ -86,9 +86,9 @@ const SEO = {
     "rencontre après 50 ans Grenoble",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Grenoble", url: "https://keefon.com/rencontres/grenoble" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Grenoble", url: "https://www.keefon.com/rencontres/Grenoble" },
   ],
 };
 
@@ -299,10 +299,10 @@ export default function GrenobleRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -312,7 +312,7 @@ export default function GrenobleRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -401,17 +401,17 @@ export default function GrenobleRencontresPage() {
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                 Je découvre Keefon 
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
                 <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -623,7 +623,7 @@ export default function GrenobleRencontresPage() {
           </div>
         </section>
 
-        {/* Footer (mentions légales / CGU) */}
+        {/* Footer (mentions légales / CGU / confidentialité / cookies) */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-center text-[11px] text-slate-900">
@@ -633,6 +633,14 @@ export default function GrenobleRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

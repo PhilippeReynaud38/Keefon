@@ -33,9 +33,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Montpellier et autour | Keefon",
   description:
     "Keefon Montpellier est une page dédiée aux rencontres bienveillantes à Montpellier et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Montpellier",
+  canonical: "https://www.keefon.com/rencontres/Montpellier",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-montpellier.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-montpellier.jpg",
   keywords: [
     // Intent + features
     "rencontre Montpellier",
@@ -88,9 +88,12 @@ const SEO = {
     "rencontre après 50 ans Hérault",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Montpellier", url: "https://keefon.com/rencontres/Montpellier" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    {
+      name: "Montpellier",
+      url: "https://www.keefon.com/rencontres/Montpellier",
+    },
   ],
 };
 
@@ -124,7 +127,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -305,10 +308,10 @@ export default function MontpellierRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -318,7 +321,7 @@ export default function MontpellierRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -407,22 +410,22 @@ export default function MontpellierRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Créer mon profil gratuitement"
-                  title="Créer mon profil gratuitement"
+                  aria-label="Je crée mon profil, c'est gratuit"
+                  title="Je crée mon profil, c'est gratuit"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                  Je crée mon profil, c&apos;est gratuit
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
-                <p className="mt-2 text-xs text-slate-800 text-center">
-  Déjà membre ?{" "}
-  <a href="/login" className="font-semibold underline">
-    Se connecter
-  </a>
-</p>
+                <p className="mt-2 text-xs text-center text-slate-800">
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -541,12 +544,12 @@ export default function MontpellierRencontresPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Créer mon profil gratuitement"
-                title="Créer mon profil gratuitement"
+                aria-label="Je crée mon profil, c'est gratuit"
+                title="Je crée mon profil, c'est gratuit"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Créer mon profil gratuitement
+                Je crée mon profil, c&apos;est gratuit
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux commencer gratuitement, compléter ton profil à ton
@@ -652,7 +655,7 @@ export default function MontpellierRencontresPage() {
           </div>
         </section>
 
-        {/* Mention légale / CGU */}
+        {/* Footer / mentions légales */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
@@ -662,6 +665,14 @@ export default function MontpellierRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>
