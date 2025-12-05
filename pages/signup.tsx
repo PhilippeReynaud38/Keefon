@@ -6,7 +6,7 @@
 //           - Bloque les e-mails jetables UNIQUEMENT quand le site
 //             tourne sur keefon.com (prod réelle).
 // Règles  : simple, robuste, commenté, UTF-8, pas d’usine à gaz.
-// Dernière MàJ : 2025-11-29 (UTC+1)
+// Dernière MàJ : 2025-12-05 (UTC+1)
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -68,6 +68,11 @@ export default function SignupPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
+  // Nouveaux états : affichage / masquage des mots de passe
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] =
+    useState<boolean>(false);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
@@ -121,8 +126,11 @@ export default function SignupPage() {
         return;
       }
 
-      // Redirection classique vers le début du parcours profil.
-      await router.push('/presignup');
+      // ✅ Après inscription, on envoie vers la page de login
+      //    avec un bandeau vert "Un e-mail de confirmation vient d’être envoyé…"
+      await router.push(
+        `/login?checkMail=1&email=${encodeURIComponent(trimmedEmail)}`,
+      );
     } catch (err: any) {
       setFormError(
         "Une erreur inconnue s’est produite pendant l’inscription.",
@@ -172,15 +180,25 @@ export default function SignupPage() {
         <label className="block text-sm font-medium mb-1" htmlFor="password">
           Mot de passe
         </label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="new-password"
-          className="mb-3 w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-paleGreen"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="mb-3 relative">
+          <input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            className="w-full rounded border border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-paleGreen"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 text-sm"
+            aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+          >
+            {showPassword ? '🙈' : '👁'}
+          </button>
+        </div>
 
         <label
           className="block text-sm font-medium mb-1"
@@ -188,15 +206,29 @@ export default function SignupPage() {
         >
           Confirme le mot de passe
         </label>
-        <input
-          id="passwordConfirm"
-          type="password"
-          autoComplete="new-password"
-          className="mb-3 w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-paleGreen"
-          value={passwordConfirm}
-          onChange={(e) => setPasswordConfirm(e.target.value)}
-          required
-        />
+        <div className="mb-3 relative">
+          <input
+            id="passwordConfirm"
+            type={showPasswordConfirm ? 'text' : 'password'}
+            autoComplete="new-password"
+            className="w-full rounded border border-gray-300 px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-paleGreen"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPasswordConfirm((v) => !v)}
+            className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 text-sm"
+            aria-label={
+              showPasswordConfirm
+                ? 'Masquer la confirmation de mot de passe'
+                : 'Afficher la confirmation de mot de passe'
+            }
+          >
+            {showPasswordConfirm ? '🙈' : '👁'}
+          </button>
+        </div>
 
         {/* Erreur spécifique mot de passe */}
         {passwordError && (
@@ -210,8 +242,8 @@ export default function SignupPage() {
           spécial.
         </p>
         <p className="text-xs text-gray-600 mb-4">
-          Les adresses e-mail jetables ne
-          sont pas acceptées sur la version publique de Keefon.
+          Les adresses e-mail jetables ne sont pas acceptées sur la version
+          publique de Keefon.
         </p>
 
         <button
