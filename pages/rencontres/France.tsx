@@ -157,26 +157,27 @@ function FreeTopBar() {
   return (
     <div
       role="status"
-      aria-label="Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 300 premiers inscrit "
+      aria-label="Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 300 premiers inscrit"
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
         boxShadow: "0 8px 28px rgba(0,0,0,.22)",
       }}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:py-4">
         <p className="m-0 flex-1 text-left font-extrabold leading-snug text-slate-900">
-          <span className="block text-[15px] sm:text-[18px]">
+          <span className="block text-[14px] sm:text-[18px]">
             Offre lancement Keefon :{" "}
             <span className="underline decoration-2 underline-offset-2">
               gratuité du site jusqu&apos;à fin 2026
             </span>{" "}
             pour les{" "}
-            <span className="font-black">300 premiers inscrit — et bien sûr, nous espérons que tu auras trouvé ta moitié bien avant, et que le bonheur t'accompagne.</span>
+            <span className="font-black">300 premiers inscrit</span>
           </span>
-          <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
+          <span className="mt-0.5 block text-[11px] sm:text-[14px] font-semibold opacity-90">
             Aucune carte bancaire demandée, chat et échanges illimités pendant
-            la période d&apos;ouverture.
+            la période d&apos;ouverture — et bien sûr, nous espérons que tu
+            auras trouvé ta moitié bien avant, et que le bonheur t&apos;accompagne.
           </span>
         </p>
 
@@ -196,7 +197,8 @@ function FreeTopBar() {
 
 function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
-  return <div className="h-[72px] sm:h-[84px] w-full" />;
+  // Spacer légèrement plus haut pour que le HERO ne passe pas sous le bandeau sur mobile
+  return <div className="h-[88px] sm:h-[84px] w-full" />;
 }
 
 /* ===========================  Carte rappel (même fond que le bandeau)  =========================== */

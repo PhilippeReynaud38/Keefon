@@ -1,16 +1,31 @@
-// pages/presignup.tsx — Keefon / Vivaya (UTF-8)
-// Page de finalisation d'inscription avec upload photo (clic + drag & drop).
-// - Récupère l'utilisateur une seule fois au montage, stocke son userId.
-// - Upload de la photo principale dans le bucket "avatars" au chemin avatars/<userId>_<timestamp>.jpg
-// - Nettoie les anciennes photos temporaires de ce user dans le même bucket.
-// - Ne touche pas aux photos de galerie.
+﻿// -*- coding: utf-8 -*-
+// Fichier : /pages/presignup.tsx — Vivaya / Keefon
+// Objet   : Page de finalisation d'inscription (présinscription) avec upload
+//           de la photo principale. Étape considérée comme "inscription terminée".
+//           - Récupère l'utilisateur connecté et son user_id.
+//           - Upload la photo principale dans le bucket "avatars" sous avatars/<userId>_<timestamp>.jpg
+//           - Supprime les anciennes photos temporaires de ce user dans ce bucket
+//             (mais ne touche pas aux photos de galerie).
+//           - Enregistre presignup_data + photo principale.
+//           - Appelle la fonction SQL public.claim_opening_offer() pour inscrire
+//             l'utilisateur comme candidat à l'offre d'ouverture (300 premiers
+//             jusqu'à fin 2026), sans jamais bloquer l'inscription si ça échoue.
+//
+// Règles  : simple, robuste, commenté, UTF-8, pas d’usine à gaz.
 
-import React, { useEffect, useState, type ChangeEvent, type DragEvent } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient";
+import React, {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+} from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { supabase } from '../lib/supabaseClient';
 
-// --- Utils -------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Utils
+// ---------------------------------------------------------------------------
 
 // Calcul d'âge simple à partir d'une date ISO (YYYY-MM-DD)
 function getAgeFromISO(dateStr: string): number {
@@ -24,26 +39,26 @@ function getAgeFromISO(dateStr: string): number {
   return age;
 }
 
-// Compression JPEG (~1600px) pour accélérer l'upload
+// Compression JPEG pour limiter la taille (~1600px max)
 async function compressImage(
   file: File,
   maxSide = 1600,
-  quality = 0.82
+  quality = 0.82,
 ): Promise<Blob> {
   const img = new Image();
   const url = URL.createObjectURL(file);
 
   await new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
-    img.onerror = (e) => reject(e);
+    img.onerror = e => reject(e);
     img.src = url;
   });
 
   const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvas.width = Math.round(img.width * ratio);
   canvas.height = Math.round(img.height * ratio);
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
   if (!ctx) {
     URL.revokeObjectURL(url);
     return file;
@@ -51,11 +66,11 @@ async function compressImage(
 
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-  const blob: Blob = await new Promise((resolve) => {
+  const blob: Blob = await new Promise(resolve => {
     canvas.toBlob(
-      (b) => resolve(b as Blob),
-      "image/jpeg",
-      quality
+      b => resolve(b as Blob),
+      'image/jpeg',
+      quality,
     );
   });
 
@@ -68,8 +83,8 @@ async function uploadAvatar(file: File, userId: string): Promise<string> {
   const fileName = `${userId}_${Date.now()}.jpg`;
   const path = `avatars/${fileName}`;
 
-  const { error } = await supabase.storage.from("avatars").upload(path, file, {
-    cacheControl: "3600",
+  const { error } = await supabase.storage.from('avatars').upload(path, file, {
+    cacheControl: '3600',
     upsert: false,
   });
 
@@ -79,25 +94,25 @@ async function uploadAvatar(file: File, userId: string): Promise<string> {
   return path;
 }
 
-// Attendre que le fichier soit visible dans Storage (évite certains 404 juste après upload)
+// Attendre que le fichier soit visible dans Storage
 async function waitUntilFileExists(
   path: string,
   maxTries = 6,
-  delayMs = 700
+  delayMs = 700,
 ): Promise<boolean> {
-  const parts = path.split("/");
+  const parts = path.split('/');
   const dir = parts[0]; // "avatars"
   const name = parts[1];
 
   for (let i = 0; i < maxTries; i++) {
     const { data, error } = await supabase.storage
-      .from("avatars")
+      .from('avatars')
       .list(dir, { limit: 1, search: name });
 
     if (!error && data && data.length) {
       return true;
     }
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    await new Promise(resolve => setTimeout(resolve, delayMs));
   }
   return false;
 }
@@ -105,12 +120,12 @@ async function waitUntilFileExists(
 // Supprime les anciennes photos temporaires de ce user dans le bucket "avatars"
 async function deleteOldAvatars(userId: string, keepPath?: string | null) {
   const { data: files, error } = await supabase.storage
-    .from("avatars")
-    .list("avatars", { limit: 1000 });
+    .from('avatars')
+    .list('avatars', { limit: 1000 });
 
   if (error || !files) return;
 
-  const keepName = keepPath ? keepPath.split("/")[1] : null;
+  const keepName = keepPath ? keepPath.split('/')[1] : null;
   const toDelete: string[] = [];
 
   for (const f of files) {
@@ -120,11 +135,13 @@ async function deleteOldAvatars(userId: string, keepPath?: string | null) {
   }
 
   if (toDelete.length) {
-    await supabase.storage.from("avatars").remove(toDelete);
+    await supabase.storage.from('avatars').remove(toDelete);
   }
 }
 
-// --- Composant principal -----------------------------------------------------
+// ---------------------------------------------------------------------------
+// Composant principal
+// ---------------------------------------------------------------------------
 
 const PresignupPage: React.FC = () => {
   const router = useRouter();
@@ -134,10 +151,10 @@ const PresignupPage: React.FC = () => {
   const [checkingUser, setCheckingUser] = useState(true);
 
   // Formulaire
-  const [username, setUsername] = useState("");
-  const [genre, setGenre] = useState("");
-  const [genreRecherche, setGenreRecherche] = useState("");
-  const [birthday, setBirthday] = useState("");
+  const [username, setUsername] = useState('');
+  const [genre, setGenre] = useState('');
+  const [genreRecherche, setGenreRecherche] = useState('');
+  const [birthday, setBirthday] = useState('');
   const [acceptCgu, setAcceptCgu] = useState(false);
   const [acceptData, setAcceptData] = useState(false);
 
@@ -161,28 +178,28 @@ const PresignupPage: React.FC = () => {
         } = await supabase.auth.getUser();
 
         if (error || !user) {
-          router.replace("/login");
+          router.replace('/login');
           return;
         }
 
         setUserId(user.id);
 
-        // Déjà complété ? → dashboard
+        // Déjà complété ? → dashboard direct
         const { data: presignup } = await supabase
-          .from("presignup_data")
-          .select("user_id")
-          .eq("user_id", user.id)
+          .from('presignup_data')
+          .select('user_id')
+          .eq('user_id', user.id)
           .maybeSingle();
 
         const { data: photo } = await supabase
-          .from("photos")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("is_main", true)
+          .from('photos')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('is_main', true)
           .maybeSingle();
 
         if (presignup && photo) {
-          router.replace("/dashboard");
+          router.replace('/dashboard');
           return;
         }
       } finally {
@@ -190,13 +207,13 @@ const PresignupPage: React.FC = () => {
       }
     };
 
-    checkUserAndProgress();
+    void checkUserAndProgress();
   }, [router]);
 
   // Traitement commun d'un fichier (clic ou drag & drop)
   const processPickedFile = async (file: File) => {
     if (!userId) {
-      setError("Ta session a expiré. Merci de te reconnecter.");
+      setError('Ta session a expiré. Merci de te reconnecter.');
       return;
     }
 
@@ -207,7 +224,7 @@ const PresignupPage: React.FC = () => {
       // Compression JPEG
       const compressedBlob = await compressImage(file);
       const jpegFile = new File([compressedBlob], file.name, {
-        type: "image/jpeg",
+        type: 'image/jpeg',
       });
 
       // Upload
@@ -220,7 +237,7 @@ const PresignupPage: React.FC = () => {
       const ok = await waitUntilFileExists(path);
       if (!ok) {
         throw new Error(
-          "La photo a été envoyée mais n'est pas encore disponible. Réessaie dans quelques secondes."
+          "La photo a été envoyée mais n'est pas encore disponible. Réessaie dans quelques secondes.",
         );
       }
 
@@ -234,7 +251,7 @@ const PresignupPage: React.FC = () => {
     } catch (e: any) {
       console.error(e);
       setError(
-        e?.message || "Erreur lors du téléchargement de la photo. Réessaie."
+        e?.message || "Erreur lors du téléchargement de la photo. Réessaie.",
       );
     } finally {
       setUploading(false);
@@ -249,7 +266,7 @@ const PresignupPage: React.FC = () => {
     await processPickedFile(file);
   };
 
-  // Drag & drop sur la zone de label (optionnel, même si tu ne le mentionnes plus dans le texte)
+  // Drag & drop sur la zone de label
   const handleDrop = async (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     if (uploading) return;
@@ -262,13 +279,13 @@ const PresignupPage: React.FC = () => {
     e.preventDefault();
   };
 
-  // Submit final
+  // Submit final (fin réelle d’inscription)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!userId) {
-      setError("Ta session a expiré. Merci de te reconnecter.");
+      setError('Ta session a expiré. Merci de te reconnecter.');
       return;
     }
 
@@ -280,7 +297,7 @@ const PresignupPage: React.FC = () => {
       !avatarFile ||
       !avatarPath
     ) {
-      setError("Tous les champs sont obligatoires.");
+      setError('Tous les champs sont obligatoires.');
       return;
     }
 
@@ -302,7 +319,7 @@ const PresignupPage: React.FC = () => {
       const exists = await waitUntilFileExists(avatarPath);
       if (!exists) {
         throw new Error(
-          "Ta photo principale n'est pas encore disponible. Réessaie dans quelques secondes."
+          "Ta photo principale n'est pas encore disponible. Réessaie dans quelques secondes.",
         );
       }
 
@@ -311,7 +328,7 @@ const PresignupPage: React.FC = () => {
 
       // Enregistrement presignup_data
       const { error: presignupError } = await supabase
-        .from("presignup_data")
+        .from('presignup_data')
         .insert([
           {
             user_id: userId,
@@ -327,29 +344,38 @@ const PresignupPage: React.FC = () => {
       if (presignupError) throw presignupError;
 
       // Màj profil (pseudo)
-      await supabase
-        .from("profiles")
-        .update({ username })
-        .eq("id", userId);
+      await supabase.from('profiles').update({ username }).eq('id', userId);
 
       // Enregistrement de la photo principale
-      const { error: photoError } = await supabase.from("photos").insert([
+      const { error: photoError } = await supabase.from('photos').insert([
         {
           user_id: userId,
           url: avatarPath, // on stocke le PATH interne (avatars/...)
           is_main: true,
-          status: "pending",
+          status: 'pending',
           created_at: new Date().toISOString(),
         },
       ]);
 
       if (photoError) throw photoError;
 
-      router.push("/dashboard");
+      // Appel de l'offre d'ouverture (300 premiers / fin 2026)
+      // NE BLOQUE PAS l'inscription si cette étape échoue.
+      const { error: openingOfferError } = await supabase.rpc(
+        'claim_opening_offer',
+      );
+      if (openingOfferError) {
+        console.error(
+          '[presignup] claim_opening_offer error',
+          openingOfferError,
+        );
+      }
+
+      await router.push('/dashboard');
     } catch (e: any) {
       console.error(e);
       setError(
-        e?.message || "Erreur pendant l'enregistrement de ton inscription."
+        e?.message || "Erreur pendant l'enregistrement de ton inscription.",
       );
     } finally {
       setSubmitting(false);
@@ -384,7 +410,7 @@ const PresignupPage: React.FC = () => {
               type="text"
               placeholder="Pseudo"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={e => setUsername(e.target.value)}
               required
             />
 
@@ -393,7 +419,7 @@ const PresignupPage: React.FC = () => {
             <select
               className="w-full border px-3 py-2 rounded"
               value={genre}
-              onChange={(e) => setGenre(e.target.value)}
+              onChange={e => setGenre(e.target.value)}
               required
             >
               <option value="">Genre</option>
@@ -406,7 +432,7 @@ const PresignupPage: React.FC = () => {
             <select
               className="w-full border px-3 py-2 rounded"
               value={genreRecherche}
-              onChange={(e) => setGenreRecherche(e.target.value)}
+              onChange={e => setGenreRecherche(e.target.value)}
               required
             >
               <option value="">Je recherche</option>
@@ -418,7 +444,7 @@ const PresignupPage: React.FC = () => {
               className="w-full border px-3 py-2 rounded"
               type="date"
               value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
+              onChange={e => setBirthday(e.target.value)}
               required
             />
 
@@ -437,10 +463,10 @@ const PresignupPage: React.FC = () => {
               className="block text-center border border-dashed border-gray-400 p-4 rounded cursor-pointer bg-white hover:bg-orange-50 text-gray-600"
             >
               {uploading
-                ? "Envoi en cours…"
+                ? 'Envoi en cours…'
                 : avatarFile
                 ? `Photo sélectionnée : ${avatarFile.name}`
-                : "Choisis une photo depuis ton téléphone ou ton ordinateur"}
+                : 'Choisis une photo depuis ton téléphone ou ton ordinateur'}
             </label>
 
             <p className="text-xs text-gray-600 mt-1">
@@ -459,51 +485,58 @@ const PresignupPage: React.FC = () => {
               />
             )}
 
-<div className="space-y-2 text-sm mt-2">
-  <label className="flex items-start gap-2">
-    <input
-      type="checkbox"
-      checked={acceptCgu}
-      onChange={(e) => setAcceptCgu(e.target.checked)}
-    />
-    <span>
-      J&apos;accepte les{" "}
-      <Link href="/cgu" className="underline" target="_blank">
-        Conditions Générales d&apos;Utilisation
-      </Link>{" "}
-      et j&apos;ai lu la{" "}
-      <Link href="/confidentialite" className="underline" target="_blank">
-        Politique de confidentialité
-      </Link>
-      .
-    </span>
-  </label>
+            <div className="space-y-2 text-sm mt-2">
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={acceptCgu}
+                  onChange={e => setAcceptCgu(e.target.checked)}
+                />
+                <span>
+                  J&apos;accepte les{' '}
+                  <Link href="/cgu" className="underline" target="_blank">
+                    Conditions Générales d&apos;Utilisation
+                  </Link>{' '}
+                  et j&apos;ai lu la{' '}
+                  <Link
+                    href="/confidentialite"
+                    className="underline"
+                    target="_blank"
+                  >
+                    Politique de confidentialité
+                  </Link>
+                  .
+                </span>
+              </label>
 
-  <label className="flex items-start gap-2">
-    <input
-      type="checkbox"
-      checked={acceptData}
-      onChange={(e) => setAcceptData(e.target.checked)}
-    />
-    <span>
-      J&apos;accepte que mes données sensibles soient utilisées dans le
-      cadre du site, conformément à la{" "}
-      <Link href="/confidentialite" className="underline" target="_blank">
-        Politique de confidentialité
-      </Link>
-      .
-    </span>
-  </label>
-</div>
-
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={acceptData}
+                  onChange={e => setAcceptData(e.target.checked)}
+                />
+                <span>
+                  J&apos;accepte que mes données sensibles soient utilisées dans
+                  le cadre du site, conformément à la{' '}
+                  <Link
+                    href="/confidentialite"
+                    className="underline"
+                    target="_blank"
+                  >
+                    Politique de confidentialité
+                  </Link>
+                  .
+                </span>
+              </label>
+            </div>
 
             <button
               type="submit"
               disabled={uploading || submitting}
               className="w-full py-2 rounded text-white hover:opacity-90 disabled:opacity-60"
-              style={{ background: "#59FF72" }} // paleGreen
+              style={{ background: '#59FF72' }} // paleGreen
             >
-              {submitting ? "Enregistrement…" : "Terminer"}
+              {submitting ? 'Enregistrement…' : 'Terminer'}
             </button>
           </form>
         </div>

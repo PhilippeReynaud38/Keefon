@@ -569,6 +569,13 @@ export default function Dashboard() {
 
   const [planLabel, setPlanLabel] = useState<string>("Gratuit");
 
+  // ✅ Statut de l'offre d'ouverture (300 premiers)
+  const [openingOffer, setOpeningOffer] = useState<{
+    isEligible: boolean;
+    freeUntil: string | null;
+  } | null>(null);
+  const [showOpeningBanner, setShowOpeningBanner] = useState(true);
+
   useEffect(() => {
     fetchMyPlan(supabase)
       .then((p) => {
@@ -584,11 +591,59 @@ export default function Dashboard() {
       });
   }, []);
 
+  // Appel de get_opening_offer_status() + lecture de "bannière déjà fermée"
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await supabase.rpc("get_opening_offer_status");
+        if (error) {
+          console.error("[dashboard] get_opening_offer_status:", error);
+          setOpeningOffer(null);
+          setShowOpeningBanner(false);
+          return;
+        }
+
+        const row = Array.isArray(data) ? data[0] : data;
+        if (!row || row.is_eligible !== true) {
+          setOpeningOffer(null);
+          setShowOpeningBanner(false);
+          return;
+        }
+
+        const freeUntil = row.free_until ?? null;
+
+        setOpeningOffer({
+          isEligible: true,
+          freeUntil,
+        });
+
+        if (typeof window !== "undefined") {
+          const dismissed =
+            window.localStorage.getItem("keefon_opening_offer_dismissed") === "1";
+          setShowOpeningBanner(!dismissed);
+        } else {
+          setShowOpeningBanner(true);
+        }
+      } catch (e) {
+        console.error("[dashboard] opening offer:", e);
+        setOpeningOffer(null);
+        setShowOpeningBanner(false);
+      }
+    })();
+  }, []);
+
   const [openMenu, setOpenMenu] = useState<"space" | "interactions" | null>(
     null
   );
   const toggle = (m: "space" | "interactions") =>
     setOpenMenu((prev) => (prev === m ? null : m));
+
+  const handleCloseOpeningBanner = () => {
+    setShowOpeningBanner(false);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("keefon_opening_offer_dismissed", "1");
+    }
+  };
 
   return (
     <div
@@ -610,6 +665,36 @@ export default function Dashboard() {
             <span className="block">et veut dire « on kiffe   » ❤️</span>
           </p>
         </div>
+
+        {/* Bandeau automatique pour l'offre d'ouverture (300 premiers) */}
+        {openingOffer?.isEligible && showOpeningBanner && (
+          <div
+            className="mt-3 mx-auto w-full max-w-md rounded-2xl px-3 py-2 text-xs sm:text-sm text-slate-900 shadow"
+            style={{ backgroundColor: "#C1F9D0" }}
+          >
+            <button
+              type="button"
+              onClick={handleCloseOpeningBanner}
+              className="mb-1 ml-auto block text-[11px] text-slate-700 hover:underline"
+            >
+              Ne plus afficher
+            </button>
+            <p className="m-0 font-bold mb-1">Félicitations 🎉</p>
+            <p className="m-0">
+              Tu fais partie des 300 premiers inscrits.
+            </p>
+            <p className="m-0">
+              Ton accès à Keefon est gratuit jusqu’au{" "}
+              <strong>
+                {openingOffer.freeUntil
+                  ? new Date(openingOffer.freeUntil).toLocaleDateString("fr-FR")
+                  : "31/12/2026"}
+              </strong>{" "}
+              — et bien sûr, nous espérons que tu auras trouvé ta moitié bien
+              avant, et que le bonheur t&apos;accompagne.
+            </p>
+          </div>
+        )}
 
         {/* Bouton Aide seul, centré sous le badge */}
         <div className="mt-2 w-full max-w-sm mx-auto flex justify-center">

@@ -31,6 +31,8 @@
 //   - Affichage explicite : “Accès partiel Essentiel / Keefon+” dans le badge.
 // CHANGELOG (2025-11-29):
 //   - Ajout d’un bandeau d’avertissement “mode découverte” (paiements désactivés).
+// CHANGELOG (2025-12-08):
+//   - Rappel discret de l’offre d’ouverture (300 premiers) si l’utilisateur est éligible.
 // ============================================================================
 
 import React, { useEffect, useState } from 'react'
@@ -41,6 +43,7 @@ import { getPaymentProvider } from '@/lib/payments'
 
 type UiTier = 'free' | 'essential' | 'elite'
 type Billing = 'monthly' | 'quarterly'
+type OpeningOfferState = { isEligible: boolean; freeUntil: string | null }
 
 const PRICES = {
   essential: { monthly: 9.9, quarterly: 29.7 },
@@ -89,6 +92,7 @@ export default function AbonnementPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [openingOffer, setOpeningOffer] = useState<OpeningOfferState | null>(null)
 
   type PlanState = { effective: UiTier; base: UiTier }
 
@@ -153,6 +157,42 @@ export default function AbonnementPage() {
         }
       } finally {
         if (on) setLoadingPlan(false)
+      }
+    })()
+    return () => {
+      on = false
+    }
+  }, [])
+
+  // Rappel de l'offre d'ouverture (300 premiers) si l'utilisateur est éligible
+  useEffect(() => {
+    let on = true
+    ;(async () => {
+      try {
+        const { data, error } = await supabase.rpc('get_opening_offer_status')
+        if (error) {
+          console.error('[abonnement] get_opening_offer_status:', error)
+          if (on) setOpeningOffer(null)
+          return
+        }
+
+        const row = Array.isArray(data) ? data[0] : data
+        if (!row || row.is_eligible !== true) {
+          if (on) setOpeningOffer(null)
+          return
+        }
+
+        const freeUntil: string | null = row.free_until ?? null
+
+        if (on) {
+          setOpeningOffer({
+            isEligible: true,
+            freeUntil,
+          })
+        }
+      } catch (e) {
+        console.error('[abonnement] opening offer:', e)
+        if (on) setOpeningOffer(null)
       }
     })()
     return () => {
@@ -260,7 +300,7 @@ export default function AbonnementPage() {
         </div>
 
         <div
-          className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-800"
+          className="mb-2 flex flex-wrap items-center gap-2 text-sm text-gray-800"
           aria-busy={loadingPlan}
         >
           <span>Ton plan actuel :</span>
@@ -273,6 +313,24 @@ export default function AbonnementPage() {
             </span>
           )}
         </div>
+
+        {/* Rappel discret de l'offre d'ouverture, si applicable */}
+        {openingOffer?.isEligible && (
+          <div className="mb-4 text-xs text-gray-800">
+            <span className="inline-block rounded-full bg-paleGreen/80 px-2 py-1 mr-2">
+              Offre d&apos;ouverture
+            </span>
+            <span>
+              Ton accès est offert jusqu&apos;au{' '}
+              <strong>
+                {openingOffer.freeUntil
+                  ? new Date(openingOffer.freeUntil).toLocaleDateString('fr-FR')
+                  : '31/12/2026'}
+              </strong>{' '}
+              (parmi les 300 premiers inscrits).
+            </span>
+          </div>
+        )}
 
         {(actionMessage || actionError) && (
           <div className="mb-4 text-xs">
@@ -460,16 +518,15 @@ export default function AbonnementPage() {
             </div>
           </details>
 
-<footer className="flex flex-wrap gap-4 text-xs text-gray-600">
-  <Link href="/cgu" className="underline">
-    Conditions Générales d&apos;Utilisation
-  </Link>
-  <span aria-hidden>·</span>
-  <Link href="/mentions-legales" className="underline">
-    Mentions légales
-  </Link>
-</footer>
-
+          <footer className="flex flex-wrap gap-4 text-xs text-gray-600">
+            <Link href="/cgu" className="underline">
+              Conditions Générales d&apos;Utilisation
+            </Link>
+            <span aria-hidden>·</span>
+            <Link href="/mentions-legales" className="underline">
+              Mentions légales
+            </Link>
+          </footer>
         </div>
       </div>
     </main>
