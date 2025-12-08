@@ -157,7 +157,7 @@ function FreeTopBar() {
   return (
     <div
       role="status"
-      aria-label="Période gratuite en cours : accès gratuit et chat ouvert à tous"
+      aria-label="Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 300 premiers inscrit "
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
@@ -167,20 +167,22 @@ function FreeTopBar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
         <p className="m-0 flex-1 text-left font-extrabold leading-snug text-slate-900">
           <span className="block text-[15px] sm:text-[18px]">
-            Période gratuite :{" "}
+            Offre lancement Keefon :{" "}
             <span className="underline decoration-2 underline-offset-2">
-              accès 100% gratuit
+              gratuité du site jusqu&apos;à fin 2026
             </span>{" "}
-            — chat ouvert à tous
+            pour les{" "}
+            <span className="font-black">300 premiers inscrit — et bien sûr, nous espérons que tu auras trouvé ta moitié bien avant, et que le bonheur t'accompagne.</span>
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profite-en dès maintenant.
+            Aucune carte bancaire demandée, chat et échanges illimités pendant
+            la période d&apos;ouverture.
           </span>
         </p>
 
         <a
           href="/signup"
-          aria-label="Créer un compte gratuitement pendant la période gratuite"
+          aria-label="Créer un compte gratuitement et faire partie des 300 premiers inscrit"
           title="Créer un compte gratuitement"
           className="shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
           style={{ background: COLORS.paleGreen }}
@@ -214,17 +216,25 @@ function FreeReminderCard() {
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div className="text-slate-900">
               <p className="m-0 text-[15px] font-extrabold sm:text-[18px]">
-                Accès 100% gratuit — chat ouvert à tous.
+                Offre limitée :{" "}
+                <span className="underline decoration-2 underline-offset-2">
+                  gratuité du site jusqu&apos;à fin 2026
+                </span>{" "}
+                pour les{" "}
+                <span className="font-black">300 premiers inscrit</span>.
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
                 Tu peux créer ton profil, échanger librement et tester Keefon
-                sans carte bancaire. Offre temporaire.
+                sans carte bancaire. Si tu fais partie des 300 premiers, tu
+                gardes la gratuité jusqu&apos;à fin 2026 — et bien sûr, nous
+                espérons que tu auras trouvé ta moitié bien avant, et que le
+                bonheur t&apos;accompagne.
               </p>
             </div>
             <a
               href="/signup"
-              aria-label="Profiter de l’accès 100% gratuit"
-              title="Profiter de l’accès 100% gratuit"
+              aria-label="Profiter de la gratuité jusqu'à fin 2026 si tu fais partie des 300 premiers inscrit"
+              title="Profiter de la gratuité jusqu'à fin 2026"
               className="rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
               style={{ background: COLORS.paleGreen }}
             >
@@ -471,7 +481,9 @@ export default function FranceRencontresPage() {
                   style={{ backgroundColor: "#93ef09ff" }}
                 >
                   <span className="block">Se prononce « qui phone » 📞</span>
-                  <span className="block">et veut dire « on kiffe » ❤️</span>
+                  <span className="block">
+                    et veut dire « on kiffe » ❤️
+                  </span>
                 </p>
               </div>
 
@@ -662,7 +674,7 @@ export default function FranceRencontresPage() {
               <a
                 href="/signup"
                 aria-label="Créer mon profil gratuitement"
-                title="Je découvre Keefon"
+                title="Créer mon profil gratuitement"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
