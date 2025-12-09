@@ -371,11 +371,14 @@ export default function AbonnementPage() {
             tagline="— pour tester l’expérience"
             price="0 €"
             features={[
-              'Profil public de base : 5 photos, âge, ville, traits ...',
-              "Tu peux matcher et échanger si l’intérêt est mutuel — c’est un Keefon.",
-              'Un cœur par mois t’est offert pour signaler ton intérêt ; il t’ouvrira peut-être un Keefon.',
-              "Un abonné Keefon+ peut t’ouvrir la porte : s’il t’invite, tu peux lui parler.",
-              'Réponds à un écho et la conversation est ouverte : peut-être que ton keef est là.',
+              "Profil public de base : 5 photos, âge, ville, traits ...",
+'Un cœur par mois t’est offert pour signaler ton intérêt ; il t’ouvrira peut-être un Keefon.',
+"Tu ne vois pas qui a envoyé les messages que tu as reçus, sauf si : ",
+
+              "- Tu peux matcher et échanger si l’intérêt est mutuel — c’est un Keefon.",
+
+              "- Un abonné Keefon+ peut t’ouvrir la porte : s’il t’invite, tu peux lui parler.",
+              '- Réponds à un écho et la conversation est ouverte : peut-être que ton keef est là.',
             ]}
             ctaLabel={isActive('free') ? 'Plan actuel' : 'Gratuit'}
             disabled
@@ -393,7 +396,7 @@ export default function AbonnementPage() {
             features={[
               'Profil enrichi et tu peux poser Jusqu’à 12 photos pour te présenter',
               'Tous tes messages reçus sont visibles',
-              'Écris à qui tu veux parmi les abonnés',
+              'Écris à qui tu veux.',
               'Conversations illimitées entre abonnés',
               'Filtres de recherche avancés (centres d’intérêt, critères affinés)',
               'Questions d’inspiration pour lancer la discussion naturellement',
