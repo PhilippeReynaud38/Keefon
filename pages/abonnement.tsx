@@ -33,6 +33,9 @@
 //   - Ajout d’un bandeau d’avertissement “mode découverte” (paiements désactivés).
 // CHANGELOG (2025-12-08):
 //   - Rappel discret de l’offre d’ouverture (300 premiers) si l’utilisateur est éligible.
+// CHANGELOG (2025-12-10):
+//   - Ne plus marquer “Déjà actif” sur Essentiel / Keefon+ en cas d’accès partiel
+//     (base = free, effectif ≠ free). Le bouton reste “Choisir …” dans ce cas.
 // ============================================================================
 
 import React, { useEffect, useState } from 'react'
@@ -247,9 +250,13 @@ export default function AbonnementPage() {
   }
 
   const isActive = (t: UiTier) => effective === t
-  const isCurrentForUi = (t: UiTier) => isActive(t)
 
+  // accès partiel = base free + effectif non free
   const hasPartialAccess = !loadingPlan && effective !== 'free' && baseTier === 'free'
+
+  // “plan actuel” pour l’UI : seulement si PAS accès partiel
+  const isCurrentForUi = (t: UiTier) => isActive(t) && !hasPartialAccess
+
   const planBadge = loadingPlan
     ? 'Chargement…'
     : hasPartialAccess
@@ -371,14 +378,12 @@ export default function AbonnementPage() {
             tagline="— pour tester l’expérience"
             price="0 €"
             features={[
-              "Profil public de base : 5 photos, âge, ville, traits ...",
-'Un cœur par mois t’est offert pour signaler ton intérêt ; il t’ouvrira peut-être un Keefon.',
-"Tu ne vois pas qui a envoyé les messages que tu as reçus, sauf si : ",
-
-              "- Tu peux matcher et échanger si l’intérêt est mutuel — c’est un Keefon.",
-
-              "- Un abonné Keefon+ peut t’ouvrir la porte : s’il t’invite, tu peux lui parler.",
-              '- Réponds à un écho et la conversation est ouverte : peut-être que ton keef est là.',
+              'Profil public de base : 5 photos, âge, ville, traits ...',
+              'Un cœur par mois t’est offert pour signaler ton intérêt ; il t’ouvrira peut-être un Keefon.',
+              'Tu ne vois pas qui a envoyé les messages que tu as reçus, sauf si : ',
+              '- Tu peux matcher et échanger si l’intérêt est mutuel —> c’est un Keefon.',
+              '- Un abonné Keefon+ peut t’ouvrir la porte : s’il t’invite, tu peux lui parler.',
+              "- Réponds à un écho et la conversation est ouverte : peut-être que ton keef est là.",
             ]}
             ctaLabel={isActive('free') ? 'Plan actuel' : 'Gratuit'}
             disabled
@@ -408,8 +413,8 @@ export default function AbonnementPage() {
                 ? 'Activation…'
                 : isCurrentForUi('essential')
                 ? 'Déjà actif'
-                : 'Passer à Essentiel'
-            }
+                : 'Choisir Essentiel'
+            } // <-- même en accès partiel, on reste sur “Choisir Essentiel”
             onClick={() => changePlan('essential')}
             disabled={pending !== null || isCurrentForUi('essential')}
             current={isCurrentForUi('essential')}
@@ -588,22 +593,21 @@ function PlanCard({
         {priceSub && <div className="text-xs text-gray-600">{priceSub}</div>}
       </div>
 
-<ul className="mb-4 ml-4 list-disc space-y-1 text-sm">
-  {features.map((f) => {
-    const trimmed = f.trim()
-    const isSub = trimmed.startsWith('- ') // sous-ligne type "- Tu peux…"
+      <ul className="mb-4 ml-4 list-disc space-y-1 text-sm">
+        {features.map((f) => {
+          const trimmed = f.trim()
+          const isSub = trimmed.startsWith('- ') // sous-ligne type "- Tu peux…"
 
-    return (
-      <li
-        key={f}
-        className={isSub ? 'list-none pl-4' : undefined} // enlève la puce et décale un peu
-      >
-        {f}
-      </li>
-    )
-  })}
-</ul>
-
+          return (
+            <li
+              key={f}
+              className={isSub ? 'list-none pl-4' : undefined} // enlève la puce et décale un peu
+            >
+              {f}
+            </li>
+          )
+        })}
+      </ul>
 
       <button
         type="button"

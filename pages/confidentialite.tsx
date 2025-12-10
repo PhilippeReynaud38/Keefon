@@ -50,10 +50,10 @@ export default function Confidentialite() {
               <h2 className="font-semibold">1. Qui sommes-nous ?</h2>
               <p>
                 <b>Keefon</b> est actuellement édité à titre individuel par{" "}
-                <b>[Nom complet de l&apos;éditeur]</b>,{" "}
-                <b>[éventuelle mention d&apos;activité / statut]</b>,{" "}
-                <b>[adresse postale complète]</b> — contact :{" "}
-                <b>[email de contact / DPO]</b>.
+                <b>Philippe Reynaud</b>,{"  "}
+                <b></b>,{" "}
+                <b>Rue de la Marjoera 38760 Varces </b> — contact :{" "}
+                <b>contact@Keefon.com</b>.
               </p>
               <p className="mt-2 text-xs text-gray-600">
                 Keefon est en phase de test/découverte. Une structure

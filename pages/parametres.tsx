@@ -62,7 +62,7 @@ export default function Parametres() {
   // --- Désinscription : <details> accessible même sans JS --- //
   const deleteSectionRef = useRef<HTMLDivElement>(null);
   const deleteDetailsRef = useRef<HTMLDetailsElement>(null);
-  const openDelete = (e?: React.MouseEvent<HTMLAnchorElement>) => {
+  const openDelete = (e?: any) => {
     if (e) e.preventDefault();
     if (deleteDetailsRef.current) deleteDetailsRef.current.open = true;
     window.location.hash = "desinscription";
@@ -98,10 +98,7 @@ export default function Parametres() {
       const provider = (user as any)?.app_metadata?.provider;
       setCanChangePassword(!provider || provider === "email");
 
-      // 2) Détection abonné (basée UNIQUEMENT sur le plan de base)
-      // Règle actuelle : seuls les vrais abonnés (plan de base ≠ free) ont accès
-      // aux réglages réservés. Les accès offerts partiels (overrides e-mail,
-      // périodes d’essai, etc.) NE doivent PAS débloquer ce bloc.
+      // 2) Détection abonné
       try {
         const { data: prof, error: profErr } = await supabase
           .from("profiles")
@@ -195,7 +192,7 @@ export default function Parametres() {
         is_public: next.is_public,
         newsletter: next.newsletter,
         visible_to_certified_only: !!next.visible_to_certified_only,
-        visibility_scope: scope, // peut ne pas exister en base
+        visibility_scope: scope,
       };
 
       const payloadFallback = {
@@ -299,7 +296,6 @@ export default function Parametres() {
     if (!sure) return;
 
     try {
-      // On récupère la session courante pour obtenir le jeton JWT
       const {
         data: { session },
         error: sessionError,
@@ -476,7 +472,7 @@ export default function Parametres() {
             )}
           </section>
 
-          {/* 2 — Icône Keefon sur l'écran d'accueil (permanent) */}
+          {/* 2 — Icône Keefon sur l'écran d'accueil */}
           <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">
               Icône sur l’écran d’accueil
@@ -518,7 +514,7 @@ export default function Parametres() {
                   disabled={!isSubscriber}
                   onChange={async (e) => {
                     if (!isSubscriber) return;
-                    const toPrivate = e.target.checked; // coché = cacher
+                    const toPrivate = e.target.checked;
                     setIsPublic(!toPrivate ? true : false);
                     await saveSettings(
                       {
@@ -571,7 +567,7 @@ export default function Parametres() {
             </div>
           </section>
 
-          {/* 4 — Compte (désinscription en <details> avec style discret) */}
+          {/* 4 — Compte */}
           <section className="rounded-2xl bg-white/90 p-6 shadow-sm ring-1 ring-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">Compte</h3>
 
@@ -601,14 +597,12 @@ export default function Parametres() {
               </button>
             </div>
 
-            {/* Panneau désinscription replié par défaut */}
             <div
               id="desinscription"
               ref={deleteSectionRef}
               className="mt-6"
             >
               <details ref={deleteDetailsRef} className="group">
-                {/* 🔽 Ligne rendue plus discrète : bleu très clair + taille réduite */}
                 <summary className="cursor-pointer select-none text-xs text-sky-300 hover:text-sky-400">
                   <span className="underline">Supprimer mon compte</span>{" "}
                   <span className="opacity-80">(définitif)</span>
@@ -631,17 +625,17 @@ export default function Parametres() {
               </details>
             </div>
           </section>
-          {/* Lien légal discret CGU · Mentions légales */}
-<footer className="mt-10 text-center text-[11px] text-gray-800">
-  <Link href="/cgu" className="hover:underline">
-    Conditions Générales d&apos;Utilisation
-  </Link>
-  {" · "}
-  <Link href="/mentions-legales" className="hover:underline">
-    Mentions légales
-  </Link>
-</footer>
 
+          {/* Lien légal discret CGU · Mentions légales */}
+          <footer className="mt-10 text-center text-[11px] text-gray-800">
+            <Link href="/cgu" className="hover:underline">
+              Conditions Générales d&apos;Utilisation
+            </Link>
+            {" · "}
+            <Link href="/mentions-legales" className="hover:underline">
+              Mentions légales
+            </Link>
+          </footer>
         </div>
       </div>
     </>

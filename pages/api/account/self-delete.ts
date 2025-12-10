@@ -97,7 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   // 4) (Option) Purge SQL si la fonction existe (wrap best-effort)
   try {
     // Si ta fonction s’appelle autrement ou prend un param différent, adapte ici.
-    await admin.rpc('admin_delete_account_hard', { user_id: uid });
+    await admin.rpc('admin_delete_account_hard', { p_user_id: uid });
   } catch {
     /* silencieux : on ne casse pas le flux si la fonction n’existe pas */
   }

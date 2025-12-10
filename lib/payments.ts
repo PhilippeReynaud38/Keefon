@@ -143,7 +143,7 @@ class DevPaymentProvider implements PaymentProvider {
     // Pour l'instant : on simule un succès.
     return {
       success: true,
-      message: `Abonnement mis à jour en mode DEV sur le plan "${planId}". Aucun paiement réel effectué.`,
+      message: `Abonnement non accessible actuellement en mode DEV sur le plan "${planId}". Aucun paiement réel effectué.`,
     };
   }
 
