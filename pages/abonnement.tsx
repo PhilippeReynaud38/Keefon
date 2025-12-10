@@ -588,11 +588,22 @@ function PlanCard({
         {priceSub && <div className="text-xs text-gray-600">{priceSub}</div>}
       </div>
 
-      <ul className="mb-4 ml-4 list-disc space-y-1 text-sm">
-        {features.map((f) => (
-          <li key={f}>{f}</li>
-        ))}
-      </ul>
+<ul className="mb-4 ml-4 list-disc space-y-1 text-sm">
+  {features.map((f) => {
+    const trimmed = f.trim()
+    const isSub = trimmed.startsWith('- ') // sous-ligne type "- Tu peux…"
+
+    return (
+      <li
+        key={f}
+        className={isSub ? 'list-none pl-4' : undefined} // enlève la puce et décale un peu
+      >
+        {f}
+      </li>
+    )
+  })}
+</ul>
+
 
       <button
         type="button"
