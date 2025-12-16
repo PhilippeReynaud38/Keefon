@@ -416,7 +416,10 @@ export default function FranceRencontresPage() {
         <meta name="keywords" content={SEO.keywords} />
         <link rel="canonical" href={SEO.canonical} />
         <link rel="alternate" hrefLang="fr" href={SEO.canonical} />
-        <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+        <meta
+          name="robots"
+          content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
+        />
         <meta property="og:locale" content="fr_FR" />
         <meta property="og:title" content={SEO.title} />
         <meta property="og:description" content={SEO.description} />
@@ -483,9 +486,7 @@ export default function FranceRencontresPage() {
                   style={{ backgroundColor: "#93ef09ff" }}
                 >
                   <span className="block">Se prononce « qui phone » 📞</span>
-                  <span className="block">
-                    et veut dire « on kiffe » ❤️
-                  </span>
+                  <span className="block">et veut dire « on kiffe » ❤️</span>
                 </p>
               </div>
 
@@ -542,12 +543,12 @@ export default function FranceRencontresPage() {
         {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Visuel (entre la carte offre et les profils) */}
+        {/* AJOUT UNIQUE : image "couple.png" entre l'offre et les profils */}
         <section className="py-6">
           <div className="mx-auto w-full max-w-5xl px-4">
             <div className="overflow-hidden rounded-3xl shadow-xl">
               <img
-                src="/hero/france-couple.jpg"
+                src="/avatars_France/France/couple.png"
                 alt="Couple trinquant au restaurant, ambiance chaleureuse"
                 className="w-full h-auto object-cover"
                 loading="lazy"
