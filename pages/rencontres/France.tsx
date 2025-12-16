@@ -542,6 +542,20 @@ export default function FranceRencontresPage() {
         {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
+        {/* Visuel (entre la carte offre et les profils) */}
+        <section className="py-6">
+          <div className="mx-auto w-full max-w-5xl px-4">
+            <div className="overflow-hidden rounded-3xl shadow-xl">
+              <img
+                src="/hero/france-couple.jpg"
+                alt="Couple trinquant au restaurant, ambiance chaleureuse"
+                className="w-full h-auto object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Exemples de profils */}
         <ProfileTeaserBand />
 
