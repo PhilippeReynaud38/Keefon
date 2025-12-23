@@ -322,8 +322,7 @@ function ProfileTeaserBand() {
           className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] sm:text-[13px] leading-relaxed"
           style={{ color: "#FEFF93" }}
         >
-          Profils fictifs inspirés de vraies personnes. Chaque membre décide ce
-          qu&apos;il partage et reste protégé par les lois françaises.
+          Chaque membre décide ce qu'il partage et reste protégé par les lois françaises.
         </div>
 
         <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible">
