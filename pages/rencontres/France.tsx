@@ -39,8 +39,6 @@ const SEO = {
     "anti harcèlement",
     "sans swipe",
     "sans swipe infini",
-    "sans algorithme opaque",
-    "anti addiction",
     "plateforme RGPD",
     "respect CNIL",
     "protection des données",
@@ -49,6 +47,12 @@ const SEO = {
     "rencontre adultes consentants",
     "slow dating",
     "dating bienveillant",
+    "célibataire",
+    "rencontre célibataire",
+    "amour",
+    "âme soeur",
+    "plan cul",
+
 
     // Longue traîne
     "site de rencontre sans swipe",
@@ -61,7 +65,7 @@ const SEO = {
     "rencontre après 30 ans",
     "rencontre après 40 ans",
     "rencontre après 50 ans",
-
+"célibataire en france",
     // Régions
     "Île-de-France",
     "Auvergne-Rhône-Alpes",
