@@ -116,33 +116,6 @@ function publicUrlFromKey(key: string, bust?: string | number): string {
   return bust ? `${u}?v=${bust}` : u;
 }
 
-/**
- * Image "render" URL (Supabase Image Transform).
- * Goal: avoid blurry rendering on desktop (Chrome) by always serving a bigger image than the card size (DPR aware-ish).
- * We DO NOT force `format=` because your Supabase returns 400 for some formats.
- */
-function renderUrlFromKey(
-  key: string,
-  opts: { width: number; height: number; resize?: "cover" | "contain"; quality?: number },
-  bust?: string | number
-) {
-  const publicUrl = publicUrlFromKey(key);
-  // /object/public -> /render/image/public
-  const base = publicUrl.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
-
-  const params = new URLSearchParams();
-  params.set("width", String(Math.round(opts.width)));
-  params.set("height", String(Math.round(opts.height)));
-  params.set("resize", opts.resize ?? "cover");
-  params.set("quality", String(opts.quality ?? 85));
-  if (bust !== undefined && bust !== null && bust !== "") params.set("v", String(bust));
-
-  return `${base}?${params.toString()}`;
-}
-
-const GALLERY_RENDER = { width: 720, height: 900, quality: 85 } as const; // 4/5 ratio
-const AVATAR_RENDER = { width: 384, height: 384, quality: 90 } as const; // circle
-
 /** Traduction ultra-légère des messages d'erreur DB vers FR pour l'UI */
 function prettyErrorFR(msg: string, prefix?: string) {
   const m = String(msg || "").toLowerCase();
@@ -295,7 +268,7 @@ function GalleryWithActions({
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
         {nonMain.map((p) => {
           const key = toStorageKey(p.url);
-          const publicUrl = renderUrlFromKey(key, GALLERY_RENDER, refreshKey); // cache-buster
+          const publicUrl = publicUrlFromKey(key, refreshKey); // cache-buster
           return (
             <div
               key={p.id}
@@ -445,7 +418,7 @@ function ProfilePage() {
 
         if (photo?.url) {
           const key = toStorageKey(photo.url);
-          setMainPhotoUrl(renderUrlFromKey(key, AVATAR_RENDER, galleryKey)); // cache-buster
+          setMainPhotoUrl(publicUrlFromKey(key, galleryKey)); // cache-buster
         } else {
           setMainPhotoUrl(null);
         }
