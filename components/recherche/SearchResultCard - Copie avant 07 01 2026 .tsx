@@ -40,60 +40,12 @@ function pickMain(photos: ProfileCardData["photos"]): string | null {
   return sorted[0]?.url ?? null;
 }
 
-// Transforme une URL publique Supabase "object" en URL "render" (redimensionnée).
-// Ça améliore nettement le rendu (évite le flou sur certains zoom/DPR) car le navigateur
-// reçoit directement une image à la bonne taille.
-function toSupabaseRenderUrl(
-  rawUrl: string,
-  opts: { width: number; height: number; quality?: number }
-): { src: string; srcSet?: string } {
-  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
-  if (!supabaseUrl) return { src: rawUrl };
-
-  try {
-    const u = new URL(rawUrl);
-    const marker = "/storage/v1/object/public/";
-    const idx = u.pathname.indexOf(marker);
-    if (idx === -1) return { src: rawUrl };
-    if (!u.origin.startsWith(supabaseUrl)) return { src: rawUrl };
-
-    // bucket/path après le marker
-    const publicPath = u.pathname.slice(idx + marker.length).replace(/^\//, "");
-    const q = opts.quality ?? 80;
-
-    const v = u.searchParams.get("v");
-    const base = `${supabaseUrl}/storage/v1/render/image/public/${publicPath}`;
-
-    const src1 = `${base}?width=${opts.width}&height=${opts.height}&quality=${q}${v ? `&v=${encodeURIComponent(v)}` : ""}`;
-    const src2 = `${base}?width=${opts.width * 2}&height=${opts.height * 2}&quality=${q}${v ? `&v=${encodeURIComponent(v)}` : ""}`;
-    return { src: src1, srcSet: `${src1} 1x, ${src2} 2x` };
-  } catch {
-    return { src: rawUrl };
-  }
-}
-
 export default function SearchResultCard({ data }: Props) {
   const router = useRouter();
   const { session } = useSessionContext();
   const me = session?.user?.id || null;
 
   const mainUrl = useMemo(() => pickMain(data.photos), [data.photos]);
-
-  // Image rendue par Supabase (1x/2x) pour un rendu plus net, surtout sur mobile.
-  const rawImgSrc = mainUrl || "/default-avatar.png";
-  const img1x = toSupabaseRenderUrl(rawImgSrc, {
-    width: 360,
-    height: 480,
-    quality: 80,
-  });
-  const img2x = toSupabaseRenderUrl(rawImgSrc, {
-    width: 720,
-    height: 960,
-    quality: 80,
-  });
-  const imgSrc = img1x.src;
-  const imgSrcSet =
-    img2x.src !== img1x.src ? `${img1x.src} 1x, ${img2x.src} 2x` : img1x.srcSet;
   const isCertified = Boolean(data.is_certified ?? data.certified);
 
   const [likeLoading, setLikeLoading] = useState(false);
@@ -176,9 +128,7 @@ export default function SearchResultCard({ data }: Props) {
       {/* IMAGE */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={imgSrc}
-        srcSet={imgSrcSet}
-        sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 220px"
+        src={mainUrl || "/default-avatar.png"}
         alt={mainUrl ? `Photo de ${data.username}` : "Aucune photo disponible"}
         className="block h-full w-full object-cover pointer-events-none select-none"
         draggable={false}
