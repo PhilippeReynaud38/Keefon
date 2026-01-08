@@ -41,61 +41,16 @@ const InlineCertifiedBadge: React.FC<{ certified?: boolean }> = ({ certified }) 
     </span>
   ) : null;
 
-/**
- * Convertit une URL publique Supabase Storage (/object/public/...) en URL "render" pour servir une image
- * redimensionnée (meilleur rendu et chargement, surtout sur mobile/écrans Retina).
- */
-function supabaseRenderUrlFromPublicObjectUrl(
-  publicUrl: string,
-  opts: { width: number; height: number; quality?: number }
-): string {
-  try {
-    const u = new URL(publicUrl);
-    const marker = "/storage/v1/object/public/";
-    const idx = u.pathname.indexOf(marker);
-    if (idx === -1) return publicUrl;
-
-    // ex: /storage/v1/object/public/avatars/avatars/xxx.png
-    const objectPath = u.pathname.slice(idx + marker.length);
-    const base = `${u.origin}/storage/v1/render/image/public/${objectPath}`;
-
-    const params = new URLSearchParams();
-    params.set("width", String(opts.width));
-    params.set("height", String(opts.height));
-    params.set("quality", String(opts.quality ?? 80));
-
-    return `${base}?${params.toString()}`;
-  } catch {
-    return publicUrl;
-  }
-}
-
-const Photo: React.FC<{ src: string | null | undefined; alt: string }> = ({ src, alt }) => {
-  const baseW = 360;
-  const baseH = 450; // ratio 4/5
-  const q = 80;
-
-  const img1x = src ? supabaseRenderUrlFromPublicObjectUrl(src, { width: baseW, height: baseH, quality: q }) : null;
-  const img2x = src ? supabaseRenderUrlFromPublicObjectUrl(src, { width: baseW * 2, height: baseH * 2, quality: q }) : null;
-
-  return (
-    <div className="w-full aspect-[4/5] overflow-hidden rounded-xl bg-gray-100 border border-gray-200">
-      {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={img1x ?? src}
-          srcSet={img1x && img2x ? `${img1x} 1x, ${img2x} 2x` : undefined}
-          alt={alt}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center text-gray-400">Aucune photo</div>
-      )}
-    </div>
-  );
-};
+const Photo: React.FC<{ src: string | null | undefined; alt: string }> = ({ src, alt }) => (
+  <div className="w-full aspect-[4/5] overflow-hidden rounded-xl bg-gray-100 border border-gray-200">
+    {src ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt={alt} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+    ) : (
+      <div className="w-full h-full flex items-center justify-center text-gray-400">Aucune photo</div>
+    )}
+  </div>
+);
 
 /** Boutons d’action (inclut la garde can_chat_with pour “Message”). */
 const Actions: React.FC<{

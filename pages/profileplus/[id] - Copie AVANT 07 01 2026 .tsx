@@ -23,60 +23,6 @@ import Link from "next/link";
 
 const TILE_RATIO = "4 / 5" as const;
 
-/**
- * ---- Image rendering (Supabase) ----
- * Objectif : éviter que le navigateur "floute" certaines images (ex: PNG Copilot),
- * surtout quand elles sont redimensionnées très fort (mobile / Retina).
- *
- * On convertit l'URL "public object" :
- *   /storage/v1/object/public/<bucket>/<path>
- * en URL "render" (image transform CDN) :
- *   /storage/v1/render/image/public/<bucket>/<path>?width=...&height=...&quality=...
- *
- * Important : on NE met PAS `format=` (chez toi, ça a déjà provoqué des 400).
- */
-type RenderOpts = { width: number; height?: number; quality?: number };
-
-const AVATAR_RENDER: RenderOpts = { width: 320, height: 320, quality: 80 };   // avatar rond (≈160px en CSS -> x2 pour Retina)
-const TILE_RENDER: RenderOpts = { width: 480, height: 600, quality: 80 };     // tuile 4/5 (mobile 2 colonnes -> x2 pour Retina)
-
-function supabaseRenderUrlFromPublicObjectUrl(publicUrl: string, opts: RenderOpts): string {
-  if (!publicUrl) return publicUrl;
-
-  try {
-    const u = new URL(publicUrl);
-
-    // Priorité à la variable d'env (prod), sinon on dérive l'origin depuis l'URL fournie.
-    const origin = process.env.NEXT_PUBLIC_SUPABASE_URL || u.origin;
-
-    // Si c'est déjà une URL "render", on met juste à jour les params.
-    if (u.pathname.includes("/storage/v1/render/image/public/")) {
-      const out = new URL(publicUrl);
-      out.searchParams.set("width", String(opts.width));
-      if (opts.height) out.searchParams.set("height", String(opts.height));
-      out.searchParams.set("quality", String(opts.quality ?? 80));
-      return out.toString();
-    }
-
-    const marker = "/storage/v1/object/public/";
-    const idx = u.pathname.indexOf(marker);
-    if (idx === -1) return publicUrl; // URL externe -> on ne touche pas
-
-    // Exemple rest: "avatars/avatars/dfd66...png"
-    const rest = u.pathname.slice(idx + marker.length);
-
-    const out = new URL(`${origin}/storage/v1/render/image/public/${rest}`);
-    out.searchParams.set("width", String(opts.width));
-    if (opts.height) out.searchParams.set("height", String(opts.height));
-    out.searchParams.set("quality", String(opts.quality ?? 80));
-    return out.toString();
-  } catch {
-    // URL invalide -> on renvoie tel quel
-    return publicUrl;
-  }
-}
-
-
 // Helpers (âge + oui/non)
 function calculateAge(dob: string | null | undefined): number | null {
   if (!dob) return null;
@@ -448,7 +394,7 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
 
         {avatarUrl && (
           <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg mb-4">
-            <img src={supabaseRenderUrlFromPublicObjectUrl(avatarUrl, AVATAR_RENDER)} alt="Photo principale" className="w-full h-full object-cover" />
+            <img src={avatarUrl} alt="Photo principale" className="w-full h-full object-cover" />
           </div>
         )}
 
@@ -517,7 +463,7 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
                   className="relative w-full overflow-hidden rounded-md shadow"
                   style={{ aspectRatio: TILE_RATIO }}
                 >
-                  <img src={supabaseRenderUrlFromPublicObjectUrl(url, TILE_RENDER)} alt={`Photo ${i + 1}`} className="absolute inset-0 w-full h-full object-cover" />
+                  <img src={url} alt={`Photo ${i + 1}`} className="absolute inset-0 w-full h-full object-cover" />
                 </div>
               ))}
             </div>
