@@ -661,8 +661,8 @@ export default function Dashboard() {
             className="inline-block text-center text-xs font-semibold rounded-full px-3 py-1"
             style={{ backgroundColor: "#93ef09ff" }}
           >
-            <span className="block">Se prononce « qui-phone ? » 📞</span>
-            <span className="block">Affinité réciproque ❤️</span>
+            <span className="block">Se prononce « qui-fone » 📞</span>
+            <span className="block">Coup de cœur mutuel. ❤️</span>
           </p>
         </div>
 
