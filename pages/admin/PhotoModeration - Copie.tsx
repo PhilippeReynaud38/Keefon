@@ -17,15 +17,15 @@
 // NOTE de correction (build): `getSafePublicUrl` est exporté par défaut par "@/lib/storageUtils",
 // il faut donc l’importer SANS accolades.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SyntheticEvent } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { getUserEmailsFromIds } from "@/lib/userIdMapping";
 import getSafePublicUrl from "@/lib/storageUtils";
 
 /**
- * IMPORTANT : ici on DOIT accepter toutes les formes d'URL.
- * - si `raw` est déjà une URL http(s), on l'affiche telle quelle
- * - sinon, on suppose que c'est une clé Storage et on passe par le helper historique.
+ * IMPORTANT: on doit accepter TOUTES les URLs.
+ * - Si la BDD contient déjà une URL http(s) -> on la garde telle quelle.
+ * - Sinon (clé storage) -> on passe par le helper historique.
  */
 function resolveAnyUrl(raw: string | null): string | null {
   if (!raw) return null;
@@ -35,44 +35,35 @@ function resolveAnyUrl(raw: string | null): string | null {
   return getSafePublicUrl(s);
 }
 
-// Transforme une URL publique Supabase "object" en URL "render" (redimensionnée) + srcSet (1x/2x)
-// => même compromis que SearchResultCard.tsx (rendu plus net, moins de flou)
-function toSupabaseRenderUrl(
-  rawUrl: string,
-  opts: { width: number; height: number; quality?: number }
-): { src: string; srcSet?: string } {
-  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
-  if (!supabaseUrl) return { src: rawUrl };
+/**
+ * Si une image échoue à charger (URL signée/transform instable), on tente 1 fallback:
+ * - retirer la query string ("?..."), puis seulement ensuite fallback default.
+ */
+function handleImgError(e: SyntheticEvent<HTMLImageElement>) {
+  const img = e.currentTarget;
+  const src = img.currentSrc || img.src || "";
 
-  try {
-    const u = new URL(rawUrl);
-    const marker = "/storage/v1/object/public/";
-    const idx = u.pathname.indexOf(marker);
-    if (idx === -1) return { src: rawUrl };
-    if (!u.origin.startsWith(supabaseUrl)) return { src: rawUrl };
+  // déjà sur le placeholder : stop
+  if (src.includes("/default-avatar.png")) return;
 
-    const publicPath = u.pathname.slice(idx + marker.length).replace(/^\//, "");
-    const q = opts.quality ?? 80;
-
-    const v = u.searchParams.get("v");
-    const base = `${supabaseUrl}/storage/v1/render/image/public/${publicPath}`;
-
-    const src1 = `${base}?width=${opts.width}&height=${opts.height}&quality=${q}${
-      v ? `&v=${encodeURIComponent(v)}` : ""
-    }`;
-    const src2 = `${base}?width=${opts.width * 2}&height=${opts.height * 2}&quality=${q}${
-      v ? `&v=${encodeURIComponent(v)}` : ""
-    }`;
-    return { src: src1, srcSet: `${src1} 1x, ${src2} 2x` };
-  } catch {
-    return { src: rawUrl };
+  // 1er retry : enlever les paramètres
+  if (src.includes("?")) {
+    const noQuery = src.split("?")[0];
+    // évite boucle infinie
+    if (noQuery && noQuery !== src) {
+      img.src = noQuery;
+      return;
+    }
   }
+
+  // fallback final
+  img.src = "/default-avatar.png";
 }
 
 interface PhotoWithUser {
   id: string;
   user_id: string;
-  url: string | null; // URL affichable (acceptée telle quelle si http(s))
+  url: string | null; // clé Storage -> URL publique via helper
   status: "pending" | "approved" | "rejected";
   moderation_note?: string | null;
   email: string;
@@ -162,6 +153,7 @@ export default function PhotoModeration() {
       }
 
       const { data: rawPhotos, error } = await query.range(from, to);
+
       if (error) throw error;
 
       const safeRows = (rawPhotos || []) as Array<{
@@ -177,7 +169,7 @@ export default function PhotoModeration() {
       const userIds = safeRows.map((p) => p.user_id);
       const emailMap = await getUserEmailsFromIds(userIds);
 
-      // enrichissement + URL affichable (accepte TOUT)
+      // enrichissement + URL publique (accepte URL complète OU clé storage)
       const enriched: PhotoWithUser[] = safeRows.map((p) => ({
         id: p.id,
         user_id: p.user_id,
@@ -411,110 +403,100 @@ export default function PhotoModeration() {
           <div className="text-slate-300">Chargement…</div>
         ) : (
           <div className="grid gap-3" style={gridStyle}>
-            {photos.map((p) => {
-              // Même compromis que SearchResultCard.tsx : on sert une image déjà à la bonne taille + srcSet 2x
-              // => rendu plus net (moins de flou) sans changer le layout.
-              const baseW = Math.max(120, Math.round(minCol));
-              const baseH = Math.max(150, Math.round((baseW * 5) / 4));
-              const rendered = p.url
-                ? toSupabaseRenderUrl(p.url, { width: baseW, height: baseH, quality: 80 })
-                : null;
-              const imgSrc = rendered?.src || p.url || "/default-avatar.png";
-              const imgSrcSet = rendered?.srcSet;
+            {photos.map((p) => (
+              <div key={p.id} className="relative bg-slate-800 border border-slate-700 rounded-md overflow-hidden">
+                {/* Bandeau haut : checkbox + EMAIL INTERACTIF + badge principale */}
+                <div className="absolute top-0 left-0 right-0 z-10 flex items-center gap-2 bg-slate-900/70 px-1.5 py-1">
+                  <input
+                    type="checkbox"
+                    checked={checkedIds.includes(p.id)}
+                    onChange={() => toggleCheckbox(p.id)}
+                    className="accent-emerald-500"
+                    title="Sélectionner"
+                  />
 
-              return (
-                <div key={p.id} className="relative bg-slate-800 border border-slate-700 rounded-md overflow-hidden">
-                  {/* Bandeau haut : checkbox + EMAIL INTERACTIF + badge principale */}
-                  <div className="absolute top-0 left-0 right-0 z-10 flex items-center gap-2 bg-slate-900/70 px-1.5 py-1">
-                    <input
-                      type="checkbox"
-                      checked={checkedIds.includes(p.id)}
-                      onChange={() => toggleCheckbox(p.id)}
-                      className="accent-emerald-500"
-                      title="Sélectionner"
-                    />
-
-                    {/* EMAIL : clic GAUCHE = ouvrir profil ; clic DROIT = copier l’email */}
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      className="flex-1 text-[11px] text-slate-100 truncate underline decoration-dotted cursor-pointer"
-                      title="Clic : ouvrir le profil — Clic droit : copier l’email"
-                      onClick={(e) => {
+                  {/* EMAIL : clic GAUCHE = ouvrir profil ; clic DROIT = copier l’email */}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="flex-1 text-[11px] text-slate-100 truncate underline decoration-dotted cursor-pointer"
+                    title="Clic : ouvrir le profil — Clic droit : copier l’email"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open(`/profileplus/${p.user_id}`, "_blank", "noopener,noreferrer");
+                    }}
+                    onContextMenu={async (e) => {
+                      e.preventDefault();
+                      const ok = await copyToClipboardSafe(p.email);
+                      if (ok) {
+                        setCopiedId(p.id);
+                        setTimeout(() => setCopiedId((prev) => (prev === p.id ? null : prev)), 1200);
+                      } else {
+                        alert("Impossible de copier l’adresse (permissions navigateur).");
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
                         window.open(`/profileplus/${p.user_id}`, "_blank", "noopener,noreferrer");
-                      }}
-                      onContextMenu={async (e) => {
-                        e.preventDefault();
-                        const ok = await copyToClipboardSafe(p.email);
-                        if (ok) {
-                          setCopiedId(p.id);
-                          setTimeout(() => setCopiedId((prev) => (prev === p.id ? null : prev)), 1200);
-                        } else {
-                          alert("Impossible de copier l’adresse (permissions navigateur).");
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          window.open(`/profileplus/${p.user_id}`, "_blank", "noopener,noreferrer");
-                        }
-                      }}
-                    >
-                      {p.email}
+                      }
+                    }}
+                  >
+                    {p.email}
+                  </span>
+
+                  {/* Badge photo principale */}
+                  {p.is_main && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400 text-slate-900 font-semibold">
+                      PRINCIPALE
                     </span>
+                  )}
 
-                    {/* Badge photo principale */}
-                    {p.is_main && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400 text-slate-900 font-semibold">
-                        PRINCIPALE
-                      </span>
-                    )}
+                  {/* Feedback "Copié ✓" (apparaît après clic droit) */}
+                  {copiedId === p.id && <span className="ml-1 text-[11px] text-emerald-300">Copié ✓</span>}
+                </div>
 
-                    {/* Feedback "Copié ✓" (apparaît après clic droit) */}
-                    {copiedId === p.id && <span className="ml-1 text-[11px] text-emerald-300">Copié ✓</span>}
-                  </div>
-
-                  {/* Image */}
-                  <div className="w-full aspect-[4/5] bg-slate-900">
+                {/* Image */}
+                <div className="w-full aspect-[4/5] bg-slate-900">
+                  {p.url ? (
                     <img
-                      src={imgSrc}
-                      srcSet={imgSrcSet}
-                      sizes={`${baseW}px`}
+                      src={p.url}
                       alt="Photo à modérer"
                       className="w-full h-full object-cover"
                       loading="lazy"
                       decoding="async"
-                      onClick={() => setPreviewUrl(p.url || null)}
-                      onError={(e) => ((e.target as HTMLImageElement).src = "/default-avatar.png")}
+                      onClick={() => setPreviewUrl(p.url!)}
+                      onError={handleImgError}
                     />
-                  </div>
-
-                  {/* Bas de carte : détails (affichés si vue compacte désactivée) */}
-                  {!compactView && (
-                    <div className="p-2 border-t border-slate-700 space-y-2">
-                      <div className="text-[11px] text-slate-300 truncate" title={p.url || ""}>
-                        {p.url || "—"}
-                      </div>
-                      <div>
-                        <textarea
-                          placeholder="Note ou raison du refus…"
-                          value={notes[p.id] || ""}
-                          onChange={(e) => setNotes({ ...notes, [p.id]: e.target.value })}
-                          className="w-full text-xs bg-slate-900 border border-slate-700 rounded p-1 text-slate-100"
-                        />
-                        <button
-                          onClick={() => updateModerationNote(p.id)}
-                          className="mt-1 w-full text-xs bg-blue-600 hover:bg-blue-500 text-white py-1 rounded"
-                        >
-                          ✉️ Enregistrer la note
-                        </button>
-                      </div>
-                    </div>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-500">—</div>
                   )}
                 </div>
-              );
-            })}
+
+                {/* Bas de carte : détails (affichés si vue compacte désactivée) */}
+                {!compactView && (
+                  <div className="p-2 border-t border-slate-700 space-y-2">
+                    <div className="text-[11px] text-slate-300 truncate" title={p.url || ""}>
+                      {p.url || "—"}
+                    </div>
+                    <div>
+                      <textarea
+                        placeholder="Note ou raison du refus…"
+                        value={notes[p.id] || ""}
+                        onChange={(e) => setNotes({ ...notes, [p.id]: e.target.value })}
+                        className="w-full text-xs bg-slate-900 border border-slate-700 rounded p-1 text-slate-100"
+                      />
+                      <button
+                        onClick={() => updateModerationNote(p.id)}
+                        className="mt-1 w-full text-xs bg-blue-600 hover:bg-blue-500 text-white py-1 rounded"
+                      >
+                        ✉️ Enregistrer la note
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
 

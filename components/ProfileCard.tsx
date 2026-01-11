@@ -87,6 +87,8 @@ const Photo: React.FC<{ src: string | null | undefined; alt: string }> = ({ src,
           srcSet={img1x && img2x ? `${img1x} 1x, ${img2x} 2x` : undefined}
           alt={alt}
           className="w-full h-full object-cover"
+          // Ajuste le point focal pour limiter les têtes coupées (sans changer le layout).
+          style={{ objectPosition: "50% 15%" }}
           loading="lazy"
           decoding="async"
         />

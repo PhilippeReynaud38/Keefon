@@ -8,6 +8,12 @@
 // [2025-11-24] Galerie : affichage limité à 4 photos sur la page publique,
 // avec bouton “+X photos” EN DESSOUS de la grille (petit, vert #93ef09ff).
 // -----------------------------------------------------------------------------
+//
+// FIX (08/01/2026) — Cadrage photos : têtes parfois coupées
+// - On garde object-cover (pas de bandes noires)
+// - On ajuste uniquement le point focal (object-position) :
+//   • Avatar rond : "50% 10%" (monte légèrement le cadrage)
+//   • Tuiles galerie : "50% 15%" (même logique que les cartes de recherche)
 
 import * as React from "react";
 import Head from "next/head";
@@ -448,7 +454,13 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
 
         {avatarUrl && (
           <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg mb-4">
-            <img src={supabaseRenderUrlFromPublicObjectUrl(avatarUrl, AVATAR_RENDER)} alt="Photo principale" className="w-full h-full object-cover" />
+            <img
+              src={supabaseRenderUrlFromPublicObjectUrl(avatarUrl, AVATAR_RENDER)}
+              alt="Photo principale"
+              className="w-full h-full object-cover"
+              // Ajuste le point focal pour limiter les têtes coupées (avatar rond).
+              style={{ objectPosition: "50% 10%" }}
+            />
           </div>
         )}
 
@@ -517,7 +529,13 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
                   className="relative w-full overflow-hidden rounded-md shadow"
                   style={{ aspectRatio: TILE_RATIO }}
                 >
-                  <img src={supabaseRenderUrlFromPublicObjectUrl(url, TILE_RENDER)} alt={`Photo ${i + 1}`} className="absolute inset-0 w-full h-full object-cover" />
+                  <img
+                    src={supabaseRenderUrlFromPublicObjectUrl(url, TILE_RENDER)}
+                    alt={`Photo ${i + 1}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    // Ajuste le point focal pour limiter les têtes coupées (tuiles galerie).
+                    style={{ objectPosition: "50% 15%" }}
+                  />
                 </div>
               ))}
             </div>

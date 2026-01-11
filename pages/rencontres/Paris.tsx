@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/Paris.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Paris & Île-de-France
- * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
+ * MAJ : 2025-11-19 — Version alignée avec Nice / Nantes / Montpellier / Marseille.
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Paris et alentours (Paris intra-muros, petite couronne, quelques villes d’Île-de-France).
@@ -9,7 +9,7 @@
  * - Pas de promesse de filtres ultra-précis : on parle de “zone Paris / Île-de-France” de façon large.
  *
  * Dépendances :
- * - next/head, next/link
+ * - next/head, next/image, next/link
  * - Tailwind pour les classes utilitaires
  *
  * Données lues :
@@ -24,6 +24,7 @@
  */
 
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
@@ -31,9 +32,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Paris et en Île-de-France | Keefon",
   description:
     "Keefon Paris est une page dédiée aux rencontres bienveillantes à Paris et en Île-de-France : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Paris",
+  canonical: "https://keefon.com/rencontres/Paris",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-paris.jpg",
+  ogImage: "https://keefon.com/og/rencontres-paris.jpg",
   keywords: [
     // Intent + features
     "rencontre Paris",
@@ -86,9 +87,9 @@ const SEO = {
     "rencontre après 50 ans Île-de-France",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
-    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Paris", url: "https://www.keefon.com/rencontres/Paris" },
+    { name: "Accueil", url: "https://keefon.com/" },
+    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Paris", url: "https://keefon.com/rencontres/Paris" },
   ],
 };
 
@@ -122,7 +123,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profite-en dès maintenant.
+            Aucune carte bancaire demandée. Profites-en dès maintenant.
           </span>
         </p>
 
@@ -190,8 +191,8 @@ function ProfileTeaserBand() {
   /**
    * ⚠️ Fichiers à placer dans : /public/avatars_France/Paris/
    * IMPORTANT :
-   *  - pas d’accents ni d’espaces dans les noms de fichiers (Alizee.png, Bilou.png,
-   *    Anne.png, Eric.png par exemple)
+   *  - pas d’accents ni d’espaces dans les noms de fichiers (Lea.png, Samir.png,
+   *    Elise.png, Thomas.png par exemple)
    *  - le chemin doit suivre les valeurs avatarSrc ci-dessous.
    *
    * Visuels fictifs, inspirés de personnes réelles, pour illustrer la diversité des profils parisiens.
@@ -205,7 +206,7 @@ function ProfileTeaserBand() {
         "Je travaille en télétravail une partie de la semaine et j’en ai eu marre des applis qui donnent l’impression de faire du shopping humain.",
       avatarSrc: "/avatars_France/Paris/Alizee.png",
       avatarAlt:
-        "Profil fictif Alizee (jeune femme souriante dans une rue parisienne avec immeubles en arrière-plan)",
+        "Profil fictif Lea (jeune femme souriante dans une rue parisienne avec immeubles en arrière-plan)",
       priority: true,
     },
     {
@@ -216,7 +217,7 @@ function ProfileTeaserBand() {
         "Entre le boulot, le métro et les soirées entre amis, je n’ai pas envie de passer des heures à swiper. Je préfère quelques échanges clairs et respectueux.",
       avatarSrc: "/avatars_France/Paris/Bilou.png",
       avatarAlt:
-        "Profil fictif Bilou (homme souriant sur un pont avec la Seine en arrière-plan)",
+        "Profil fictif Samir (homme souriant sur un pont avec la Seine en arrière-plan)",
       priority: true,
     },
     {
@@ -227,7 +228,7 @@ function ProfileTeaserBand() {
         "Je bouge entre mon boulot, les enfants et les trajets en RER. Keefon me permet de prendre le temps d’échanger sans pression.",
       avatarSrc: "/avatars_France/Paris/Anne.png",
       avatarAlt:
-        "Profil fictif Anne (femme souriante assise en terrasse dans une grande ville)",
+        "Profil fictif Elise (femme souriante assise en terrasse dans une grande ville)",
     },
     {
       pseudo: "Eric",
@@ -237,7 +238,7 @@ function ProfileTeaserBand() {
         "Je travaille en région parisienne, je bouge beaucoup. Keefon m’aide à ouvrir des portes sans me perdre dans des centaines de profils.",
       avatarSrc: "/avatars_France/Paris/Eric.png",
       avatarAlt:
-        "Profil fictif Eric (homme souriant dans une rue avec immeubles haussmanniens)",
+        "Profil fictif Thomas (homme souriant dans une rue avec immeubles haussmanniens)",
     },
   ];
 
@@ -260,11 +261,13 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <img
+                <Image
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  className="h-full w-full object-cover"
-                  loading={Boolean((p as any).priority) ? "eager" : "lazy"}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
+                  priority={Boolean((p as any).priority)}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -305,10 +308,10 @@ export default function ParisRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://www.keefon.com",
+        url: "https://keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://www.keefon.com/recherche?q={query}",
+          target: "https://keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -318,7 +321,7 @@ export default function ParisRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com#website" },
+        isPartOf: { "@id": "https://keefon.com#website" },
       },
     ],
   };
@@ -407,21 +410,15 @@ export default function ParisRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Je crée mon profil, c'est gratuit"
-                  title="Je crée mon profil, c'est gratuit"
+                  aria-label="Créer mon profil gratuitement"
+                  title="Créer mon profil gratuitement"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Je crée mon profil, c&apos;est gratuit
+                  Créer mon profil gratuitement
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
-                </p>
-                <p className="mt-2 text-xs text-slate-800 text-center">
-                  Déjà membre ?{" "}
-                  <a href="/login" className="font-semibold underline">
-                    Se connecter
-                  </a>
                 </p>
               </div>
             </div>
@@ -538,12 +535,12 @@ export default function ParisRencontresPage() {
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Je crée mon profil, c'est gratuit"
-                title="Je crée mon profil, c'est gratuit"
+                aria-label="Créer mon profil gratuitement"
+                title="Créer mon profil gratuitement"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Je crée mon profil, c&apos;est gratuit
+                Créer mon profil gratuitement
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux commencer gratuitement, compléter ton profil à ton
@@ -671,14 +668,6 @@ export default function ParisRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
-              </Link>
-              {" · "}
-              <Link href="/confidentialite" className="hover:underline">
-                Politique de confidentialité
-              </Link>
-              {" · "}
-              <Link href="/cookies" className="hover:underline">
-                Cookies
               </Link>
             </p>
           </div>

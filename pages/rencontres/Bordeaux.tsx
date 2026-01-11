@@ -14,43 +14,31 @@
  *
  * Données lues :
  * - Aucune (page purement statique, pas de fetch).
+ *
+ * Effets de bord :
+ * - Aucun (uniquement rendu React côté front).
+ *
+ * Invariants :
+ * - Garder la cohérence visuelle avec france.tsx / marseille.tsx (bandeau jaune, carte rappel, structure des sections).
+ * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n'existent pas encore.
  */
 
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes Bordeaux & Gironde | Keefon",
+  title: "Rencontres bienveillantes à Bordeaux et autour | Keefon",
   description:
-    "Rencontres bienveillantes sur la zone Bordeaux & Gironde : Bordeaux, Mérignac, Pessac, rive droite, bassin d’Arcachon… Keefon propose une approche plus humaine, loin du swipe toxique.",
-  canonical: "https://www.keefon.com/rencontres/bordeaux",
+    "Keefon Bordeaux est une page dédiée aux rencontres bienveillantes à Bordeaux et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+  canonical: "https://keefon.com/rencontres/Bordeaux",
   siteName: "Keefon",
-  robots: "index,follow",
-  locale: "fr_FR",
-  type: "website",
-  image: "https://www.keefon.com/og/keefon-rencontres-bordeaux.png",
+  ogImage: "https://keefon.com/og/rencontres-bordeaux.jpg",
   keywords: [
-    "rencontres Bordeaux",
+    // Intent + features
     "rencontre Bordeaux",
-    "rencontres Gironde",
-    "rencontre Gironde",
-    "rencontre sérieuse Bordeaux",
-    "rencontre sérieuse Gironde",
-    "rencontre bienveillante Bordeaux",
-    "rencontre respectueuse Bordeaux",
-    "application de rencontres Bordeaux",
-    "slow dating Bordeaux",
-    "rencontre locale Bordeaux",
-    "rencontre par ville",
-    "rencontre bassin d’Arcachon",
-    "rencontre Médoc",
-    "rencontre rive droite Bordeaux",
-    "rencontre après 30 ans Bordeaux",
-    "rencontre après 40 ans Bordeaux",
-    "rencontre après 50 ans Bordeaux",
-    "chat rencontre Bordeaux",
-    "chat rencontre Gironde",
+    "rencontres Bordeaux",
     "site de rencontre Bordeaux",
     "rencontres bienveillantes Bordeaux",
     "rencontre locale Bordeaux",
@@ -66,11 +54,41 @@ const SEO = {
     "respect et sécurité",
     "rencontre respectueuse",
     "anti harcèlement",
-  ],
+    "sans swipe",
+    "sans swipe infini",
+    "sans algorithme opaque",
+    "anti addiction",
+    "plateforme RGPD",
+    "respect CNIL",
+    "protection des données",
+    "dating Bordeaux",
+    "dating Gironde",
+    "rencontre adultes consentants",
+    "slow dating",
+    "dating bienveillant",
+
+    // Villes / zone (SEO, pas promesse de filtres)
+    "Bordeaux",
+    "Mérignac",
+    "Pessac",
+    "Talence",
+    "Bègles",
+    "Cenon",
+    "Lormont",
+    "Bruges",
+    "Le Bouscat",
+    "Villenave-d'Ornon",
+
+    // Combinaisons courtes utiles
+    "rencontre sérieuse Bordeaux",
+    "rencontre après 30 ans Bordeaux",
+    "rencontre après 40 ans Bordeaux",
+    "rencontre après 50 ans Bordeaux",
+  ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
-    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Bordeaux & Gironde", url: "https://www.keefon.com/rencontres/bordeaux" },
+    { name: "Accueil", url: "https://keefon.com/" },
+    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Bordeaux", url: "https://keefon.com/rencontres/bordeaux" },
   ],
 };
 
@@ -87,7 +105,7 @@ function FreeTopBar() {
   return (
     <div
       role="status"
-      aria-label="Offre de lancement : Keefon gratuit jusqu’à fin 2026 pour les 300 premiers inscrits"
+      aria-label="Période gratuite en cours : accès gratuit et chat ouvert à tous"
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
@@ -97,23 +115,22 @@ function FreeTopBar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
         <p className="m-0 flex-1 text-left font-extrabold leading-snug text-slate-900">
           <span className="block text-[15px] sm:text-[18px]">
-            Offre de lancement :{" "}
+            Période gratuite :{" "}
             <span className="underline decoration-2 underline-offset-2">
-              Keefon 100% gratuit jusqu’à fin 2026
+              accès 100% gratuit
             </span>{" "}
-            pour les 300 premiers inscrits.
+            — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Si tu fais partie des 300 premiers,
-            ton accès reste gratuit jusqu’au 31/12/2026.
+            Aucune carte bancaire demandée. Profites-en dès maintenant.
           </span>
         </p>
 
         <a
           href="/signup"
-          aria-label="Créer un compte et profiter de l’offre gratuite jusqu’à fin 2026 pour les 300 premiers inscrits"
-          title="Créer un compte gratuitement (offre 300 premiers inscrits)"
-          className="shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow-md transition hover:translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
+          aria-label="Créer un compte gratuitement pendant la période gratuite"
+          title="Créer un compte gratuitement"
+          className="shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
           style={{ background: COLORS.paleGreen }}
         >
           En profiter
@@ -145,20 +162,18 @@ function FreeReminderCard() {
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div className="text-slate-900">
               <p className="m-0 text-[15px] font-extrabold sm:text-[18px]">
-                Offre lancement : Keefon 100% gratuit jusqu’à fin 2026 pour les
-                300 premiers inscrits.
+                Accès 100% gratuit — chat ouvert à tous.
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
                 Tu peux créer ton profil, échanger librement et tester Keefon
-                sans carte bancaire. Si tu fais partie des 300 premiers
-                inscrits, ton accès reste gratuit jusqu’au 31/12/2026.
+                sans carte bancaire. Offre temporaire.
               </p>
             </div>
             <a
               href="/signup"
-              aria-label="Profiter de l’offre Keefon gratuit jusqu’à fin 2026 pour les 300 premiers inscrits"
-              title="Profiter de l’offre gratuite (300 premiers inscrits)"
-              className="rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow-md transition hover:translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
+              aria-label="Profiter de l’accès 100% gratuit"
+              title="Profiter de l’accès 100% gratuit"
+              className="rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
               style={{ background: COLORS.paleGreen }}
             >
               En profiter
@@ -175,106 +190,100 @@ function ProfileTeaserBand() {
   /**
    * ⚠️ Fichiers à placer dans : /public/avatars_France/Bordeaux/
    * IMPORTANT :
-   *  - pas d’accents ni d’espaces
-   *  - format : .png
-   *  - poids raisonnable (< 300ko idéalement)
+   *  - pas d’accents ni d’espaces dans les noms de fichiers (Simon.png, Monique.png, Nath.png, Riton.png)
+   *  - tu peux renommer les images côté disque, le chemin doit suivre ces valeurs.
    */
   const profiles = [
     {
-      pseudo: "Claire_Bdx",
-      ageVille: "30 ans — Bordeaux centre",
-      badges: ["Free", "Écho reçu"],
+      pseudo: "Simon",
+      ageVille: "48 ans — Bordeaux centre",
+      badges: ["Free"],
       phrase:
-        "Marre des applis où tout va trop vite. Ici, j’ai l’impression de rencontrer des gens qui prennent le temps de parler.",
-      avatarSrc: "/avatars_France/Bordeaux/claire-bdx.png",
-      avatarAlt: "Profil fictif Claire_Bdx",
+        "Je travaille en centre-ville et je n’ai plus envie de passer mes soirées à swiper. Ici je peux discuter plus calmement.",
+      avatarSrc: "/avatars_France/Bordeaux/Simon.png",
+      avatarAlt: "Profil fictif Simon_Quais (homme à Bordeaux centre)",
       priority: true,
     },
     {
-      pseudo: "Mathieu_Ocean",
-      ageVille: "36 ans — Pessac",
-      badges: ["Free"],
+      pseudo: "Monique",
+      ageVille: "56 ans — sud métropole",
+      badges: ["Essentiel"],
       phrase:
-        "Je suis souvent entre Bordeaux et le bassin. Keefon me permet de rencontrer des personnes qui ont le même rythme de vie.",
-      avatarSrc: "/avatars_France/Bordeaux/mathieu-ocean.png",
-      avatarAlt: "Profil fictif Mathieu_Ocean",
-      priority: false,
+        "Après quelques années seule, j’avais envie de retrouver un espace bienveillant pour échanger sans me sentir pressée.",
+      avatarSrc: "/avatars_France/Bordeaux/Monique.png",
+      avatarAlt: "Profil fictif Monique_Gradignan (femme à Bordeaux métropole)",
+      priority: true,
     },
     {
-      pseudo: "Anais_RiveDroite",
-      ageVille: "33 ans — rive droite",
+      pseudo: "Nath",
+      ageVille: "26 ans — Chartrons",
       badges: ["Free"],
       phrase:
-        "J’avais besoin d’un cadre plus sain, loin du swipe compulsif. Keefon me correspond beaucoup plus.",
-      avatarSrc: "/avatars_France/Bordeaux/anais-rivedroite.png",
-      avatarAlt: "Profil fictif Anais_RiveDroite",
-      priority: false,
+        "Entre les cours, le boulot et les sorties sur les quais, je préfère quelques vraies conversations que des centaines de matchs.",
+      avatarSrc: "/avatars_France/Bordeaux/Nath.png",
+      avatarAlt: "Profil fictif Nath_Bdx (jeune femme à Bordeaux)",
     },
     {
-      pseudo: "Thomas_Medoc",
-      ageVille: "39 ans — Médoc",
-      badges: ["Free"],
+      pseudo: "Riton",
+      ageVille: "29 ans — rive droite",
+      badges: ["Essentiel"],
       phrase:
-        "Je vis un peu à l’écart, et ça complique les rencontres. Ici, je peux discuter tranquillement, sans pression.",
-      avatarSrc: "/avatars_France/Bordeaux/thomas-medoc.png",
-      avatarAlt: "Profil fictif Thomas_Medoc",
-      priority: false,
+        "Je voulais une appli plus simple, où tu peux expliquer ce que tu cherches sans te prendre une pluie de messages lourds.",
+      avatarSrc: "/avatars_France/Bordeaux/Riton.png",
+      avatarAlt: "Profil fictif Riton_RiveDroite (jeune homme à Bordeaux)",
     },
   ];
 
   return (
-    <section className="border-y border-slate-100 bg-slate-50/60 py-8">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4">
-        <div className="flex flex-col gap-1">
-          <p className="text-[13px] font-semibold uppercase tracking-wide text-slate-500">
-            Exemples de profils Keefon (fictifs)
-          </p>
-          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
-            Une communauté bienveillante sur la zone Bordeaux & Gironde.
-          </h2>
-          <p className="max-w-2xl text-[14px] leading-relaxed text-slate-600">
-            Voici quelques exemples de profils fictifs, pour te donner une idée
-            de l’ambiance Keefon sur Bordeaux, sa métropole et la Gironde.
-          </p>
+    <section className="section section-profiles-preview py-6">
+      <div className="container mx-auto max-w-5xl px-4">
+        {/* Mention discrète (bulle jaune pâle) */}
+        <div
+          className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] sm:text-[13px] leading-relaxed"
+          style={{ color: "#FEFF93" }}
+        >
+          Profils fictifs inspirés de vraies personnes. Chaque membre décide
+          ce qu'il partage et reste protégé par les lois françaises.
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {profiles.map((profile) => (
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
+          {profiles.map((p) => (
             <article
-              key={profile.pseudo}
-              className="flex flex-col rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-sm"
+              key={p.pseudo}
+              className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
-              <div className="mb-3 flex items-center gap-3">
-                <div className="relative h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
-                  <img
-                    src={profile.avatarSrc}
-                    alt={profile.avatarAlt}
-                    loading={profile.priority ? "eager" : "lazy"}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="m-0 text-[14px] font-bold text-slate-900">
-                    {profile.pseudo}
-                  </p>
-                  <p className="m-0 text-[12px] text-slate-600">
-                    {profile.ageVille}
-                  </p>
+              <div className="relative h-72 w-full">
+                <Image
+                  src={p.avatarSrc}
+                  alt={p.avatarAlt}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
+                  priority={Boolean((p as any).priority)}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
+                  <div className="text-sm font-semibold text-white drop-shadow">
+                    {p.pseudo}
+                  </div>
+                  <div className="mt-[2px] text-xs text-slate-100 drop-shadow">
+                    {p.ageVille}
+                  </div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    {profile.badges.map((badge) => (
+                    {p.badges.map((b) => (
                       <span
-                        key={badge}
-                        className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700"
+                        key={b}
+                        className="inline-flex items-center rounded-full bg-sky-50/95 px-2 py-[2px] text-[10px] font-semibold text-slate-900 shadow-sm"
                       >
-                        {badge}
+                        {b}
                       </span>
                     ))}
                   </div>
+                  <div className="mt-2 rounded-2xl bg-sky-50/95 px-3 py-2 text-[11px] leading-relaxed text-slate-900 shadow-sm">
+                    {p.phrase}
+                  </div>
                 </div>
               </div>
-              <p className="mt-1 text-[13px] leading-relaxed text-slate-700">
-                {profile.phrase}
-              </p>
             </article>
           ))}
         </div>
@@ -283,405 +292,333 @@ function ProfileTeaserBand() {
   );
 }
 
-/* ===========================  Contenu principal — Bordeaux & Gironde  =========================== */
-export default function RencontresBordeauxPage() {
+/* ===========================  Page  =========================== */
+export default function BordeauxRencontresPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: SEO.siteName,
+        url: "https://keefon.com",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://keefon.com/recherche?q={query}",
+          "query-input": "required name=query",
+        },
+      },
+      {
+        "@type": "WebPage",
+        name: SEO.title,
+        url: SEO.canonical,
+        description: SEO.description,
+        inLanguage: "fr-FR",
+        isPartOf: { "@id": "https://keefon.com#website" },
+      },
+    ],
+  };
+
   return (
     <>
       <Head>
         <title>{SEO.title}</title>
         <meta name="description" content={SEO.description} />
+        <meta name="keywords" content={SEO.keywords} />
         <link rel="canonical" href={SEO.canonical} />
-        <meta property="og:site_name" content={SEO.siteName} />
         <meta property="og:title" content={SEO.title} />
         <meta property="og:description" content={SEO.description} />
-        <meta property="og:url" content={SEO.canonical} />
-        <meta property="og:type" content={SEO.type} />
-        <meta property="og:image" content={SEO.image} />
-        <meta property="og:locale" content={SEO.locale} />
-        <meta name="robots" content={SEO.robots} />
-        <meta name="keywords" content={SEO.keywords.join(", ")} />
+        <meta property="og:image" content={SEO.ogImage} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={SEO.siteName} />
         <script
+          key="ld-json"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebPage",
-              name: SEO.title,
-              description: SEO.description,
-              url: SEO.canonical,
-              inLanguage: SEO.locale,
-              breadcrumb: {
-                "@type": "BreadcrumbList",
-                itemListElement: SEO.breadcrumb.map((item, index) => ({
-                  "@type": "ListItem",
-                  position: index + 1,
-                  name: item.name,
-                  item: item.url,
-                })),
-              },
-            }),
-          }}
+          // JSON-LD statique, pas d’injection de données utilisateur
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </Head>
 
       <FreeTopBar />
-      <main className="min-h-screen bg-slate-50/60 text-slate-900">
-        <FreeTopBarSpacer />
+      <FreeTopBarSpacer />
 
-        {/* Hero — Bordeaux & Gironde */}
-        <section className="border-b border-slate-100 bg-white/90">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:py-14 lg:flex-row lg:items-center">
-            <div className="flex-1 space-y-4">
-              <p className="text-[13px] font-semibold uppercase tracking-wide text-emerald-600">
-                Rencontres bienveillantes · Bordeaux & Gironde 🍷🌊
-              </p>
-              <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                Rencontres sérieuses et bienveillantes sur Bordeaux & Gironde.
+      <main
+        /**
+         * Image de fond :
+         *  - pour l’instant on réutilise bg-France-ext.png (déjà présent dans /public)
+         *  - tu pourras remplacer plus tard par un visuel type “bg-Bordeaux-ext.png”
+         *    en ne changeant QUE la valeur de backgroundImage.
+         */
+        className="min-h-screen"
+        style={{
+          backgroundImage: "url('/bg-France-ext.png')",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center top",
+        }}
+      >
+        {/* HERO */}
+        <header className="py-10">
+          <div className="container mx-auto flex justify-center px-4">
+            <div className="w-full max-w-3xl rounded-3xl border border-sky-200 bg-sky-50/65 px-6 py-6 text-slate-900 shadow-xl backdrop-blur-[2px]">
+              {/* KEEFON centré et coloré (visuel) */}
+              <div className="mb-2 flex items-center justify-center">
+                <span
+                  aria-hidden="true"
+                  className="leading-none text-5xl font-extrabold tracking-tight sm:text-6xl"
+                  style={{
+                    color: "#93ef09ff",
+                    textShadow:
+                      "0 2px 10px rgba(0,0,0,0.35), 0 6px 22px rgba(0,0,0,0.22)",
+                  }}
+                >
+                  KEEFON
+                </span>
+              </div>
+
+              {/* H1 SEO */}
+              <h1
+                className="text-center text-3xl font-extrabold sm:text-4xl md:text-5xl"
+                style={{
+                  color: "#cdff58ff",
+                  textShadow: "0 2px 6px rgba(0,0,0,0.25)",
+                }}
+              >
+                Rencontres bienveillantes à Bordeaux et autour
               </h1>
-              <p className="max-w-xl text-[15px] leading-relaxed text-slate-700">
-                Keefon propose une approche plus humaine des rencontres, pensée
-                pour les habitants de Bordeaux, Mérignac, Pessac, la rive
-                droite, le Médoc, le bassin d’Arcachon et plus largement la
-                Gironde. Loin du swipe compulsif, l’objectif est de remettre du
-                sens dans les échanges.
+
+              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
+                Une plateforme française pour celles et ceux qui vivent à
+                Bordeaux et dans les villes autour (Mérignac, Pessac, rive
+                droite, bassin d’Arcachon…) et qui veulent des rencontres plus
+                humaines, sans swipe toxique.
               </p>
 
-              <ul className="space-y-2 text-[14px] text-slate-700">
-                <li className="flex gap-2">
-                  <span className="mt-[3px] inline-block h-[6px] w-[6px] rounded-full bg-emerald-500" />
-                  <span>
-                    <strong>Zone Bordeaux & Gironde</strong> : métropole,
-                    villages, littoral, arrière-pays… Chacun sa place.
-                  </span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="mt-[3px] inline-block h-[6px] w-[6px] rounded-full bg-emerald-500" />
-                  <span>
-                    <strong>Ambiance bienveillante</strong> : une charte de
-                    respect claire, des limites posées dès le départ.
-                  </span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="mt-[3px] inline-block h-[6px] w-[6px] rounded-full bg-emerald-500" />
-                  <span>
-                    <strong>Pas de course aux matchs</strong> : on privilégie
-                    des échanges de qualité plutôt que des centaines de profils.
-                  </span>
-                </li>
-              </ul>
+              <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
+                Keefon est créée et hébergée en France, dans le cadre des lois
+                françaises de protection de la vie privée (RGPD, CNIL, droits
+                de l'individu).
+              </p>
 
-              <div className="flex flex-wrap gap-3 pt-2">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 py-2.5 text-[14px] font-semibold text-white shadow-md transition hover:bg-emerald-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                  aria-label="Créer mon profil gratuitement"
+                  title="Créer mon profil gratuitement"
+                  className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
+                  style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuit
+                  Créer mon profil gratuitement
                 </a>
-                <Link
-                  href="/fonctionnement"
-                  className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white/70 px-5 py-2.5 text-[14px] font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300/60"
-                >
-                  Comprendre comment ça marche
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex-1">
-              <div className="relative mx-auto max-w-md rounded-3xl border border-slate-200 bg-slate-900 p-4 text-slate-50 shadow-xl">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <div>
-                    <p className="m-0 text-[13px] font-semibold uppercase tracking-wide text-emerald-300">
-                      Bordeaux · Exemple de discussion
-                    </p>
-                    <p className="m-0 text-[12px] text-slate-200/80">
-                      Illustration d’une conversation entre deux personnes de
-                      la région.
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-[11px] font-semibold text-emerald-200">
-                    Bêta bienveillante
-                  </span>
-                </div>
-
-                <div className="space-y-2 rounded-2xl bg-slate-800/80 p-3">
-                  <div className="flex gap-2">
-                    <div className="mt-1 h-7 w-7 rounded-full bg-slate-600" />
-                    <div className="space-y-1">
-                      <div className="inline-block max-w-[85%] rounded-2xl bg-slate-700 px-3 py-2 text-[12px]">
-                        Salut 🙂 Moi c’est{" "}
-                        <span className="font-semibold">Claire, 30 ans</span>,
-                        je vis à Bordeaux centre. J’adore flâner aux Chartrons
-                        et aller au bassin dès que je peux.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2">
-                    <div className="space-y-1">
-                      <div className="inline-block max-w-[85%] rounded-2xl bg-emerald-500 px-3 py-2 text-[12px] text-slate-900">
-                        Enchanté Claire, moi c’est Julien, je suis à Mérignac.
-                        Je passe aussi beaucoup de temps sur la côte 🌊
-                      </div>
-                    </div>
-                    <div className="mt-1 h-7 w-7 rounded-full bg-slate-600" />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <div className="mt-1 h-7 w-7 rounded-full bg-slate-600" />
-                    <div className="space-y-1">
-                      <div className="inline-block max-w-[85%] rounded-2xl bg-slate-700 px-3 py-2 text-[12px]">
-                        Ça te dirait qu’on discute autour d’un café quartier
-                        Saint-Michel un de ces jours ?
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="h-9 flex-1 rounded-full bg-slate-800/80" />
-                  <button className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/90 text-[18px] font-bold text-slate-900 shadow-md">
-                    ➤
-                  </button>
-                </div>
-
-                <p className="mt-3 text-[11px] text-slate-300/80">
-                  Interface illustrée à titre d’exemple. Sur Keefon, l’objectif
-                  est de faciliter des échanges sincères, respectueux, ancrés
-                  dans la vraie vie bordelaise.
+                <p className="text-xs text-slate-700">
+                  Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
               </div>
             </div>
           </div>
-        </section>
+        </header>
 
+        {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Section “Pourquoi une page dédiée à Bordeaux & la Gironde ?” */}
-        <section className="border-b border-slate-100 bg-slate-50/80">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:py-14 lg:flex-row">
-            <div className="flex-1 space-y-4">
-              <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                Pourquoi une page dédiée à Bordeaux & la Gironde ?
-              </h2>
-              <p className="max-w-xl text-[15px] leading-relaxed text-slate-700">
-                La zone Bordeaux & Gironde a une vraie identité : vie urbaine,
-                vignobles, littoral, forêts… Les modes de vie sont variés, et
-                les rencontres ne se vivent pas de la même manière qu’ailleurs.
-                Keefon veut en tenir compte, tout en gardant un cadre commun à
-                toute la France.
+        {/* Exemples de profils (Bordeaux) */}
+        <ProfileTeaserBand />
+
+        {/* Comment ça marche ? */}
+        <section className="py-10">
+          <div className="container mx-auto max-w-5xl px-4">
+            <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
+              Comment ça marche à Bordeaux&nbsp;?
+            </h2>
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  1. Tu crées ton profil
+                </h3>
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  2. Tu indiques que tu es sur la zone Bordeaux / Gironde
+                </h3>
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  3. Tu échanges simplement
+                </h3>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* Pourquoi Keefon est différent ? */}
+        <section className="py-10">
+          <div className="container mx-auto max-w-5xl px-4">
+            <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
+              Pourquoi Keefon est différent à Bordeaux&nbsp;?
+            </h2>
+            <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+              <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                Pas de swipe toxique
+              </p>
+              <p className="text-sm leading-relaxed">
+                Pas de défilement infini pour te garder accroché à l’écran.
+                Le but, c'est la rencontre, pas l’addiction. Les comportements
+                toxiques sont hors-jeu et peuvent être signalés facilement.
               </p>
 
-              <ul className="space-y-2 text-[14px] text-slate-700">
-                <li className="flex gap-2">
-                  <span className="mt-[3px] inline-block h-[6px] w-[6px] rounded-full bg-slate-400" />
-                  <span>
-                    <strong>Une vie à cheval entre ville et océan</strong> :
-                    beaucoup de bordelais jonglent entre la métropole, le
-                    bassin, le Médoc… Keefon s’adapte à ces réalités.
-                  </span>
+              <p className="mt-4 mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                Plus d’opportunités pour tous
+              </p>
+              <p className="text-sm leading-relaxed">
+                Les Échos et Keefon+ créent des ouvertures supplémentaires pour
+                les profils Free. L’abonnement Essentiel reste volontairement
+                abordable pour aller plus loin sans exploser ton budget.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Bordeaux ancrée dans le réel */}
+        <section className="py-10">
+          <div className="container mx-auto max-w-5xl px-4">
+            <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
+              Rencontrer à Bordeaux, sans se perdre dans la masse
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
+              Une grande ville, beaucoup de monde, beaucoup de mouvements entre
+              centre, rive droite et communes autour. Keefon te permet d’ouvrir
+              des portes sans te perdre dans une marée de profils anonymes.
+            </p>
+            <div className="mt-6 grid gap-6 md:grid-cols-2">
+              <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  Quais, quartiers, métropole…
+                </h3>
+                <p className="text-sm leading-relaxed">
+                  Que tu vives proche de la place de la Bourse, des Chartrons,
+                  de la gare Saint-Jean ou d’une commune voisine, tu peux
+                  croiser des personnes qui partagent la même ville et le même
+                  quotidien que toi.
+                </p>
+              </article>
+
+              <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  Et le reste de la côte si tu bouges
+                </h3>
+                <p className="text-sm leading-relaxed">
+                  Si tu te déplaces souvent vers le bassin d’Arcachon, le
+                  Médoc ou d’autres villes de Nouvelle-Aquitaine, tu peux aussi
+                  utiliser Keefon dans ces zones, avec les mêmes principes de
+                  respect et de clarté.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* Idées de sorties locales (Bordeaux & Gironde) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="mb-1 text-xs font-semibold text-chatOuter">
+                Quelques idées de sorties autour de Bordeaux
+              </h2>
+              <ul className="list-disc space-y-1 pl-4">
+                <li>
+                  Balade en fin de journée sur les quais de la Garonne, avec un
+                  détour par le miroir d’eau et la place de la Bourse.
                 </li>
-                <li className="flex gap-2">
-                  <span className="mt-[3px] inline-block h-[6px] w-[6px] rounded-full bg-slate-400" />
-                  <span>
-                    <strong>Des rencontres à ton rythme</strong> : que tu sois
-                    très actif(ve) en ville ou plutôt tourné(e) vers la nature,
-                    tu peux trouver des personnes qui te ressemblent.
-                  </span>
+                <li>
+                  Verre ou pique-nique au{" "}
+                  <span className="whitespace-nowrap">Jardin Public</span> pour
+                  discuter au calme en restant en cœur de ville.
                 </li>
-                <li className="flex gap-2">
-                  <span className="mt-[3px] inline-block h-[6px] w-[6px] rounded-full bg-slate-400" />
-                  <span>
-                    <strong>Un cadre plus serein</strong> : l’idée est de
-                    sortir de la logique “supermarché de profils” qui épuise
-                    beaucoup de gens.
-                  </span>
+                <li>
+                  Soirée dans un bar à vin ou une cave du centre, pour
+                  découvrir quelques bouteilles de la région sans obligation de
+                  “grand rendez-vous”.
+                </li>
+                <li>
+                  Promenade dans les rues piétonnes autour de la rue
+                  Sainte-Catherine ou des Chartrons, en prenant le temps de
+                  s’arrêter dans un café ou une petite adresse que vous aimez
+                  bien.
+                </li>
+                <li>
+                  Si vous aimez bouger un peu, journée ou demi-journée au
+                  bassin d’Arcachon ou sur la côte, en gardant un point de
+                  rencontre simple et public pour que chacun se sente à l’aise.
+                </li>
+              </ul>
+              <p className="mt-2">
+                Ce ne sont que des exemples : chacun choisit ses lieux de
+                rencontre et reste libre de son rythme et de ses limites.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Liens internes SEO (France + autres villes) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
+              <p className="mb-2">
+                Tu peux aussi explorer la vue d’ensemble&nbsp;:
+                {" "}
+                <Link
+                  href="/rencontres/France"
+                  className="font-semibold underline-offset-2 hover:underline"
+                >
+                  rencontres en France
+                </Link>
+                .
+              </p>
+              <p className="mb-1">
+                Autres grandes villes où Keefon est présent&nbsp;:
+              </p>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1">
+                <li>
+                  <Link
+                    href="/rencontres/Nantes"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Nantes
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/rencontres/Toulouse"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Toulouse
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/rencontres/Lyon"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Lyon
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/rencontres/Paris"
+                    className="underline-offset-2 hover:underline"
+                  >
+                    Rencontres à Paris
+                  </Link>
                 </li>
               </ul>
             </div>
-
-            <div className="flex-1">
-              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-[16px] font-extrabold text-slate-900">
-                  Exemples de situations concrètes
-                </h3>
-                <ul className="mt-3 space-y-2 text-[13px] text-slate-700">
-                  <li>
-                    • Tu vis à Bordeaux mais passes tes week-ends au Cap Ferret
-                    ou sur le bassin.
-                  </li>
-                  <li>
-                    • Tu habites en rive droite ou dans le Médoc et tu as
-                    l’impression que “tout se passe” ailleurs.
-                  </li>
-                  <li>
-                    • Tu es installé(e) à Pessac, Mérignac ou Talence, et tu
-                    aimerais rencontrer quelqu’un qui partage ton rythme de vie.
-                  </li>
-                </ul>
-                <p className="mt-3 text-[13px] text-slate-600">
-                  Keefon ne promet pas de magie, mais un cadre plus posé pour
-                  faire des rencontres, en respectant qui tu es et l’endroit où
-                  tu vis.
-                </p>
-              </div>
-            </div>
           </div>
         </section>
 
-        <ProfileTeaserBand />
-
-        {/* Section “Comment ça marche ?” */}
-        <section className="border-b border-slate-100 bg-white/90">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:py-14 lg:flex-row">
-            <div className="flex-1 space-y-4">
-              <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                Comment fonctionne Keefon sur Bordeaux & la Gironde ?
-              </h2>
-              <p className="max-w-xl text-[15px] leading-relaxed text-slate-700">
-                Le fonctionnement reste le même que pour le reste de la France,
-                mais avec des suggestions adaptées à ta zone. L’idée est de
-                mettre en avant des profils qui ont du sens pour toi, que tu
-                sois plutôt urbain(e) ou attiré(e) par le littoral.
-              </p>
-
-              <ol className="space-y-2 text-[14px] text-slate-700">
-                <li>
-                  <strong>1. Tu crées ton profil</strong> : quelques questions
-                  sur toi, sur ce que tu recherches et ton environnement de vie.
-                </li>
-                <li>
-                  <strong>2. Tu vois des profils de ta zone</strong> : Bordeaux
-                  métropole, Gironde, littoral… en fonction de ce que tu
-                  indiques.
-                </li>
-                <li>
-                  <strong>3. Tu échanges dans une messagerie claire</strong> :
-                  pas de surcharges ni de fonctionnalités inutiles, juste un
-                  espace pour parler.
-                </li>
-                <li>
-                  <strong>4. Tu choisis le rythme</strong> : rien ne t’oblige à
-                  répondre dans la minute. Keefon encourage un tempo plus humain.
-                </li>
-              </ol>
-            </div>
-
-            <div className="flex-1">
-              <div className="space-y-4 rounded-3xl border border-slate-200 bg-slate-900 p-5 text-slate-50 shadow-md">
-                <h3 className="text-[16px] font-extrabold">
-                  Quelques principes importants
-                </h3>
-                <ul className="mt-2 space-y-2 text-[13px] text-slate-100/90">
-                  <li>
-                    • <strong>Bienveillance</strong> : la région est variée,
-                    les profils aussi. Le respect est non négociable.
-                  </li>
-                  <li>
-                    • <strong>Authenticité</strong> : pas besoin de surjouer,
-                    l’idée est d’être soi-même.
-                  </li>
-                  <li>
-                    • <strong>Protection des données</strong> : Keefon reste
-                    dans un cadre RGPD, avec hébergement en Europe.
-                  </li>
-                  <li>
-                    • <strong>Équilibre</strong> : on évite de créer un
-                    environnement addictif ; l’appli doit rester un outil, pas
-                    une dépendance.
-                  </li>
-                </ul>
-                <p className="mt-3 text-[12px] text-slate-200/80">
-                  Keefon est en construction, avec l’ambition d’offrir un
-                  espace plus sain aux personnes qui en ont assez des
-                  applications classiques.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section “Rejoindre Keefon depuis Bordeaux & la Gironde” */}
-        <section className="bg-white/90">
-          <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:py-14">
-            <div className="grid gap-8 lg:grid-cols-[1.1fr,0.9fr]">
-              <div className="space-y-4">
-                <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                  Envie de rejoindre Keefon depuis Bordeaux & la Gironde ?
-                </h2>
-                <p className="max-w-xl text-[15px] leading-relaxed text-slate-700">
-                  Si tu te retrouves dans cette vision plus sereine des
-                  rencontres, tu peux créer ton profil dès maintenant. Keefon
-                  se construit avec les premiers membres, dont une partie
-                  vient déjà de Bordeaux et de la région.
-                </p>
-
-                <ul className="space-y-2 text-[14px] text-slate-700">
-                  <li>
-                    • Plateforme française, pensée pour des rencontres plus
-                    saines.
-                  </li>
-                  <li>
-                    • Approche locale, avec une attention particulière aux
-                    réalités de la zone Bordeaux & Gironde.
-                  </li>
-                  <li>
-                    • Ambiance bienveillante, loin des comportements toxiques.
-                  </li>
-                </ul>
-
-                <div className="flex flex-wrap gap-3 pt-1">
-                  <a
-                    href="/signup"
-                    className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 py-2.5 text-[14px] font-semibold text-white shadow-md transition hover:bg-emerald-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-                  >
-                    Créer mon profil gratuit
-                  </a>
-                  <Link
-                    href="/fonctionnement"
-                    className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white/70 px-5 py-2.5 text-[14px] font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300/60"
-                  >
-                    En savoir plus sur Keefon
-                  </Link>
-                </div>
-              </div>
-
-              <div className="space-y-4 rounded-3xl border border-slate-200 bg-slate-900 p-5 text-slate-50 shadow-md">
-                <h3 className="text-[16px] font-extrabold">
-                  Quelques engagements importants
-                </h3>
-                <ul className="mt-2 space-y-2 text-[13px] text-slate-100/90">
-                  <li>• Lutte contre le harcèlement et les comportements toxiques.</li>
-                  <li>• Respect de ta vie privée et de tes données.</li>
-                  <li>• Possibilité de signaler facilement un comportement inapproprié.</li>
-                  <li>• Construction progressive avec les retours de la communauté.</li>
-                </ul>
-                <p className="mt-3 text-[12px] text-slate-200/80">
-                  Keefon n’a pas vocation à être une usine à profils, mais un
-                  espace plus humain pour construire des relations durables.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer simplifié */}
-        <footer className="border-t border-slate-200 bg-slate-50/90">
-          <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 py-4 text-[12px] text-slate-600 sm:flex-row">
-            <p className="m-0">
-              © {new Date().getFullYear()} Keefon — Rencontres bienveillantes
-              sur Bordeaux & Gironde.
-            </p>
-            <p className="m-0 flex flex-wrap items-center gap-2">
+        <footer className="pt-4 pb-10">
+          <div className="mx-auto max-w-5xl px-4">
+            <p className="mt-2 text-[11px] text-center text-slate-900">
+              <Link href="/cgu" className="hover:underline">
+                Conditions Générales d’Utilisation
+              </Link>
+              {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
-              </Link>
-              {" · "}
-              <Link href="/confidentialite" className="hover:underline">
-                Politique de confidentialité
-              </Link>
-              {" · "}
-              <Link href="/cookies" className="hover:underline">
-                Cookies
               </Link>
             </p>
           </div>

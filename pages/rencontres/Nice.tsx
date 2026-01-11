@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/Nice.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Nice & Côte d’Azur
- * MAJ : 2025-12-04 — Domaine www.keefon.com + CTA + footer légal harmonisé
+ * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Nice / Cannes / Côte d’Azur.
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Nice et alentours (Cannes, Antibes, Menton, arrière-pays azuréen…).
@@ -9,7 +9,7 @@
  * - Pas de promesse de filtres ultra-précis : on parle de “zone Nice / Côte d’Azur” de façon large.
  *
  * Dépendances :
- * - next/head, next/link
+ * - next/head, next/image, next/link
  * - Tailwind pour les classes utilitaires
  *
  * Données lues :
@@ -25,16 +25,17 @@
  */
 
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
   title: "Rencontres bienveillantes à Nice et sur la Côte d’Azur | Keefon",
   description:
-    "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes, Menton et sur la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Nice",
+    "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes et sur toute la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+  canonical: "https://keefon.com/rencontres/Nice",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-nice.jpg",
+  ogImage: "https://keefon.com/og/rencontres-nice.jpg",
   keywords: [
     // Intent + features
     "rencontre Nice",
@@ -72,24 +73,25 @@ const SEO = {
     "Nice",
     "Cannes",
     "Antibes",
+    "Juan-les-Pins",
     "Menton",
     "Cagnes-sur-Mer",
+    "Villefranche-sur-Mer",
     "Saint-Laurent-du-Var",
-    "Villeneuve-Loubet",
-    "Vence",
     "Grasse",
     "Alpes-Maritimes",
 
     // Combinaisons courtes utiles
     "rencontre sérieuse Nice",
+    "rencontre sérieuse Cannes",
     "rencontre après 30 ans Nice",
     "rencontre après 40 ans Côte d’Azur",
-    "rencontre après 50 ans Alpes-Maritimes",
+    "rencontre après 50 ans Côte d’Azur",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
-    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Nice", url: "https://www.keefon.com/rencontres/Nice" },
+    { name: "Accueil", url: "https://keefon.com/" },
+    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Nice", url: "https://keefon.com/rencontres/Nice" },
   ],
 };
 
@@ -123,7 +125,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profite-en dès maintenant.
+            Aucune carte bancaire demandée. Profites-en dès maintenant.
           </span>
         </p>
 
@@ -186,7 +188,7 @@ function FreeReminderCard() {
   );
 }
 
-/* ===========================  Bandeau “exemples de profils” — Nice & Côte d’Azur  =========================== */
+/* ===========================  Bandeau “exemples de profils” — Nice / Côte d’Azur  =========================== */
 function ProfileTeaserBand() {
   /**
    * ⚠️ Fichiers à placer dans : /public/avatars_France/Nice/
@@ -204,7 +206,7 @@ function ProfileTeaserBand() {
       ageVille: "25 ans — Nice centre",
       badges: ["Free"],
       phrase:
-        "Je bosse en ville et je profite dès que je peux du Vieux-Nice, du tram et des cafés. J’aime beaucoup Keefon, pour sa facilité de rencontrer d'autres personnes.",
+        "Je bosse en ville et je profite dès que je peux du Vieux-Nice et de la Promenade. J'aime beaucoup Keefon, pour sa facilité de rencontrer d'autres personnes.",
       avatarSrc: "/avatars_France/Nice/Nadou.png",
       avatarAlt:
         "Profil fictif Nadou (jeune femme souriante dans une rue de ville méditerranéenne)",
@@ -215,7 +217,7 @@ function ProfileTeaserBand() {
       ageVille: "31 ans — Nice bord de mer",
       badges: ["Essentiel"],
       phrase:
-        "Entre le boulot, le sport et les soirées entre amis, je n’ai pas envie de passer mes nuits à swiper. Je préfère quelques échanges clairs et respectueux.",
+        "Entre le boulot, le sport et les soirées entre amis, j’ai zéro envie de passer des heures à swiper. Je préfère quelques échanges clairs et respectueux.",
       avatarSrc: "/avatars_France/Nice/Nico.png",
       avatarAlt:
         "Profil fictif Nico (homme souriant au soleil sur une promenade en bord de mer)",
@@ -262,11 +264,13 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <img
+                <Image
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  className="h-full w-full object-cover"
-                  loading={(p as any).priority ? "eager" : "lazy"}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
+                  priority={Boolean((p as any).priority)}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -307,20 +311,20 @@ export default function NiceRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://www.keefon.com",
+        url: "https://keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://www.keefon.com/recherche?q={query}",
+          target: "https://keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
       {
         "@type": "WebPage",
-        name: SEO.title,
-        url: SEO.canonical,
-        description: SEO.description,
-        inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com#website" },
+          name: SEO.title,
+          url: SEO.canonical,
+          description: SEO.description,
+          inLanguage: "fr-FR",
+          isPartOf: { "@id": "https://keefon.com#website" },
       },
     ],
   };
@@ -395,8 +399,7 @@ export default function NiceRencontresPage() {
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
                 Une plateforme française pour celles et ceux qui vivent à Nice,
-                sur la Côte d’Azur et dans les villes alentours (Cannes,
-                Antibes, Menton, villages perchés…) et qui veulent des
+                Cannes, Antibes ou dans les villes autour et qui veulent des
                 rencontres plus humaines, sans swipe toxique, au rythme du
                 soleil et de la mer.
               </p>
@@ -410,21 +413,15 @@ export default function NiceRencontresPage() {
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <a
                   href="/signup"
-                  aria-label="Je crée mon profil, c'est gratuit"
-                  title="Je crée mon profil, c'est gratuit"
+                  aria-label="Créer mon profil gratuitement"
+                  title="Créer mon profil gratuitement"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Je crée mon profil, c&apos;est gratuit
+                  Créer mon profil gratuitement
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
-                </p>
-                <p className="mt-2 text-xs text-slate-800 text-center">
-                  Déjà membre ?{" "}
-                  <a href="/login" className="font-semibold underline">
-                    Se connecter
-                  </a>
                 </p>
               </div>
             </div>
@@ -434,7 +431,7 @@ export default function NiceRencontresPage() {
         {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Exemples de profils (Nice & Côte d’Azur) */}
+        {/* Exemples de profils (Nice / Côte d’Azur) */}
         <ProfileTeaserBand />
 
         {/* Comment ça marche ? */}
@@ -449,7 +446,7 @@ export default function NiceRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Nice / Côte d’Azur
+                  2. Tu indiques ta ville.
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -463,7 +460,7 @@ export default function NiceRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Pourquoi Keefon est différent à Nice&nbsp;?
+              Pourquoi Keefon est différent sur la Côte d’Azur&nbsp;?
             </h2>
             <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
               <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -483,7 +480,7 @@ export default function NiceRencontresPage() {
                 Les Échos et Keefon+ créent des ouvertures supplémentaires pour
                 les profils Free. L&apos;abonnement Essentiel reste
                 volontairement abordable pour aller plus loin sans exploser ton
-                budget, même quand la vie sur la Côte d’Azur coûte déjà cher.
+                budget, même dans une région où tout coûte souvent plus cher.
               </p>
             </div>
           </div>
@@ -503,24 +500,23 @@ export default function NiceRencontresPage() {
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Nice, Cannes, Antibes, Menton…
+                  Vieux-Nice, Promenade, collines…
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Que tu vives à Nice même, vers le port, la Prom&apos; ou dans
-                  un quartier plus en hauteur, ou que tu sois plutôt côté
-                  Cannes, Antibes ou Menton, tu peux croiser des personnes qui
-                  partagent la même région et la même envie de rencontres plus
-                  simples.
+                  Que tu vives à Nice, Antibes ou Menton, dans les collines de
+                  Cimiez, à Cagnes-sur-Mer ou dans un village de l&apos;arrière-pays,
+                  tu peux croiser des personnes qui partagent la même région et
+                  la même énergie que toi.
                 </p>
               </article>
 
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Et l’arrière-pays si tu bouges
+                  Et toute la Côte d’Azur si tu bouges
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Si tu te déplaces souvent vers l’arrière-pays, les villages
-                  perchés ou d’autres coins des Alpes-Maritimes, tu peux aussi
+                  Si tu te déplaces souvent vers Cannes, Antibes, Grasse, Menton
+                  ou d&apos;autres villes de la Côte d&apos;Azur, tu peux aussi
                   utiliser Keefon dans ces zones, avec les mêmes principes de
                   respect et de clarté.
                 </p>
@@ -538,18 +534,18 @@ export default function NiceRencontresPage() {
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
               Keefon s&apos;adresse à celles et ceux qui préfèrent un espace
               plus calme, plus clair, plus respectueux que les applis
-              classiques, tout en restant connectés à la lumière de la Côte
-              d’Azur.
+              classiques, tout en profitant de la lumière et de la mer entre
+              Nice, Cannes, Antibes et les villages autour.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
                 href="/signup"
-                aria-label="Je crée mon profil, c'est gratuit"
-                title="Je crée mon profil, c'est gratuit"
+                aria-label="Créer mon profil gratuitement"
+                title="Créer mon profil gratuitement"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                 style={{ background: COLORS.paleGreen }}
               >
-                Je crée mon profil, c&apos;est gratuit
+                Créer mon profil gratuitement
               </a>
               <p className="text-xs text-slate-800">
                 Tu peux commencer gratuitement, compléter ton profil à ton
@@ -568,24 +564,33 @@ export default function NiceRencontresPage() {
               </h2>
               <ul className="list-disc space-y-1 pl-4">
                 <li>
-                  Balade sur la Promenade des Anglais ou sur le port, avec un
-                  café en terrasse pour discuter tranquillement.
+                  Balade sur la Promenade des Anglais avec un café ou une glace,
+                  en choisissant un point de rendez-vous public facile à
+                  retrouver.
                 </li>
                 <li>
-                  Promenade dans le Vieux-Nice ou vers la colline du Château
-                  pour parler au calme avec vue sur la mer.
+                  Promenade dans le Vieux-Nice et autour du Cours Saleya, pour
+                  discuter en marchant et faire une pause en terrasse si le
+                  feeling passe.
                 </li>
                 <li>
-                  Sortie en bord de mer vers Cannes, Antibes ou Menton, en
-                  restant sur des zones fréquentées et faciles d&apos;accès.
+                  Montée vers la colline du Château ou un autre point de vue,
+                  pour parler au calme tout en profitant de la vue sur la baie.
                 </li>
                 <li>
-                  Découverte d’un village perché ou d’un coin de l’arrière-pays,
-                  en gardant un cadre simple et sécurisé pour tout le monde.
+                  Sortie à Antibes, Cannes ou Menton (TER, bus ou voiture), avec
+                  une balade sur le port, en bord de mer ou dans un quartier
+                  animé.
+                </li>
+                <li>
+                  Si vous aimez marcher, petite balade dans un village ou un
+                  coin de l&apos;arrière-pays (en restant sur des chemins
+                  connus, accessibles et fréquentés) pour garder un cadre
+                  simple et sécurisé.
                 </li>
               </ul>
               <p className="mt-2">
-                Ce sont seulement des idées : chacun choisit ses lieux de
+                Ce ne sont que des idées : chacun choisit ses lieux de
                 rencontre, son rythme et ses limites, avec le confort et la
                 sécurité en priorité.
               </p>
@@ -637,10 +642,10 @@ export default function NiceRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Toulouse"
+                    href="/rencontres/Paris"
                     className="underline-offset-2 hover:underline"
                   >
-                    Rencontres à Toulouse
+                    Rencontres à Paris
                   </Link>
                 </li>
               </ul>
@@ -658,14 +663,6 @@ export default function NiceRencontresPage() {
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
-              </Link>
-              {" · "}
-              <Link href="/confidentialite" className="hover:underline">
-                Politique de confidentialité
-              </Link>
-              {" · "}
-              <Link href="/cookies" className="hover:underline">
-                Cookies
               </Link>
             </p>
           </div>

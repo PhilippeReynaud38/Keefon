@@ -182,7 +182,8 @@ export default function SearchResultCard({ data }: Props) {
         alt={mainUrl ? `Photo de ${data.username}` : "Aucune photo disponible"}
         className="block h-full w-full object-cover pointer-events-none select-none"
         draggable={false}
-        style={{ aspectRatio: "3/4" }}
+        // Ajuste le point focal pour limiter les têtes coupées (sans changer le layout).
+        style={{ aspectRatio: "3/4", objectPosition: "50% 15%" }}
         loading="lazy"
       />
 
