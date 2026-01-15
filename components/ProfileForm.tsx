@@ -217,7 +217,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
         <label className="block text-paleGreen font-semibold">Une relation pour toi c’est…</label>
         <textarea className="input h-28" value={form.vision_relation || ""} onChange={(e) => updateField("vision_relation", e.target.value)} />
 
-        <label className="block text-paleGreen font-semibold">Ta bio libre</label>
+        <label className="block text-paleGreen font-semibold">Tes vacances idéales, ce serait…</label>
         <textarea className="input h-24" value={form.bio || ""} onChange={(e) => updateField("bio", e.target.value)} />
 
         {message && (
