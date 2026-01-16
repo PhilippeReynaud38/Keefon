@@ -389,7 +389,7 @@ export default function FranceRencontresPage() {
                   style={{ backgroundColor: "#93ef09ff" }}
                 >
                   <span className="block">Se prononce « qui phone » 📞</span>
-                  <span className="block">et veut dire « on kiffe » ❤️</span>
+                  <span className="block"> « Coup de coeur mutuel» ❤️</span>
                 </p>
               </div>
 
