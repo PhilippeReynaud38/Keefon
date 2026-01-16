@@ -662,7 +662,7 @@ export default function Dashboard() {
             style={{ backgroundColor: "#93ef09ff" }}
           >
             <span className="block">Se prononce « qui-fone » 📞</span>
-            <span className="block">Coup de cœur mutuel. ❤️</span>
+            <span className="block">« Coup de cœur mutuel »❤️</span>
           </p>
         </div>
 
@@ -681,7 +681,7 @@ export default function Dashboard() {
             </button>
             <p className="m-0 font-bold mb-1">Félicitations 🎉</p>
             <p className="m-0">
-              Tu fais partie des 300 premiers inscrits.
+              Tu fais partie des 2000 premiers inscrits.
             </p>
             <p className="m-0">
               Ton accès à Keefon est gratuit jusqu’au{" "}
