@@ -32,9 +32,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Marseille et autour | Keefon",
   description:
     "Keefon Marseille est une page dédiée aux rencontres bienveillantes à Marseille et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Marseille",
+  canonical: "https://www.keefon.com/rencontres/Marseille",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-marseille.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-marseille.jpg",
   keywords: [
     // Intent + features
     "rencontre Marseille",
@@ -78,9 +78,9 @@ const SEO = {
     "rencontre après 50 ans Marseille",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Marseille", url: "https://keefon.com/rencontres/Marseille" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Marseille", url: "https://www.keefon.com/rencontres/Marseille" },
   ],
 };
 
@@ -295,10 +295,10 @@ export default function MarseilleRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -308,7 +308,7 @@ export default function MarseilleRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com.com#website" },
       },
     ],
   };

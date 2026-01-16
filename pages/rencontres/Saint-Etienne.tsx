@@ -34,9 +34,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Saint-Étienne et autour | Keefon",
   description:
     "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Saint-Etienne",
+  canonical: "https://www.keefon.com/rencontres/Saint-Etienne",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-saint-etienne.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-saint-etienne.jpg",
   keywords: [
     // Intent + features
     "rencontre Saint-Étienne",
@@ -76,11 +76,11 @@ const SEO = {
     "rencontre après 50 ans Loire",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Saint-Étienne",
-      url: "https://keefon.com/rencontres/Saint-Etienne",
+      url: "https://www.keefon.com/rencontres/Saint-Etienne",
     },
   ],
 };
@@ -297,10 +297,10 @@ export default function SaintEtienneRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -310,7 +310,7 @@ export default function SaintEtienneRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };

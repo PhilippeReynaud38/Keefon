@@ -34,9 +34,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Montpellier et autour | Keefon",
   description:
     "Keefon Montpellier est une page dédiée aux rencontres bienveillantes à Montpellier et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Montpellier",
+  canonical: "https://www.keefon.com/rencontres/Montpellier",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-montpellier.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-montpellier.jpg",
   keywords: [
     // Intent + features
     "rencontre Montpellier",
@@ -81,9 +81,9 @@ const SEO = {
     "rencontre après 50 ans Hérault",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Montpellier", url: "https://keefon.com/rencontres/Montpellier" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Montpellier", url: "https://www.keefon.com/rencontres/Montpellier" },
   ],
 };
 
@@ -300,10 +300,10 @@ export default function MontpellierRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -313,7 +313,7 @@ export default function MontpellierRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com.com#website" },
       },
     ],
   };

@@ -1,5 +1,4 @@
 User-agent: *
 Disallow: /api/
 Disallow: /admin
-
-Sitemap: https://keefon.com/sitemap.xml
+Sitemap: https://www.keefon.com/sitemap.xml

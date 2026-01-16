@@ -3,7 +3,7 @@ le fichier  userIdMapping.ts serre à faire la liaison entre id de la table prof
 
 export const SITE = {
   name: "Keefon",
-  url: "https://keefon.com", // ← ajuste si besoin
+  url: "https://www.keefon.com", // ← ajuste si besoin
   defaultLocale: "fr",
   locales: ["fr", "en"],
   twitter: "@keefon", // optionnel

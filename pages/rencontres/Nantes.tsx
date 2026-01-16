@@ -34,9 +34,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Nantes et autour | Keefon",
   description:
     "Keefon Nantes est une page dédiée aux rencontres bienveillantes à Nantes et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Nantes",
+  canonical: "https://www.keefon.com/rencontres/Nantes",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-nantes.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-nantes.jpg",
   keywords: [
     // Intent + features
     "rencontre Nantes",
@@ -81,9 +81,9 @@ const SEO = {
     "rencontre après 50 ans Loire-Atlantique",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Nantes", url: "https://keefon.com/rencontres/Nantes" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "hhttps://www.keefon.com/rencontres" },
+    { name: "Nantes", url: "https://www.keefon.com/rencontres/Nantes" },
   ],
 };
 
@@ -300,10 +300,10 @@ export default function NantesRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -313,7 +313,7 @@ export default function NantesRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com.com#website" },
       },
     ],
   };

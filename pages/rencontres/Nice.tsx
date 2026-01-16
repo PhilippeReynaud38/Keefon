@@ -33,9 +33,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Nice et sur la Côte d’Azur | Keefon",
   description:
     "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes et sur toute la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Nice",
+  canonical: "https://www.keefon.com/rencontres/Nice",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-nice.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-nice.jpg",
   keywords: [
     // Intent + features
     "rencontre Nice",
@@ -81,9 +81,9 @@ const SEO = {
     "rencontre après 50 ans Côte d’Azur",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Nice", url: "https://keefon.com/rencontres/Nice" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Nice", url: "https://www.keefon.com/rencontres/Nice" },
   ],
 };
 
@@ -303,10 +303,10 @@ export default function NiceRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -316,7 +316,7 @@ export default function NiceRencontresPage() {
           url: SEO.canonical,
           description: SEO.description,
           inLanguage: "fr-FR",
-          isPartOf: { "@id": "https://keefon.com#website" },
+          isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };

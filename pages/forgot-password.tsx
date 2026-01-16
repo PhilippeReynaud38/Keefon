@@ -34,7 +34,7 @@ const ForgotPasswordPage: NextPage = () => {
       const baseUrlRaw =
         process.env.NEXT_PUBLIC_SITE_URL ||
         (typeof window !== "undefined" ? window.location.origin : "") ||
-        "https://keefon.com";
+        "https://www.keefon.com";
 
       // On enlève un éventuel "/" final pour éviter "//reset-password".
       const baseUrl = baseUrlRaw.replace(/\/$/, "");

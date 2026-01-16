@@ -34,9 +34,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Strasbourg et autour | Keefon",
   description:
     "Keefon Strasbourg est une page dédiée aux rencontres bienveillantes à Strasbourg et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Strasbourg",
+  canonical: "https://www.keefon.com/rencontres/Strasbourg",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-strasbourg.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-strasbourg.jpg",
   keywords: [
     // Intent + features
     "rencontre Strasbourg",
@@ -78,9 +78,9 @@ const SEO = {
     "rencontre après 50 ans Alsace",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Strasbourg", url: "https://keefon.com/rencontres/Strasbourg" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Strasbourg", url: "https://www.keefon.com/rencontres/Strasbourg" },
   ],
 };
 
@@ -297,10 +297,10 @@ export default function StrasbourgRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -310,7 +310,7 @@ export default function StrasbourgRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };

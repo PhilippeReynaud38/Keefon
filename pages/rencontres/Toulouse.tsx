@@ -32,9 +32,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Toulouse et dans l’aire toulousaine | Keefon",
   description:
     "Keefon Toulouse rassemble celles et ceux qui vivent dans la ville rose et autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
-  canonical: "https://keefon.com/rencontres/Toulouse",
+  canonical: "https://www.keefon.com/rencontres/Toulouse",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-toulouse.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-toulouse.jpg",
   keywords: [
     // Intent + fonctionnalités (variante par rapport aux autres pages)
     "rencontre Toulouse",
@@ -67,11 +67,11 @@ const SEO = {
     "Muret",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Toulouse / aire toulousaine",
-      url: "https://keefon.com/rencontres/Toulouse",
+      url: "https://www.keefon.com/rencontres/Toulouse",
     },
   ],
 };
@@ -287,10 +287,10 @@ export default function ToulouseRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -300,7 +300,7 @@ export default function ToulouseRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };

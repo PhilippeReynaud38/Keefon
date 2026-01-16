@@ -32,9 +32,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Grenoble et dans la métropole | Keefon",
   description:
     "Keefon Grenoble est une page dédiée aux rencontres bienveillantes à Grenoble et dans sa métropole : échanges respectueux, profils protégés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/grenoble",
+  canonical: "https://www.keefon.com/rencontres/grenoble",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-grenoble.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-grenoble.jpg",
   keywords: [
     // Intent + features (adapté à Grenoble / métropole)
     "rencontre Grenoble",
@@ -80,9 +80,9 @@ const SEO = {
     "rencontre après 50 ans Grenoble",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Grenoble", url: "https://keefon.com/rencontres/grenoble" },
+    { name: "Accueil", url: "https://www.keefon.com" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Grenoble", url: "https://www.keefon.com/rencontres/grenoble" },
   ],
 };
 
@@ -295,10 +295,10 @@ export default function GrenobleRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -308,7 +308,7 @@ export default function GrenobleRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com.com#website" },
       },
     ],
   };
