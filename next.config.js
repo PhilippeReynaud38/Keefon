@@ -1,10 +1,10 @@
-// next.config.js — Keefon (SEO/Index clean + www canonical)
+// -*- coding: utf-8 -*-
+// next.config.js — Keefon (SEO minimum safe)
 
 const isProd = process.env.NODE_ENV === "production";
 const enableHsts = process.env.ENABLE_HSTS !== "false";
 
-const PRIMARY_HOST = "www.keefon.com";
-const APEX_HOST = "keefon.com";
+const NOINDEX = { key: "X-Robots-Tag", value: "noindex, nofollow" };
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -17,6 +17,7 @@ const nextConfig = {
         hostname: "**.supabase.co",
         pathname: "/storage/v1/object/**",
       },
+      // { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
     ],
   },
 
@@ -24,66 +25,33 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // ✅ Force keefon.com -> www.keefon.com (fallback)
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: APEX_HOST }],
-        destination: `https://${PRIMARY_HOST}/:path*`,
-        permanent: true,
-      },
-    ];
-  },
-
-  // ✅ Noindex pages internes + HSTS en prod
   async headers() {
     const rules = [
-      // Noindex pages “internes” (polluent Google)
-      {
-        source: "/recherche",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/recherche/:path*",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/reset-password",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/reset-password/:path*",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/login",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/signup",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/cookies",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-
-      // HSTS seulement en prod
-      ...(isProd && enableHsts
-        ? [
-            {
-              source: "/:path*",
-              headers: [
-                {
-                  key: "Strict-Transport-Security",
-                  value: "max-age=63072000; includeSubDomains; preload",
-                },
-              ],
-            },
-          ]
-        : []),
+      // Pages internes : noindex (minimum)
+      { source: "/cookies/:path*", headers: [NOINDEX] },
+      { source: "/reset-password/:path*", headers: [NOINDEX] },
+      { source: "/recherche/:path*", headers: [NOINDEX] },
+      { source: "/login/:path*", headers: [NOINDEX] },
+      { source: "/signup/:path*", headers: [NOINDEX] },
+      { source: "/onboarding/:path*", headers: [NOINDEX] },
+      { source: "/settings/:path*", headers: [NOINDEX] },
+      { source: "/messages/:path*", headers: [NOINDEX] },
+      { source: "/profil/:path*", headers: [NOINDEX] },
+      { source: "/admin/:path*", headers: [NOINDEX] },
     ];
+
+    // HSTS seulement en prod
+    if (isProd && enableHsts) {
+      rules.push({
+        source: "/:path*",
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      });
+    }
 
     return rules;
   },
