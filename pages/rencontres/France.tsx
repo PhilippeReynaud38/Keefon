@@ -18,15 +18,11 @@ const SEO = {
   ogImage: "https://keefon.com/og/rencontres-france.jpg",
   keywords: [
     // Intent + features
-    "rencontre","site de rencontre","site de rencontre gratuit","rencontres bienveillantes","site de rencontre français","appli de rencontre française",
+    "rencontre","rencontre gratuit","site de rencontre","site de rencontre gratuit","rencontres bienveillantes","site de rencontre français","appli de rencontre française",
     "rencontre sérieuse","rencontres sérieuses","rencontre locale","rencontres locales",
     "chat gratuit","chat rencontre gratuit","messagerie gratuite","discussion rencontre",
-    "profils certifiés","profil certifié","vérification profil",
-    "respect et sécurité","rencontre respectueuse","anti harcèlement",
-    "sans swipe","sans swipe infini","sans algorithme opaque","anti addiction",
-    "plateforme RGPD","respect CNIL","protection des données",
-    "dating France","site de dating France","rencontre adultes consentants",
-    "slow dating","dating bienveillant",
+    "rencontre respectueuse", "sans swipe",    "dating France","site de dating France",
+    "rencontre adultes consentants", "slow dating","dating bienveillant",
 
     // Longue traîne
     "site de rencontre sans swipe","site de rencontre bienveillant France",

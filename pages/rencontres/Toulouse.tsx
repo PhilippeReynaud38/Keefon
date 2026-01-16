@@ -38,7 +38,9 @@ const SEO = {
   keywords: [
     // Intent + fonctionnalités (variante par rapport aux autres pages)
     "rencontre Toulouse",
+       "rencontre gratuite Toulouse",
     "rencontres Toulouse",
+       "rencontres gratuites Toulouse",
     "site de rencontre Toulouse",
     "rencontres aire toulousaine",
     "rencontres Haute-Garonne",
@@ -48,16 +50,7 @@ const SEO = {
     "chat gratuit Toulouse",
     "rencontres bienveillantes Toulouse",
     "rencontres respectueuses",
-    "profil certifié",
-    "profils certifiés",
-    "vérification de profil",
-    "anti harcèlement",
-    "sans swipe infini",
-    "sans algorithme opaque",
-    "plateforme RGPD",
-    "respect CNIL",
-    "protection des données",
-    "slow dating",
+
     "rencontre après 30 ans Toulouse",
     "rencontre après 40 ans Toulouse",
     "rencontre après 50 ans Toulouse",
@@ -405,6 +398,18 @@ export default function ToulouseRencontresPage() {
                 <p className="text-xs text-slate-700">
                   Inscription simple. Tu peux compléter ton profil à ton rythme.
                 </p>
+                <Link
+  href="/login"
+  aria-label="Déjà inscrit ? Se connecter"
+  title="Se connecter"
+  className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
+  style={{
+    background: COLORS.bannerGrad,
+    border: "1px solid #F9E13A",
+  }}
+>
+  Déjà inscrit ? Se connecter
+</Link>
               </div>
             </div>
           </div>

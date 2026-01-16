@@ -38,6 +38,7 @@ const SEO = {
   keywords: [
     // Intent + fonctionnalités
     "rencontre Rennes",
+     "rencontre gratuite Rennes",
     "rencontres Rennes",
     "site de rencontre Rennes",
     "rencontres Ille-et-Vilaine",
@@ -48,16 +49,6 @@ const SEO = {
     "chat gratuit Rennes",
     "rencontres bienveillantes Rennes",
     "rencontres respectueuses",
-    "profil certifié",
-    "profils certifiés",
-    "vérification de profil",
-    "anti harcèlement",
-    "sans swipe infini",
-    "sans algorithme opaque",
-    "plateforme RGPD",
-    "respect CNIL",
-    "protection des données",
-    "slow dating",
     "rencontre après 30 ans Rennes",
     "rencontre après 40 ans Rennes",
     "rencontre après 50 ans Rennes",
@@ -407,12 +398,19 @@ export default function RennesRencontresPage() {
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
-                <p className="mt-2 w-full text-center text-xs text-slate-800">
-                  Déjà membre ?{" "}
-                  <a href="/login" className="font-semibold underline">
-                    Se connecter
-                  </a>
-                </p>
+
+                <Link
+  href="/login"
+  aria-label="Déjà inscrit ? Se connecter"
+  title="Se connecter"
+  className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
+  style={{
+    background: COLORS.bannerGrad,
+    border: "1px solid #F9E13A",
+  }}
+>
+  Déjà inscrit ? Se connecter
+</Link>
               </div>
             </div>
           </div>

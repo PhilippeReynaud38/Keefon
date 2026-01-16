@@ -38,6 +38,7 @@ const SEO = {
   keywords: [
     // Intent + features (adapté à Grenoble / métropole)
     "rencontre Grenoble",
+       "rencontre gratuit Grenoble",
     "rencontres Grenoble",
     "site de rencontre Grenoble",
     "rencontres bienveillantes Grenoble",
@@ -54,14 +55,6 @@ const SEO = {
     "vérification profil",
     "respect et sécurité",
     "rencontre respectueuse",
-    "anti harcèlement",
-    "sans swipe",
-    "sans swipe infini",
-    "sans algorithme opaque",
-    "anti addiction",
-    "plateforme RGPD",
-    "respect CNIL",
-    "protection des données",
     "dating Grenoble",
     "dating Isère",
     "rencontre adultes consentants",
@@ -409,6 +402,18 @@ export default function GrenobleRencontresPage() {
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
+                <Link
+  href="/login"
+  aria-label="Déjà inscrit ? Se connecter"
+  title="Se connecter"
+  className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
+  style={{
+    background: COLORS.bannerGrad,
+    border: "1px solid #F9E13A",
+  }}
+>
+  Déjà inscrit ? Se connecter
+</Link>
               </div>
             </div>
           </div>
