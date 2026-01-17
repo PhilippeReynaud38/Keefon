@@ -82,7 +82,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Grenoble", url: "https://www.keefon.com/rencontres/grenoble" },
+    { name: "Grenoble", url: "https://www.keefon.com/rencontres/Grenoble" },
   ],
 };
 

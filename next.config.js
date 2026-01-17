@@ -1,5 +1,6 @@
 // -*- coding: utf-8 -*-
 // next.config.js — Keefon (SEO minimum safe)
+// next.config.js
 
 const isProd = process.env.NODE_ENV === "production";
 const enableHsts = process.env.ENABLE_HSTS !== "false";
@@ -12,24 +13,17 @@ const nextConfig = {
 
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.supabase.co",
-        pathname: "/storage/v1/object/**",
-      },
-      // { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/**" },
     ],
   },
 
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  eslint: { ignoreDuringBuilds: true },
 
   async headers() {
     const rules = [
-      // Pages internes : noindex (minimum)
       { source: "/cookies/:path*", headers: [NOINDEX] },
       { source: "/reset-password/:path*", headers: [NOINDEX] },
+      { source: "/forgot-password/:path*", headers: [NOINDEX] },
       { source: "/recherche/:path*", headers: [NOINDEX] },
       { source: "/login/:path*", headers: [NOINDEX] },
       { source: "/signup/:path*", headers: [NOINDEX] },
@@ -40,21 +34,39 @@ const nextConfig = {
       { source: "/admin/:path*", headers: [NOINDEX] },
     ];
 
-    // HSTS seulement en prod
     if (isProd && enableHsts) {
       rules.push({
         source: "/:path*",
-        headers: [
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=63072000; includeSubDomains; preload",
-          },
-        ],
+        headers: [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }],
       });
     }
 
     return rules;
+  }, // <-- IMPORTANT : la virgule ici
+
+  async redirects() {
+    return [
+      { source: "/", destination: "/rencontres/France", permanent: true },
+
+      // minuscules -> Majuscule (car tes pages sont en Majuscule)
+      { source: "/rencontres/france", destination: "/rencontres/France", permanent: true },
+      { source: "/rencontres/grenoble", destination: "/rencontres/Grenoble", permanent: true },
+
+      { source: "/rencontres/paris", destination: "/rencontres/Paris", permanent: true },
+      { source: "/rencontres/lyon", destination: "/rencontres/Lyon", permanent: true },
+      { source: "/rencontres/marseille", destination: "/rencontres/Marseille", permanent: true },
+      { source: "/rencontres/toulouse", destination: "/rencontres/Toulouse", permanent: true },
+      { source: "/rencontres/nice", destination: "/rencontres/Nice", permanent: true },
+      { source: "/rencontres/nantes", destination: "/rencontres/Nantes", permanent: true },
+      { source: "/rencontres/montpellier", destination: "/rencontres/Montpellier", permanent: true },
+      { source: "/rencontres/strasbourg", destination: "/rencontres/Strasbourg", permanent: true },
+      { source: "/rencontres/bordeaux", destination: "/rencontres/Bordeaux", permanent: true },
+      { source: "/rencontres/lille", destination: "/rencontres/Lille", permanent: true },
+      { source: "/rencontres/rennes", destination: "/rencontres/Rennes", permanent: true },
+      { source: "/rencontres/saint-etienne", destination: "/rencontres/Saint-Etienne", permanent: true },
+    ];
   },
 };
 
 module.exports = nextConfig;
+
