@@ -308,7 +308,7 @@ export default function GrenobleRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com/#website" },
       },
     ],
   };
