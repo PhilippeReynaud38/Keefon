@@ -1,12 +1,12 @@
 /**
  * Fichier : pages/rencontres/nantes.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Nantes et alentours
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Nantes (métropole & Loire-Atlantique).
+ * MAJ : 2025-11-19 — Version basée sur Marseille.tsx, adaptée à Nantes (métropole & Loire-Atlantique).
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Nantes et alentours (Nantes, Rezé, Saint-Herblain,
  *   Orvault, Carquefou, bords de Loire et de l’Erdre…).
- * - Même design et même logique que pages/rencontres/france.tsx, paris.tsx, marseille.tsx.
+ * - Même design et même logique que pages/rencontres/france.tsx, .tsx, Marseille.tsx.
  * - Pas de promesse de filtres avancés : on parle de “zone Nantes / Loire-Atlantique” de façon large.
  *
  * Dépendances :
@@ -20,7 +20,7 @@
  * - Aucun (uniquement rendu React côté front).
  *
  * Invariants :
- * - Garder la cohérence visuelle avec france.tsx / paris.tsx / marseille.tsx
+ * - Garder la cohérence visuelle avec france.tsx / Paris.tsx / Marseille.tsx
  *   (bandeau jaune, carte rappel, structure des sections).
  * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n’existent pas encore.
  */
@@ -81,7 +81,7 @@ const SEO = {
     "rencontre après 50 ans Loire-Atlantique",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "hhttps://www.keefon.com/rencontres" },
     { name: "Nantes", url: "https://www.keefon.com/rencontres/Nantes" },
   ],

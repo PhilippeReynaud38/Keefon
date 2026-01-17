@@ -34,7 +34,7 @@ const SEO = {
     "Keefon Paris est une page dédiée aux rencontres bienveillantes à Paris et en Île-de-France : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Paris",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-paris.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Paris.jpg",
   keywords: [
     // Intent + features
     "rencontre Paris",
@@ -80,7 +80,7 @@ const SEO = {
     "rencontre après 50 ans Île-de-France",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     { name: "Paris", url: "https://www.keefon.com/rencontres/Paris" },
   ],
@@ -188,7 +188,7 @@ function ProfileTeaserBand() {
    *    Elise.png, Thomas.png par exemple)
    *  - le chemin doit suivre les valeurs avatarSrc ci-dessous.
    *
-   * Visuels fictifs, inspirés de personnes réelles, pour illustrer la diversité des profils parisiens.
+   * Visuels fictifs, inspirés de personnes réelles, pour illustrer la diversité des profils Parisiens.
    */
   const profiles = [
     {
@@ -199,7 +199,7 @@ function ProfileTeaserBand() {
         "Je travaille en télétravail une partie de la semaine et j’en ai eu marre des applis qui donnent l’impression de faire du shopping humain.",
       avatarSrc: "/avatars_France/Paris/Alizee.png",
       avatarAlt:
-        "Profil fictif Lea (jeune femme souriante dans une rue parisienne avec immeubles en arrière-plan)",
+        "Profil fictif Lea (jeune femme souriante dans une rue Parisienne avec immeubles en arrière-plan)",
       priority: true,
     },
     {
@@ -482,7 +482,7 @@ export default function ParisRencontresPage() {
                 Les Échos et Keefon+ créent des ouvertures supplémentaires pour
                 les profils Free. L&apos;abonnement Essentiel reste
                 volontairement abordable pour aller plus loin sans exploser ton
-                budget, même avec le coût de la vie parisienne.
+                budget, même avec le coût de la vie Parisienne.
               </p>
             </div>
           </div>
@@ -535,7 +535,7 @@ export default function ParisRencontresPage() {
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
               Keefon s&apos;adresse à celles et ceux qui préfèrent un espace
               plus calme, plus clair, plus respectueux que les applis
-              classiques, tout en restant connectés à la vie parisienne.
+              classiques, tout en restant connectés à la vie Parisienne.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a

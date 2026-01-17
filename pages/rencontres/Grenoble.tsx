@@ -1,7 +1,7 @@
 /**
- * Fichier : pages/rencontres/grenoble.tsx
+ * Fichier : pages/rencontres/Grenoble.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Grenoble / Métropole
- * MAJ : 2025-11-19 — Version basée sur lyon.tsx, adaptée à Grenoble + métropole
+ * MAJ : 2025-11-19 — Version basée sur Lyon.tsx, adaptée à Grenoble + métropole
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Grenoble / Métropole, en plus de la page générale France.
@@ -32,9 +32,9 @@ const SEO = {
   title: "Rencontres bienveillantes à Grenoble et dans la métropole | Keefon",
   description:
     "Keefon Grenoble est une page dédiée aux rencontres bienveillantes à Grenoble et dans sa métropole : échanges respectueux, profils protégés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/grenoble",
+  canonical: "https://www.keefon.com/rencontres/Grenoble",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-grenoble.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Grenoble.jpg",
   keywords: [
     // Intent + features (adapté à Grenoble / métropole)
     "rencontre Grenoble",

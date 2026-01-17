@@ -6,7 +6,7 @@
  * Contexte :
  * - Page vitrine dédiée à la zone Montpellier et alentours (Montpellier, Castelnau, Lattes,
  *   Palavas, Carnon, arrière-pays héraultais…).
- * - Même design et même logique que pages/rencontres/France.tsx, Paris.tsx, Marseille.tsx.
+ * - Même design et même logique que pages/rencontres/France.tsx, aris.tsx, Marseille.tsx.
  * - Pas de promesse de filtres avancés : on parle de “zone Montpellier / Hérault / Occitanie” de façon large.
  *
  * Dépendances :
@@ -36,7 +36,7 @@ const SEO = {
     "Keefon Montpellier est une page dédiée aux rencontres bienveillantes à Montpellier et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Montpellier",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-montpellier.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Montpellier.jpg",
   keywords: [
     // Intent + features
     "rencontre Montpellier",
@@ -81,7 +81,7 @@ const SEO = {
     "rencontre après 50 ans Hérault",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     { name: "Montpellier", url: "https://www.keefon.com/rencontres/Montpellier" },
   ],

@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/Nice.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Nice & Côte d’Azur
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Nice / Cannes / Côte d’Azur.
+ * MAJ : 2025-11-19 — Version basée sur Marseille.tsx, adaptée à Nice / Cannes / Côte d’Azur.
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Nice et alentours (Cannes, Antibes, Menton, arrière-pays azuréen…).
@@ -35,7 +35,7 @@ const SEO = {
     "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes et sur toute la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Nice",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-nice.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Nice.jpg",
   keywords: [
     // Intent + features
     "rencontre Nice",
@@ -81,7 +81,7 @@ const SEO = {
     "rencontre après 50 ans Côte d’Azur",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     { name: "Nice", url: "https://www.keefon.com/rencontres/Nice" },
   ],

@@ -1,78 +1,58 @@
 /**
- * Fichier : pages/rencontres/Toulouse.tsx
- * Module : Pages publiques / SEO — Rencontres sur la zone Toulouse / aire Toulousaine
- * MAJ : 2025-11-19 — Version basée sur france.tsx / Paris.tsx / lille.tsx, adaptée à Toulouse.
- *
- * Contexte :
- * - Page vitrine dédiée à la zone Toulouse et à l’aire Toulousaine (“ville rose” + proches communes).
- * - Même design et logique que les autres pages de zone pour rester simple à maintenir.
- * - Pas de promesse de filtres ultra précis : on parle de “zone Toulouse / aire Toulousaine” de façon large.
- *
- * Dépendances :
- * - next/head, next/image, next/link
- * - Tailwind CSS pour les classes utilitaires.
- *
- * Données lues :
- * - Aucune (page purement statique).
- *
- * Effets de bord :
- * - Aucun (rendu React uniquement).
- *
- * Invariants :
- * - Rester cohérent avec france.tsx / Paris.tsx / lille.tsx (bandeau jaune, rappel, structure de sections).
- * - Ne pas sur-promettre de fonctionnalités de recherche qui n’existent pas encore.
+ * Fichier : pages/rencontres/france.tsx
+ * Module : Pages publiques / SEO — Rencontres en France
+ * MAJ : 2025-11-24 — Badge prononciation Keefon + correction preload avatars
  */
 
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
-/* ===========================  SEO (Toulouse / ville rose)  =========================== */
+/* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Toulouse et dans l’aire Toulousaine | Keefon",
+  title: "Rencontres bienveillantes en France | Keefon",
   description:
-    "Keefon Toulouse rassemble celles et ceux qui vivent dans la ville rose et autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
-  canonical: "https://www.keefon.com/rencontres/Toulouse",
+    "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+  canonical: "https://www.keefon.com/rencontres/France",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-Toulouse.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-France.jpg",
   keywords: [
-    // Intent + fonctionnalités (variante par rapport aux autres pages)
-    "rencontre Toulouse",
-       "rencontre gratuite Toulouse",
-    "rencontres Toulouse",
-       "rencontres gratuites Toulouse",
-    "site de rencontre Toulouse",
-    "rencontres aire toulousaine",
-    "rencontres Haute-Garonne",
-    "rencontre locale Toulouse",
-    "rencontre proche de chez moi Toulouse",
-    "chat rencontre Toulouse",
-    "chat gratuit Toulouse",
-    "rencontres bienveillantes Toulouse",
-    "rencontres respectueuses",
+    // Intent + features
+    "rencontre","rencontre gratuit","site de rencontre","site de rencontre gratuit","rencontres bienveillantes","site de rencontre français","appli de rencontre française",
+    "rencontre sérieuse","rencontres sérieuses","rencontre locale","rencontres locales",
+    "chat gratuit","chat rencontre gratuit","messagerie gratuite","discussion rencontre",
+    "rencontre respectueuse", "sans swipe",    "dating France","site de dating France",
+    "rencontre adultes consentants", "slow dating","dating bienveillant",
 
-    "rencontre après 30 ans Toulouse",
-    "rencontre après 40 ans Toulouse",
-    "rencontre après 50 ans Toulouse",
+    // Longue traîne
+    "site de rencontre sans swipe","site de rencontre bienveillant France",
+    "application de rencontre française sérieuse","chat rencontre gratuit France",
+    "rencontre proche de chez moi","rencontre par ville","rencontre par région",
+    "rencontre après 30 ans","rencontre après 40 ans","rencontre après 50 ans",
 
-    // Villes / zone
-    "Toulouse",
-    "Blagnac",
-    "Colomiers",
-    "Ramonville",
-    "Balma",
-    "Cugnaux",
-    "Tournefeuille",
-    "L’Union",
-    "Muret",
+    // Régions
+    "Île-de-France","Auvergne-Rhône-Alpes","Occitanie","Provence-Alpes-Côte d’Azur",
+    "Nouvelle-Aquitaine","Hauts-de-France","Grand Est","Bretagne","Normandie",
+    "Pays de la Loire","Bourgogne-Franche-Comté","Centre-Val de Loire","Corse",
+
+    // Grandes villes
+    "Paris","Lyon","Marseille","Toulouse","Nice","Nantes","Strasbourg","Montpellier",
+    "Bordeaux","Lille","Rennes","Reims","Toulon","Grenoble","Dijon","Angers","Nîmes",
+    "Villeurbanne","Clermont-Ferrand","Saint-Étienne","Le Havre","Aix-en-Provence",
+    "Brest","Tours","Amiens","Limoges","Metz","Besançon","Perpignan","Orléans",
+    "Mulhouse","Rouen","Boulogne-Billancourt","Nancy","Argenteuil","Saint-Denis",
+
+    // Combinaisons courtes utiles
+    "rencontre Paris","rencontre Lyon","rencontre Marseille","rencontre Toulouse",
+    "rencontre Montpellier","rencontre Bordeaux","rencontre Nantes","rencontre Lille",
+    "rencontre Nice","rencontre Rennes","rencontre Strasbourg","rencontre Toulon",
+    "rencontre Grenoble","rencontre Dijon","rencontre Angers","rencontre Nîmes",
+    "rencontre Clermont-Ferrand","rencontre Reims","rencontre Metz","rencontre Rouen"
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    {
-      name: "Toulouse / aire toulousaine",
-      url: "https://www.keefon.com/rencontres/Toulouse",
-    },
+    { name: "France", url: "https://www.keefon.com/rencontres/France" },
   ],
 };
 
@@ -93,7 +73,7 @@ function FreeTopBar() {
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
-        boxShadow: "0 8px 28px rgba(0,0,0,0.22)",
+        boxShadow: "0 8px 28px rgba(0,0,0,.22)", // ombre légèrement renforcée
       }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
@@ -126,10 +106,10 @@ function FreeTopBar() {
 
 function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
-  return <div className="h-[72px] w-full sm:h-[84px]" />;
+  return <div className="h-[72px] sm:h-[84px] w-full" />;
 }
 
-/* ===========================  Carte rappel période gratuite  =========================== */
+/* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
 function FreeReminderCard() {
   if (!FREE_MODE) return null;
   return (
@@ -140,7 +120,7 @@ function FreeReminderCard() {
           style={{
             borderColor: "#F9E13A",
             background: COLORS.bannerGrad,
-            boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
+            boxShadow: "0 10px 28px rgba(0,0,0,.18)", // ombre renforcée, cohérente avec la ligne jaune
           }}
         >
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -149,8 +129,8 @@ function FreeReminderCard() {
                 Accès 100% gratuit — chat ouvert à tous.
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
-                Tu peux créer ton profil, échanger librement et découvrir Keefon
-                sans carte bancaire. Offre à durée limitée.
+                Tu peux créer ton profil, échanger librement et tester Keefon
+                sans carte bancaire. Offre temporaire.
               </p>
             </div>
             <a
@@ -169,71 +149,84 @@ function FreeReminderCard() {
   );
 }
 
-/* ===========================  Exemples de profils — Toulouse  =========================== */
+/* ===========================  Bandeau “exemples de profils”  =========================== */
 function ProfileTeaserBand() {
-  /**
-   * ⚠️ Fichiers à placer dans : /public/avatars_France/Toulouse/
-   * IMPORTANT :
-   *  - pas d’accents ni d’espaces dans les noms de fichiers
-   *    (Fred.png, Brigitte.png, Paul.png, Miloue.png)
-   *  - rester cohérent entre ces chemins et les fichiers réels.
-   */
   const profiles = [
     {
-      pseudo: "Fred_31",
-      ageVille: "30 ans — Toulouse",
-      badges: ["Free"],
+      pseudo: "Léa_Soleil",
+      ageVille: "29 ans — Toulouse (31)",
+      badges: ["Free", "Écho reçu"],
       phrase:
-        "Je partage mon temps entre le boulot et les sorties dans la ville rose. Je préfère quelques échanges de qualité plutôt que des matchs à la chaîne.",
-      avatarSrc: "/avatars_France/Toulouse/Fred.png",
-      avatarAlt: "Profil fictif Fred_31 (homme à Toulouse, rue en briques roses)",
+        "Sur les autres applis, on scrolle sans jamais vraiment se rencontrer. Ici, avec l’Écho et Keefon+, je croise enfin de vraies personnes, pas juste des profils.",
+      avatarSrc: "/avatars_France/France/lea-soleil.png",
+      avatarAlt: "Profil fictif Léa_Soleil",
       priority: true,
     },
     {
-      pseudo: "Brigitte",
-      ageVille: "47 ans — Toulouse",
-      badges: ["Essentiel"],
+      pseudo: "Bertrand",
+      ageVille: "39 ans — Paris (75)",
+      badges: ["Keefon+"],
       phrase:
-        "Je n’ai pas envie d’une appli qui me pousse à rester scotchée à l’écran. Ici je peux discuter posément et voir si le courant passe.",
-      avatarSrc: "/avatars_France/Toulouse/Brigitte.png",
-      avatarAlt: "Profil fictif Brigitte_Tlse (femme à Toulouse, quartier résidentiel)",
+        "J’aime beaucoup ce site. Avec Keefon+, je peux parler aussi avec des personnes non abonnées. C’est une autre dimension, avec beaucoup moins de pertes de temps.",
+      avatarSrc: "/avatars_France/France/bertrand.png",
+      avatarAlt: "Profil fictif Bertrand",
       priority: true,
     },
     {
-      pseudo: "Paul",
-      ageVille: "28 ans — Toulouse",
-      badges: ["Free"],
+      pseudo: "Sami",
+      ageVille: "34 ans — Montpellier (34)",
+      badges: ["Essentiel", "Profil certifié"],
       phrase:
-        "Je suis souvent en vadrouille entre le boulot, le sport et les amis. Keefon me permet de rencontrer du monde, j'aime bien ce site.",
-      avatarSrc: "/avatars_France/Toulouse/Paul.png",
-      avatarAlt:
-        "Profil fictif Paul_Garonne (jeune homme devant la Garonne, ambiance ensoleillée)",
+        "Déjà déçu par d’autres applis, ici je teste quelque chose de plus humain, j’adore.",
+      avatarSrc: "/avatars_France/France/sami.png",
+      avatarAlt: "Profil fictif Sami",
     },
     {
-      pseudo: "Miloue",
-      ageVille: "27 ans — Toulouse et communes autour",
+      pseudo: "Nora_azur",
+      ageVille: "29 ans — Lyon (69)",
+      badges: ["Essentiel", "Profil certifié"],
+      phrase:
+        "Rencontres posées et sincères, loin du bruit des applis classiques.",
+      avatarSrc: "/avatars_France/France/nora-azur.png",
+      avatarAlt: "Profil fictif Nora_azur",
+    },
+    {
+      pseudo: "Philou_océan",
+      ageVille: "56 ans — La Rochelle (17)",
+      badges: ["Free"],
+      phrase:
+        "Je vis près de l’océan. Ici, je fais des rencontres tranquilles, avec des personnes qui ont aussi envie de vraies discussions, pas seulement de petits likes.",
+      avatarSrc: "/avatars_France/France/Philou_ocean.png",
+      avatarAlt: "Profil fictif Philou_océan",
+    },
+    {
+      pseudo: "Claire_lys",
+      ageVille: "55 ans — Dijon (21)",
       badges: ["Essentiel"],
       phrase:
-        "J’aime quand les échanges restent simples et respectueux. Keefon m’aide à rencontrer des gens qui partagent cette façon de voir les choses.",
-      avatarSrc: "/avatars_France/Toulouse/Miloue.png",
-      avatarAlt:
-        "Profil fictif Milou_VilleRose (jeune femme souriante près d’un pont à Toulouse)",
+        "Après 50 ans, je ne cherche plus à collectionner les matchs. Ici je prends le temps d’échanger vraiment, sans pression c'est très different des autres sites..",
+      avatarSrc: "/avatars_France/France/Claire_lys.png",
+      avatarAlt: "Profil fictif Claire_lys",
     },
   ];
 
   return (
     <section className="section section-profiles-preview py-6">
       <div className="container mx-auto max-w-5xl px-4">
-        {/* Mention discrète (bulle jaune pâle) */}
+        <h2 className="text-sm sm:text-base font-semibold uppercase tracking-[0.18em] text-menuBtn">
+          Quelques exemples de profils sur Keefon
+        </h2>
+
+        {/* Mention discrète (jaune pâle, sans fond) */}
         <div
           className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] sm:text-[13px] leading-relaxed"
           style={{ color: "#FEFF93" }}
         >
-          Profils fictifs inspirés de vraies personnes. Chaque membre décide
-          ce qu&apos;il partage et reste protégé par les lois françaises.
+          Profils fictifs inspirés de vraies personnes. Chaque membre décide ce
+          qu&apos;il partage et reste protégé par les lois françaises.
         </div>
 
-        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible">
           {profiles.map((p) => (
             <article
               key={p.pseudo}
@@ -279,8 +272,8 @@ function ProfileTeaserBand() {
   );
 }
 
-/* ===========================  Page principale  =========================== */
-export default function ToulouseRencontresPage() {
+/* ===========================  Page  =========================== */
+export default function FranceRencontresPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -299,8 +292,20 @@ export default function ToulouseRencontresPage() {
         name: SEO.title,
         url: SEO.canonical,
         description: SEO.description,
-        inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com#website" },
+        isPartOf: {
+          "@type": "WebSite",
+          name: SEO.siteName,
+          url: "https://www.keefon.com",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: SEO.breadcrumb.map((b, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: b.name,
+          item: b.url,
+        })),
       },
     ],
   };
@@ -312,13 +317,31 @@ export default function ToulouseRencontresPage() {
         <meta name="description" content={SEO.description} />
         <meta name="keywords" content={SEO.keywords} />
         <link rel="canonical" href={SEO.canonical} />
+        <link rel="alternate" hrefLang="fr" href={SEO.canonical} />
+        <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+        <meta property="og:locale" content="fr_FR" />
         <meta property="og:title" content={SEO.title} />
         <meta property="og:description" content={SEO.description} />
-        <meta property="og:image" content={SEO.ogImage} />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={SEO.canonical} />
         <meta property="og:site_name" content={SEO.siteName} />
+        <meta property="og:image" content={SEO.ogImage} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={SEO.title} />
+        <meta name="twitter:description" content={SEO.description} />
+        <meta name="twitter:image" content={SEO.ogImage} />
+        {/* Preload 2 visuels clés — chemin corrigé (dossier France) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/avatars_France/France/lea-soleil.png"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/avatars_France/France/bertrand.png"
+        />
         <script
-          key="ld-json"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
@@ -328,12 +351,6 @@ export default function ToulouseRencontresPage() {
       <FreeTopBarSpacer />
 
       <main
-        /**
-         * Image de fond :
-         *  - Pour l’instant on réutilise bg-France-ext.png, déjà présent dans /public.
-         *  - Tu pourras remplacer plus tard par une image plus “ville rose”
-         *    (par exemple bg-Toulouse-ext.png) en ne changeant QUE backgroundImage.
-         */
         className="min-h-screen"
         style={{
           backgroundImage: "url('/bg-France-ext.png')",
@@ -346,42 +363,52 @@ export default function ToulouseRencontresPage() {
         <header className="py-10">
           <div className="container mx-auto flex justify-center px-4">
             <div className="w-full max-w-3xl rounded-3xl border border-sky-200 bg-sky-50/65 px-6 py-6 text-slate-900 shadow-xl backdrop-blur-[2px]">
-              {/* Logo texte KEEFON */}
+              {/* KEEFON centré et coloré (visuel) */}
               <div className="mb-2 flex items-center justify-center">
                 <span
                   aria-hidden="true"
-                  className="leading-none text-5xl font-extrabold tracking-tight sm:text-6xl"
+                  className="font-extrabold tracking-tight leading-none text-5xl sm:text-6xl"
                   style={{
                     color: "#93ef09ff",
                     textShadow:
-                      "0 2px 10px rgba(0,0,0,0.35), 0 6px 22px rgba(0,0,0,0.22)",
+                      "0 2px 10px rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.22)", // ombre renforcée pour le mot KEEFON
                   }}
                 >
                   KEEFON
                 </span>
               </div>
 
-              {/* H1 SEO */}
+              {/* Badge prononciation Keefon, optimisé mobile */}
+              <div className="mt-2 flex justify-center">
+                <p
+                  className="inline-block text-center text-[11px] sm:text-xs font-semibold rounded-full px-3 py-1"
+                  style={{ backgroundColor: "#93ef09ff" }}
+                >
+                  <span className="block">Se prononce « qui phone » 📞</span>
+                  <span className="block"> « Coup de coeur mutuel» ❤️</span>
+                </p>
+              </div>
+
+              {/* H1 SEO conservé (contraste via ombre légère) */}
               <h1
-                className="text-center text-3xl font-extrabold sm:text-4xl md:text-5xl"
+                className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold"
                 style={{
                   color: "#cdff58ff",
-                  textShadow: "0 2px 6px rgba(0,0,0,0.25)",
+                  textShadow: "0 2px 6px rgba(0,0,0,.25)",
                 }}
               >
-                Rencontres bienveillantes à Toulouse et dans la ville rose
+                Rencontres bienveillantes partout en France
               </h1>
 
-              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Une plateforme française pour celles et ceux qui vivent à
-                Toulouse et dans l&apos;aire toulousaine, et qui veulent des
-                rencontres plus humaines, loin des applis centrées sur la
-                consommation de profils.
+              <p className="mt-3 text-sm leading-relaxed sm:text-base text-center">
+                Une plateforme française pour celles et ceux qui veulent du
+                vrai, du respect et du temps de qualité. Sans swipe infini,
+                sans surjeu, sans cirque.
               </p>
 
-              <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
-                Keefon est pensée et hébergée en France, dans le respect des
-                lois françaises sur la vie privée (RGPD, CNIL, droits de
+              <p className="mt-2 text-xs leading-relaxed text-slate-800 sm:text-[13px] text-center">
+                Keefon est créée et hébergée en France, dans le cadre des lois
+                françaises de protection de la vie privée (RGPD, CNIL, droits de
                 l&apos;individu).
               </p>
 
@@ -396,9 +423,9 @@ export default function ToulouseRencontresPage() {
                   Créer mon profil gratuitement
                 </a>
                 <p className="text-xs text-slate-700">
-                  Inscription simple. Tu peux compléter ton profil à ton rythme.
+                  Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
-                <Link
+<Link
   href="/login"
   aria-label="Déjà inscrit ? Se connecter"
   title="Se connecter"
@@ -415,17 +442,17 @@ export default function ToulouseRencontresPage() {
           </div>
         </header>
 
-        {/* Rappel période gratuite */}
+        {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Exemples de profils (Toulouse) */}
+        {/* Exemples de profils */}
         <ProfileTeaserBand />
 
-        {/* Comment ça marche ? */}
+        {/* Comment ça marche */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche sur la zone Toulouse&nbsp;?
+              Comment ça marche&nbsp;?
             </h2>
             <div className="mt-6 grid gap-6 md:grid-cols-3">
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -433,7 +460,7 @@ export default function ToulouseRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Toulouse / aire Toulousaine
+                  2. Tu dis ce que tu cherches
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -443,11 +470,11 @@ export default function ToulouseRencontresPage() {
           </div>
         </section>
 
-        {/* Pourquoi Keefon est différent ? */}
+        {/* Pourquoi Keefon */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Pourquoi Keefon est différent à Toulouse&nbsp;?
+              Pourquoi Keefon est différent&nbsp;?
             </h2>
             <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
               <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -456,54 +483,53 @@ export default function ToulouseRencontresPage() {
               <p className="text-sm leading-relaxed">
                 Pas de défilement infini pour te garder accroché à l&apos;écran.
                 Le but, c&apos;est la rencontre, pas l&apos;addiction. Les
-                comportements irrespectueux peuvent être signalés et sont
-                incompatibles avec l&apos;esprit du site.
+                comportements toxiques sont hors-jeu et peuvent être signalés
+                facilement.
               </p>
 
               <p className="mt-4 mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                Plus d&apos;ouvertures pour tous
+                Plus d&apos;opportunités pour tous
               </p>
               <p className="text-sm leading-relaxed">
-                Les Échos et Keefon+ ajoutent des opportunités pour les profils
-                Free. L&apos;abonnement Essentiel reste volontairement raisonnable
-                pour aller plus loin sans exploser ton budget.
+                Les échos et Keefon+ créent des ouvertures supplémentaires pour
+                les profils Free. L&apos;abonnement Essentiel reste
+                volontairement abordable pour aller plus loin sans exploser ton
+                budget.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Toulouse ancrée dans le réel */}
+        {/* France */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Rencontrer sur Toulouse, sans se perdre dans la masse
+              Rencontrer en France, sans se perdre dans la masse
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Entre la Garonne, les briques roses et les communes autour,
-              l&apos;aire Toulousaine est vaste. Keefon t&apos;aide à ouvrir des
-              portes sans te noyer dans une liste interminable de profils
-              anonymes.
+              Que tu sois en grande ville ou dans une petite commune, Keefon te
+              permet d&apos;ouvrir des portes sans te perdre dans une marée de
+              profils anonymes.
             </p>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Toulouse et les villes voisines
+                  Partout en France
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Que tu sois en centre-ville, à Blagnac, Colomiers, Balma ou
-                  dans une autre commune, tu peux croiser des personnes qui
-                  vivent sur la même grande zone que toi.
+                  Des membres de toute la France métropolitaine et d&apos;outre-mer.
+                  À toi de choisir : proche de chez toi ou plus loin.
                 </p>
               </article>
 
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Et le reste de la France quand tu bouges
+                  Ancré dans le réel
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Si tu te déplaces régulièrement (missions pro, week-ends,
-                  vacances), tu peux aussi utiliser Keefon dans d&apos;autres
-                  régions, avec les mêmes règles de clarté et de respect.
+                  L&apos;objectif n&apos;est pas juste de matcher, mais de
+                  pouvoir se voir en vrai : un café, une balade, un événement,
+                  une activité partagée.
                 </p>
               </article>
             </div>
@@ -514,12 +540,12 @@ export default function ToulouseRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Envie de rencontres plus humaines à Toulouse&nbsp;?
+              Envie de rencontres plus humaines en France&nbsp;?
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Keefon s&apos;adresse à celles et ceux qui préfèrent un cadre plus
-              calme et plus clair que les applis classiques, tout en profitant
-              de l&apos;ambiance de la ville rose.
+              Keefon s&apos;adresse à celles et ceux qui préfèrent un espace
+              plus calme, plus clair, plus respectueux que les applis
+              classiques.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
@@ -532,111 +558,14 @@ export default function ToulouseRencontresPage() {
                 Créer mon profil gratuitement
               </a>
               <p className="text-xs text-slate-800">
-                Tu peux tester l&apos;appli gratuitement, voir comment tu te
-                sens, puis décider si tu veux aller plus loin.
+                Tu peux commencer gratuitement, compléter ton profil à ton
+                rythme, et voir ensuite jusqu&apos;où tu veux aller.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Idées de sorties locales (Toulouse & aire Toulousaine) */}
-        <section className="py-6">
-          <div className="mx-auto max-w-5xl px-4">
-            <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-900 shadow-sm backdrop-blur-[2px]">
-              <h2 className="mb-1 text-xs font-semibold text-chatOuter">
-                Quelques idées de sorties autour de Toulouse
-              </h2>
-              <ul className="list-disc space-y-1 pl-4">
-                <li>
-                  Balade le long de la Garonne, vers la Daurade ou la Prairie
-                  des Filtres, avec un café en terrasse pour discuter dans un
-                  lieu public.
-                </li>
-                <li>
-                  Promenade sur la place du Capitole et dans les rues
-                  piétonnes, en gardant un point de rendez-vous simple et facile
-                  à retrouver.
-                </li>
-                <li>
-                  Sortie dans un parc comme le Jardin des Plantes ou le Jardin
-                  Japonais de Compans-Caffarelli, pour parler un peu plus au
-                  calme.
-                </li>
-                <li>
-                  Marche tranquille le long du canal du Midi ou d&apos;un autre
-                  canal, en restant sur des portions fréquentées et bien
-                  éclairées.
-                </li>
-                <li>
-                  Si vous êtes en périphérie, petite balade dans le centre-ville
-                  d&apos;une commune voisine (Blagnac, Colomiers, Balma, etc.)
-                  avec un café ou un lieu public comme point de repère.
-                </li>
-              </ul>
-              <p className="mt-2">
-                Ce ne sont que des idées : chacun choisit ses lieux de
-                rencontre, son rythme et ses limites, avec le confort et la
-                sécurité en priorité.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Liens internes SEO (France + autres villes) */}
-        <section className="py-6">
-          <div className="mx-auto max-w-5xl px-4">
-            <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
-              <p className="mb-2">
-                Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
-                <Link
-                  href="/rencontres/France"
-                  className="font-semibold underline-offset-2 hover:underline"
-                >
-                  rencontres en France
-                </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/Bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/Montpellier"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Montpellier
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/Marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/Nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
+        {/* Footer légal discret */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">

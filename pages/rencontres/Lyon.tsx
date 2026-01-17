@@ -1,7 +1,7 @@
 /**
- * Fichier : pages/rencontres/lyon.tsx
+ * Fichier : pages/rencontres/Lyon.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Lyon / Métropole
- * MAJ : 2025-11-18 — Version basée sur paris.tsx, adaptée à Lyon + métropole
+ * MAJ : 2025-11-18 — Version basée sur Paris.tsx, adaptée à Lyon + métropole
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Lyon / Métropole, en plus de la page générale France.
@@ -34,7 +34,7 @@ const SEO = {
     "Keefon Lyon est une page dédiée aux rencontres bienveillantes à Lyon et dans sa métropole : échanges respectueux, profils vérifiés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Lyon",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-lyon.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Lyon.jpg",
   keywords: [
     // Intent + features (garde le même esprit que France, ciblé Lyon / métropole)
     "rencontre Lyon",
@@ -42,7 +42,7 @@ const SEO = {
     "rencontres Lyon",
     "rencontres métropole de Lyon",
     "site de rencontre Lyon",
-    "site de rencontre métropole lyonnaise",
+    "site de rencontre métropole Lyonnaise",
     "rencontres bienveillantes Lyon",
     "rencontre locale Lyon",
     "rencontres proche de chez moi Lyon",
@@ -80,7 +80,7 @@ const SEO = {
     "rencontre après 50 ans Lyon",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     { name: "Lyon / Métropole", url: "https://www.keefon.com/rencontres/lyon" },
   ],

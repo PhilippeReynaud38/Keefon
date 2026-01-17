@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/Strasbourg.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Strasbourg et alentours
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Strasbourg (Eurométropole & Alsace).
+ * MAJ : 2025-11-19 — Version basée sur Marseille.tsx, adaptée à Strasbourg (Eurométropole & Alsace).
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Strasbourg et alentours (Strasbourg, Illkirch, Schiltigheim,
@@ -78,7 +78,7 @@ const SEO = {
     "rencontre après 50 ans Alsace",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     { name: "Strasbourg", url: "https://www.keefon.com/rencontres/Strasbourg" },
   ],

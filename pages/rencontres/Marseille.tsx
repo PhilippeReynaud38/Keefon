@@ -1,11 +1,11 @@
 /**
  * Fichier : pages/rencontres/marseille.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Marseille et alentours
- * MAJ : 2025-11-19 — Version basée sur france.tsx / paris.tsx, adaptée à Marseille (métropole et côte).
+ * MAJ : 2025-11-19 — Version basée sur france.tsx / Paris.tsx, adaptée à Marseille (métropole et côte).
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Marseille et alentours (Marseille, Aubagne, Aix, côte méditerranéenne…).
- * - Même design et même logique que pages/rencontres/france.tsx et paris.tsx pour rester simple à maintenir.
+ * - Même design et même logique que pages/rencontres/france.tsx et Paris.tsx pour rester simple à maintenir.
  * - Pas de promesse de filtres avancés : on parle de “zone Marseille / Provence” de façon large.
  *
  * Dépendances :
@@ -34,7 +34,7 @@ const SEO = {
     "Keefon Marseille est une page dédiée aux rencontres bienveillantes à Marseille et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Marseille",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-marseille.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Marseille.jpg",
   keywords: [
     // Intent + features
     "rencontre Marseille",
@@ -78,7 +78,7 @@ const SEO = {
     "rencontre après 50 ans Marseille",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     { name: "Marseille", url: "https://www.keefon.com/rencontres/Marseille" },
   ],

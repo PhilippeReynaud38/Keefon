@@ -1,12 +1,12 @@
 /**
  * Fichier : pages/rencontres/saint-etienne.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Saint-Étienne et alentours
- * MAJ : 2025-11-19 — Version basée sur marseille.tsx, adaptée à Saint-Étienne (métropole & Loire).
+ * MAJ : 2025-11-19 — Version basée sur Marseille.tsx, adaptée à Saint-Étienne (métropole & Loire).
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Saint-Étienne et alentours (Saint-Étienne, Saint-Chamond, Firminy,
  *   Andrézieux-Bouthéon, plaine du Forez…).
- * - Même design et même logique que pages/rencontres/france.tsx, paris.tsx et marseille.tsx.
+ * - Même design et même logique que pages/rencontres/france.tsx, Paris.tsx et Marseille.tsx.
  * - Pas de promesse de filtres avancés : on parle de “zone Saint-Étienne / Loire” de façon large.
  *
  * Dépendances :
@@ -20,7 +20,7 @@
  * - Aucun (uniquement rendu React côté front).
  *
  * Invariants :
- * - Garder la cohérence visuelle avec france.tsx / paris.tsx / marseille.tsx (bandeau jaune,
+ * - Garder la cohérence visuelle avec france.tsx / Paris.tsx / marseille.tsx (bandeau jaune,
  *   carte rappel, structure des sections).
  * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n’existent pas encore.
  */
@@ -36,7 +36,7 @@ const SEO = {
     "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Saint-Etienne",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-saint-etienne.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Saint-Etienne.jpg",
   keywords: [
     // Intent + features
     "rencontre Saint-Étienne",
@@ -76,7 +76,7 @@ const SEO = {
     "rencontre après 50 ans Loire",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Saint-Étienne",

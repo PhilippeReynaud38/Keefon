@@ -34,7 +34,7 @@ const SEO = {
     "Keefon Rennes rassemble celles et ceux qui vivent à Rennes et dans les villes autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
   canonical: "https://www.keefon.com/rencontres/Rennes",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-rennes.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-Rennes.jpg",
   keywords: [
     // Intent + fonctionnalités
     "rencontre Rennes",
@@ -66,7 +66,7 @@ const SEO = {
     "Bretagne",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Rennes",
