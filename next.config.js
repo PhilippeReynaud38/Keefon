@@ -44,28 +44,28 @@ const nextConfig = {
     return rules;
   }, // <-- IMPORTANT : la virgule ici
 
-  async redirects() {
-    return [
-      { source: "/", destination: "/rencontres/France", permanent: true },
+async redirects() {
+  return [
+    { source: "/", destination: "/rencontres/France", permanent: true },
 
-      // minuscules -> Majuscule (car tes pages sont en Majuscule)
-      { source: "/rencontres/france", destination: "/rencontres/France", permanent: true },
-      { source: "/rencontres/grenoble", destination: "/rencontres/Grenoble", permanent: true },
+    // minuscules -> Majuscule
+    { source: "/rencontres/france", destination: "/rencontres/France", permanent: true },
+    { source: "/rencontres/paris", destination: "/rencontres/Paris", permanent: true },
+    { source: "/rencontres/lyon", destination: "/rencontres/Lyon", permanent: true },
+    { source: "/rencontres/marseille", destination: "/rencontres/Marseille", permanent: true },
+    { source: "/rencontres/toulouse", destination: "/rencontres/Toulouse", permanent: true },
+    { source: "/rencontres/nice", destination: "/rencontres/Nice", permanent: true },
+    { source: "/rencontres/nantes", destination: "/rencontres/Nantes", permanent: true },
+    { source: "/rencontres/montpellier", destination: "/rencontres/Montpellier", permanent: true },
+    { source: "/rencontres/strasbourg", destination: "/rencontres/Strasbourg", permanent: true },
+    { source: "/rencontres/bordeaux", destination: "/rencontres/Bordeaux", permanent: true },
+    { source: "/rencontres/lille", destination: "/rencontres/Lille", permanent: true },
+    { source: "/rencontres/rennes", destination: "/rencontres/Rennes", permanent: true },
+    { source: "/rencontres/grenoble", destination: "/rencontres/Grenoble", permanent: true },
+    { source: "/rencontres/saint-etienne", destination: "/rencontres/Saint-Etienne", permanent: true },
+  ];
+},
 
-      { source: "/rencontres/paris", destination: "/rencontres/Paris", permanent: true },
-      { source: "/rencontres/lyon", destination: "/rencontres/Lyon", permanent: true },
-      { source: "/rencontres/marseille", destination: "/rencontres/Marseille", permanent: true },
-      { source: "/rencontres/toulouse", destination: "/rencontres/Toulouse", permanent: true },
-      { source: "/rencontres/nice", destination: "/rencontres/Nice", permanent: true },
-      { source: "/rencontres/nantes", destination: "/rencontres/Nantes", permanent: true },
-      { source: "/rencontres/montpellier", destination: "/rencontres/Montpellier", permanent: true },
-      { source: "/rencontres/strasbourg", destination: "/rencontres/Strasbourg", permanent: true },
-      { source: "/rencontres/bordeaux", destination: "/rencontres/Bordeaux", permanent: true },
-      { source: "/rencontres/lille", destination: "/rencontres/Lille", permanent: true },
-      { source: "/rencontres/rennes", destination: "/rencontres/Rennes", permanent: true },
-      { source: "/rencontres/saint-etienne", destination: "/rencontres/Saint-Etienne", permanent: true },
-    ];
-  },
 };
 
 module.exports = nextConfig;
