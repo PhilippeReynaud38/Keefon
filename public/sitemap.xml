@@ -2,23 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://www.keefon.com/rencontres/France</loc>
+    <loc>https://www.keefon.com/rencontres/france</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <url><loc>https://www.keefon.com/rencontres/Paris</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Lyon</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Marseille</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Toulouse</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Nice</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Nantes</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Montpellier</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Strasbourg</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Bordeaux</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Lille</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Rennes</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Grenoble</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.keefon.com/rencontres/Saint-Etienne</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/paris</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/lyon</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/marseille</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/toulouse</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/nice</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/nantes</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/montpellier</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/strasbourg</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/bordeaux</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/lille</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/rennes</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/grenoble</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.keefon.com/rencontres/saint-etienne</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 
 </urlset>
