@@ -33,7 +33,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Nice et sur la Côte d’Azur | Keefon",
   description:
     "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes et sur toute la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Nice",
+  canonical: "https://www.keefon.com/rencontres/nice",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Nice.jpg",
   keywords: [
@@ -42,6 +42,7 @@ const SEO = {
       "rencontre gratuit Nice",
     "rencontres Nice",
     "site de rencontre Nice",
+     "meilleur rencontres Nice",
     "rencontres bienveillantes Nice",
     "rencontre locale Nice",
     "rencontre proche de chez moi Nice",
@@ -83,7 +84,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Nice", url: "https://www.keefon.com/rencontres/Nice" },
+    { name: "Nice", url: "https://www.keefon.com/rencontres/nice" },
   ],
 };
 
@@ -609,7 +610,7 @@ export default function NiceRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -622,7 +623,7 @@ export default function NiceRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Marseille"
+                    href="/rencontres/marseille"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Marseille
@@ -630,7 +631,7 @@ export default function NiceRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -638,7 +639,7 @@ export default function NiceRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux
@@ -646,7 +647,7 @@ export default function NiceRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris

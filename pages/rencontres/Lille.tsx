@@ -32,7 +32,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Lille et dans la métropole | Keefon",
   description:
     "Keefon Lille est la porte d’entrée pour des rencontres bienveillantes à Lille et dans la métropole lilloise : échanges simples, respectueux, sans swipe infini. Pendant la période d’ouverture, le chat reste gratuit.",
-  canonical: "https://www.keefon.com/rencontres/Lille",
+  canonical: "https://www.keefon.com/rencontres/lille",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Lille.jpg",
   keywords: [
@@ -80,7 +80,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Lille / métropole", url: "https://www.keefon.com/rencontres/Lille" },
+    { name: "Lille / métropole", url: "https://www.keefon.com/rencontres/lille" },
   ],
 };
 
@@ -565,7 +565,7 @@ export default function LilleRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -578,7 +578,7 @@ export default function LilleRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -586,7 +586,7 @@ export default function LilleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -594,7 +594,7 @@ export default function LilleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux
@@ -602,7 +602,7 @@ export default function LilleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Strasbourg"
+                    href="/rencontres/strasbourg"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Strasbourg

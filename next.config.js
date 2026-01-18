@@ -1,72 +1,74 @@
-// -*- coding: utf-8 -*-
-// next.config.js — Keefon (SEO minimum safe)
-// next.config.js
+// next.config.js — Keefon (LOWERCASE canonical + www)
 
 const isProd = process.env.NODE_ENV === "production";
 const enableHsts = process.env.ENABLE_HSTS !== "false";
 
-const NOINDEX = { key: "X-Robots-Tag", value: "noindex, nofollow" };
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  trailingSlash: false,
 
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/**" },
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+        pathname: "/storage/v1/object/**",
+      },
     ],
   },
 
   eslint: { ignoreDuringBuilds: true },
 
-  async headers() {
-    const rules = [
-      { source: "/cookies/:path*", headers: [NOINDEX] },
-      { source: "/reset-password/:path*", headers: [NOINDEX] },
-      { source: "/forgot-password/:path*", headers: [NOINDEX] },
-      { source: "/recherche/:path*", headers: [NOINDEX] },
-      { source: "/login/:path*", headers: [NOINDEX] },
-      { source: "/signup/:path*", headers: [NOINDEX] },
-      { source: "/onboarding/:path*", headers: [NOINDEX] },
-      { source: "/settings/:path*", headers: [NOINDEX] },
-      { source: "/messages/:path*", headers: [NOINDEX] },
-      { source: "/profil/:path*", headers: [NOINDEX] },
-      { source: "/admin/:path*", headers: [NOINDEX] },
+  async redirects() {
+    return [
+      // Optionnel: forcer www en prod (tu l'as déjà aussi dans Vercel Domains)
+      ...(isProd
+        ? [
+            {
+              source: "/:path*",
+              has: [{ type: "host", value: "keefon.com" }],
+              destination: "https://www.keefon.com/:path*",
+              permanent: true,
+            },
+          ]
+        : []),
+
+      // Home → lowercase
+      { source: "/", destination: "/rencontres/france", permanent: true },
+
+      // Anciennes URLs en Majuscule → nouvelles en minuscule
+      { source: "/rencontres/France", destination: "/rencontres/france", permanent: true },
+      { source: "/rencontres/Paris", destination: "/rencontres/paris", permanent: true },
+      { source: "/rencontres/Lyon", destination: "/rencontres/lyon", permanent: true },
+      { source: "/rencontres/Marseille", destination: "/rencontres/marseille", permanent: true },
+      { source: "/rencontres/Toulouse", destination: "/rencontres/toulouse", permanent: true },
+      { source: "/rencontres/Nice", destination: "/rencontres/nice", permanent: true },
+      { source: "/rencontres/Nantes", destination: "/rencontres/nantes", permanent: true },
+      { source: "/rencontres/Montpellier", destination: "/rencontres/montpellier", permanent: true },
+      { source: "/rencontres/Strasbourg", destination: "/rencontres/strasbourg", permanent: true },
+      { source: "/rencontres/Bordeaux", destination: "/rencontres/bordeaux", permanent: true },
+      { source: "/rencontres/Lille", destination: "/rencontres/lille", permanent: true },
+      { source: "/rencontres/Rennes", destination: "/rencontres/rennes", permanent: true },
+      { source: "/rencontres/Grenoble", destination: "/rencontres/grenoble", permanent: true },
+      { source: "/rencontres/Saint-Etienne", destination: "/rencontres/saint-etienne", permanent: true },
     ];
+  },
 
-    if (isProd && enableHsts) {
-      rules.push({
+  async headers() {
+    if (!isProd || !enableHsts) return [];
+    return [
+      {
         source: "/:path*",
-        headers: [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }],
-      });
-    }
-
-    return rules;
-  }, // <-- IMPORTANT : la virgule ici
-
-async redirects() {
-  return [
-    { source: "/", destination: "/rencontres/France", permanent: true },
-
-    // minuscules -> Majuscule
-    { source: "/rencontres/france", destination: "/rencontres/France", permanent: true },
-    { source: "/rencontres/paris", destination: "/rencontres/Paris", permanent: true },
-    { source: "/rencontres/lyon", destination: "/rencontres/Lyon", permanent: true },
-    { source: "/rencontres/marseille", destination: "/rencontres/Marseille", permanent: true },
-    { source: "/rencontres/toulouse", destination: "/rencontres/Toulouse", permanent: true },
-    { source: "/rencontres/nice", destination: "/rencontres/Nice", permanent: true },
-    { source: "/rencontres/nantes", destination: "/rencontres/Nantes", permanent: true },
-    { source: "/rencontres/montpellier", destination: "/rencontres/Montpellier", permanent: true },
-    { source: "/rencontres/strasbourg", destination: "/rencontres/Strasbourg", permanent: true },
-    { source: "/rencontres/bordeaux", destination: "/rencontres/Bordeaux", permanent: true },
-    { source: "/rencontres/lille", destination: "/rencontres/Lille", permanent: true },
-    { source: "/rencontres/rennes", destination: "/rencontres/Rennes", permanent: true },
-    { source: "/rencontres/grenoble", destination: "/rencontres/Grenoble", permanent: true },
-    { source: "/rencontres/saint-etienne", destination: "/rencontres/Saint-Etienne", permanent: true },
-  ];
-},
-
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
-

@@ -32,7 +32,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Lyon et dans la métropole | Keefon",
   description:
     "Keefon Lyon est une page dédiée aux rencontres bienveillantes à Lyon et dans sa métropole : échanges respectueux, profils vérifiés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Lyon",
+  canonical: "https://www.keefon.com/rencontres/lyon",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Lyon.jpg",
   keywords: [
@@ -614,7 +614,7 @@ export default function LyonRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -627,7 +627,7 @@ export default function LyonRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -635,7 +635,7 @@ export default function LyonRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Marseille"
+                    href="/rencontres/marseille"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Marseille
@@ -643,7 +643,7 @@ export default function LyonRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux
@@ -651,7 +651,7 @@ export default function LyonRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Grenoble"
+                    href="/rencontres/grenoble"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Grenoble

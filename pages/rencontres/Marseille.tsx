@@ -32,7 +32,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Marseille et autour | Keefon",
   description:
     "Keefon Marseille est une page dédiée aux rencontres bienveillantes à Marseille et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Marseille",
+  canonical: "https://www.keefon.com/rencontres/marseille",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Marseille.jpg",
   keywords: [
@@ -80,7 +80,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Marseille", url: "https://www.keefon.com/rencontres/Marseille" },
+    { name: "Marseille", url: "https://www.keefon.com/rencontres/marseille" },
   ],
 };
 
@@ -308,7 +308,7 @@ export default function MarseilleRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com/#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -597,7 +597,7 @@ export default function MarseilleRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -610,7 +610,7 @@ export default function MarseilleRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -618,7 +618,7 @@ export default function MarseilleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -626,7 +626,7 @@ export default function MarseilleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Nice"
+                    href="/rencontres/nice"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Nice
@@ -634,7 +634,7 @@ export default function MarseilleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux

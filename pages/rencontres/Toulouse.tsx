@@ -32,7 +32,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Toulouse et dans l’aire Toulousaine | Keefon",
   description:
     "Keefon Toulouse rassemble celles et ceux qui vivent dans la ville rose et autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
-  canonical: "https://www.keefon.com/rencontres/Toulouse",
+  canonical: "https://www.keefon.com/rencontres/toulouse",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Toulouse.jpg",
   keywords: [
@@ -71,7 +71,7 @@ const SEO = {
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Toulouse / aire toulousaine",
-      url: "https://www.keefon.com/rencontres/Toulouse",
+      url: "https://www.keefon.com/rencontres/toulouse",
     },
   ],
 };
@@ -589,7 +589,7 @@ export default function ToulouseRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -602,7 +602,7 @@ export default function ToulouseRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux
@@ -610,7 +610,7 @@ export default function ToulouseRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Montpellier"
+                    href="/rencontres/montpellier"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Montpellier
@@ -618,7 +618,7 @@ export default function ToulouseRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Marseille"
+                    href="/rencontres/marseille"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Marseille
@@ -626,7 +626,7 @@ export default function ToulouseRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Nice"
+                    href="/rencontres/nice"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Nice

@@ -34,12 +34,13 @@ const SEO = {
   title: "Rencontres bienveillantes à Saint-Étienne et autour | Keefon",
   description:
     "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Saint-Etienne",
+  canonical: "https://www.keefon.com/rencontres/saint-etienne",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Saint-Etienne.jpg",
   keywords: [
     // Intent + features
     "rencontre Saint-Étienne",
+     "meilleur rencontre Saint-Étienne",
       "rencontre gratuite Saint-Étienne",
     "rencontres Saint-Étienne",
     "site de rencontre Saint-Étienne",
@@ -55,7 +56,7 @@ const SEO = {
     "rencontre respectueuse",
     "dating Saint-Étienne",
     "dating Loire",
-    "rencontre adultes consentants",,
+    "rencontre adultes consentants",
     "dating bienveillant",
 
     // Villes / zone (SEO, pas promesse de filtres)
@@ -80,7 +81,7 @@ const SEO = {
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Saint-Étienne",
-      url: "https://www.keefon.com/rencontres/Saint-Etienne",
+      url: "https://www.keefon.com/rencontres/saint-etienne",
     },
   ],
 };
@@ -601,7 +602,7 @@ export default function SaintEtienneRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -614,7 +615,7 @@ export default function SaintEtienneRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -622,7 +623,7 @@ export default function SaintEtienneRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Grenoble"
+                    href="/rencontres/grenoble"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Grenoble
@@ -630,7 +631,7 @@ export default function SaintEtienneRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Marseille"
+                    href="/rencontres/marseille"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Marseille
@@ -638,7 +639,7 @@ export default function SaintEtienneRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Nice"
+                    href="/rencontres/nice"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Nice

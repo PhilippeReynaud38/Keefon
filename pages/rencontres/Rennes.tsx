@@ -32,7 +32,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Rennes et en Bretagne | Keefon",
   description:
     "Keefon Rennes rassemble celles et ceux qui vivent à Rennes et dans les villes autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
-  canonical: "https://www.keefon.com/rencontres/Rennes",
+  canonical: "https://www.keefon.com/rencontres/rennes",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Rennes.jpg",
   keywords: [
@@ -70,7 +70,7 @@ const SEO = {
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
     {
       name: "Rennes",
-      url: "https://www.keefon.com/rencontres/Rennes",
+      url: "https://www.keefon.com/rencontres/rennes",
     },
   ],
 };
@@ -583,7 +583,7 @@ export default function RennesRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -596,7 +596,7 @@ export default function RennesRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Nantes"
+                    href="/rencontres/nantes"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Nantes
@@ -604,7 +604,7 @@ export default function RennesRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -612,7 +612,7 @@ export default function RennesRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux
@@ -620,7 +620,7 @@ export default function RennesRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Strasbourg"
+                    href="/rencontres/strasbourg"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Strasbourg

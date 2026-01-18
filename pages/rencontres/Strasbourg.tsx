@@ -34,7 +34,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Strasbourg et autour | Keefon",
   description:
     "Keefon Strasbourg est une page dédiée aux rencontres bienveillantes à Strasbourg et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Strasbourg",
+  canonical: "https://www.keefon.com/rencontres/strasbourg",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-strasbourg.jpg",
   keywords: [
@@ -80,7 +80,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Strasbourg", url: "https://www.keefon.com/rencontres/Strasbourg" },
+    { name: "Strasbourg", url: "https://www.keefon.com/rencontres/strasbourg" },
   ],
 };
 
@@ -602,7 +602,7 @@ export default function StrasbourgRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -615,7 +615,7 @@ export default function StrasbourgRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -623,7 +623,7 @@ export default function StrasbourgRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -631,7 +631,7 @@ export default function StrasbourgRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Strasbourg"
+                    href="/rencontres/strasbourg"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Strasbourg
@@ -639,7 +639,7 @@ export default function StrasbourgRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Metz"
+                    href="/rencontres/metz"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Metz

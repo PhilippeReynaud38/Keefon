@@ -32,13 +32,15 @@ const SEO = {
   title: "Rencontres bienveillantes à Bordeaux et autour | Keefon",
   description:
     "Keefon Bordeaux est une page dédiée aux rencontres bienveillantes à Bordeaux et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://keefon.com/rencontres/Bordeaux",
+  canonical: "https://www.keefon.com/rencontres/bordeaux",
   siteName: "Keefon",
-  ogImage: "https://keefon.com/og/rencontres-bordeaux.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-bordeaux.jpg",
   keywords: [
     // Intent + features
     "rencontre Bordeaux",
         "rencontre gratuit Bordeaux",
+            "meilleur site rencontre Bordeaux",
+
     "rencontres Bordeaux",
     "site de rencontre Bordeaux",
     "rencontres bienveillantes Bordeaux",
@@ -75,9 +77,9 @@ const SEO = {
     "rencontre après 50 ans Bordeaux",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://keefon.com/" },
-    { name: "Rencontres", url: "https://keefon.com/rencontres" },
-    { name: "Bordeaux", url: "https://keefon.com/rencontres/bordeaux" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Bordeaux", url: "https://www.keefon.com/rencontres/bordeaux" },
   ],
 };
 
@@ -289,10 +291,10 @@ export default function BordeauxRencontresPage() {
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://keefon.com",
+        url: "https://www.keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://keefon.com/recherche?q={query}",
+          target: "https://www.keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -302,7 +304,7 @@ export default function BordeauxRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://keefon.com#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -563,7 +565,7 @@ export default function BordeauxRencontresPage() {
                 Tu peux aussi explorer la vue d’ensemble&nbsp;:
                 {" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -576,7 +578,7 @@ export default function BordeauxRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Nantes"
+                    href="/rencontres/nantes"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Nantes
@@ -584,7 +586,7 @@ export default function BordeauxRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Toulouse"
+                    href="/rencontres/toulouse"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Toulouse
@@ -592,7 +594,7 @@ export default function BordeauxRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -600,7 +602,7 @@ export default function BordeauxRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris

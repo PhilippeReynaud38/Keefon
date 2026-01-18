@@ -34,7 +34,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Nantes et autour | Keefon",
   description:
     "Keefon Nantes est une page dédiée aux rencontres bienveillantes à Nantes et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Nantes",
+  canonical: "https://www.keefon.com/rencontres/nantes",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-nantes.jpg",
   keywords: [
@@ -82,8 +82,8 @@ const SEO = {
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
-    { name: "Rencontres", url: "hhttps://www.keefon.com/rencontres" },
-    { name: "Nantes", url: "https://www.keefon.com/rencontres/Nantes" },
+    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
+    { name: "Nantes", url: "https://www.keefon.com/rencontres/nantes" },
   ],
 };
 
@@ -313,7 +313,7 @@ export default function NantesRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com/#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -603,7 +603,7 @@ export default function NantesRencontresPage() {
               <p className="mb-2">
                 Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -616,7 +616,7 @@ export default function NantesRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -624,7 +624,7 @@ export default function NantesRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Bordeaux"
+                    href="/rencontres/bordeaux"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Bordeaux
@@ -632,7 +632,7 @@ export default function NantesRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Lille"
+                    href="/rencontres/lille"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lille
@@ -640,7 +640,7 @@ export default function NantesRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Grenoble"
+                    href="/rencontres/grenoble"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Grenoble

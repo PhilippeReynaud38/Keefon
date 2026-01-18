@@ -1,5 +1,5 @@
 /**
- * Fichier : pages/rencontres/Grenoble.tsx
+ * Fichier : pages/rencontres/grenoble.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Grenoble / Métropole
  * MAJ : 2025-11-19 — Version basée sur Lyon.tsx, adaptée à Grenoble + métropole
  *
@@ -32,7 +32,7 @@ const SEO = {
   title: "Rencontres bienveillantes à Grenoble et dans la métropole | Keefon",
   description:
     "Keefon Grenoble est une page dédiée aux rencontres bienveillantes à Grenoble et dans sa métropole : échanges respectueux, profils protégés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/Grenoble",
+  canonical: "https://www.keefon.com/rencontres/grenoble",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Grenoble.jpg",
   keywords: [
@@ -82,7 +82,7 @@ const SEO = {
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Grenoble", url: "https://www.keefon.com/rencontres/Grenoble" },
+    { name: "Grenoble", url: "https://www.keefon.com/rencontres/grenoble" },
   ],
 };
 
@@ -308,7 +308,7 @@ export default function GrenobleRencontresPage() {
         url: SEO.canonical,
         description: SEO.description,
         inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com/#website" },
+        isPartOf: { "@id": "https://www.keefon.com#website" },
       },
     ],
   };
@@ -580,7 +580,7 @@ export default function GrenobleRencontresPage() {
                 Tu peux aussi explorer la vue d’ensemble&nbsp;:
                 {" "}
                 <Link
-                  href="/rencontres/France"
+                  href="/rencontres/france"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
@@ -593,7 +593,7 @@ export default function GrenobleRencontresPage() {
               <ul className="flex flex-wrap gap-x-3 gap-y-1">
                 <li>
                   <Link
-                    href="/rencontres/Lyon"
+                    href="/rencontres/lyon"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Lyon
@@ -601,7 +601,7 @@ export default function GrenobleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Marseille"
+                    href="/rencontres/marseille"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Marseille
@@ -609,7 +609,7 @@ export default function GrenobleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Paris"
+                    href="/rencontres/paris"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Paris
@@ -617,7 +617,7 @@ export default function GrenobleRencontresPage() {
                 </li>
                 <li>
                   <Link
-                    href="/rencontres/Nice"
+                    href="/rencontres/nice"
                     className="underline-offset-2 hover:underline"
                   >
                     Rencontres à Nice
