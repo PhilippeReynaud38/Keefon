@@ -638,12 +638,6 @@ export default function StrasbourgRencontresPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/rencontres/metz"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Metz
-                  </Link>
                 </li>
               </ul>
             </div>

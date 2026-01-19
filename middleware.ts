@@ -1,22 +1,30 @@
-// -*- coding: utf-8 -*-
-// ============================================================================
-// Keefon | Middleware global
-// Fichier : /middleware.ts
-// Objet   : Laisser passer toutes les requêtes sans mot de passe global.
-//           On conserve le middleware comme squelette pour de futures règles.
-// Règles  : code simple, pas d’effets de bord, UTF-8.
-// ============================================================================
+
+
 
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export function middleware(_req: NextRequest) {
-  // Aucune restriction globale : on laisse tout passer.
+export function middleware(req: NextRequest) {
+  const url = req.nextUrl;
+  const pathname = url.pathname;
+
+  // On ne touche qu'aux pages /rencontres/*
+  if (pathname.startsWith("/rencontres/")) {
+    const lower = pathname.toLowerCase();
+
+    // Si quelqu'un arrive avec /rencontres/Rennes, /Rencontres/Paris, etc.
+    if (pathname !== lower) {
+      const redirectUrl = url.clone();
+      redirectUrl.pathname = lower;
+      return NextResponse.redirect(redirectUrl, 308);
+    }
+  }
+
   return NextResponse.next();
 }
 
-// ⚠ IMPORTANT : pas de "as string[]" ni d’astuces TypeScript ici.
-// Next.js lit cette config comme du simple JS.
+
+
 export const config = {
-  matcher: [], // pas de routes ciblées pour l’instant
+  matcher: ["/rencontres/:path*"],
 };
