@@ -5,9 +5,9 @@
  */
 
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
-import Image from "next/image";
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
   title: "Rencontres bienveillantes en France | Keefon",
@@ -336,10 +336,10 @@ function ProfileTeaserBand() {
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
                   fill
-                  sizes="(max-width: 768px) 80vw, (max-width: 1024px) 45vw, 25vw"
-                  className="object-cover object-[50%_20%]"
-                  priority={p.priority}
+                  className="object-cover object-top"
+                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
                   quality={95}
+                  priority={Boolean((p as any).priority)}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">

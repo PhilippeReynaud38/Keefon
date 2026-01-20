@@ -315,12 +315,11 @@ const PresignupPage: React.FC = () => {
     setSubmitting(true);
 
     try {
-      // On s'assure que la photo existe bien dans le bucket
+      // Vérif best-effort : la liste Storage peut être en retard de quelques secondes.
+      // On n'empêche pas l'inscription pour ça.
       const exists = await waitUntilFileExists(avatarPath);
       if (!exists) {
-        throw new Error(
-          "Ta photo principale n'est pas encore disponible. Réessaie dans quelques secondes.",
-        );
+        console.warn("[presignup] avatar pas encore visible via storage.list(), on continue");
       }
 
       // On garde uniquement la dernière photo temporaire de ce user

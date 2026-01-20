@@ -1,26 +1,7 @@
 /**
- * Fichier : pages/rencontres/Paris.tsx
- * Module : Pages publiques / SEO — Rencontres sur la zone Paris & Île-de-France
- * MAJ : 2025-11-19 — Version alignée avec Nice / Nantes / Montpellier / Marseille.
- *
- * Contexte :
- * - Page vitrine dédiée à la zone Paris et alentours (Paris intra-muros, petite couronne, quelques villes d’Île-de-France).
- * - Même design et même logique que pages/rencontres/France.tsx, Marseille.tsx, Nice.tsx, etc.
- * - Pas de promesse de filtres ultra-précis : on parle de “zone Paris / Île-de-France” de façon large.
- *
- * Dépendances :
- * - next/head, next/image, next/link
- * - Tailwind pour les classes utilitaires
- *
- * Données lues :
- * - Aucune (page purement statique, pas de fetch).
- *
- * Effets de bord :
- * - Aucun (uniquement rendu React côté front).
- *
- * Invariants :
- * - Garder la cohérence visuelle avec les autres pages villes (bandeau jaune, carte rappel, structure des sections).
- * - Ne PAS promettre de fonctionnalités de recherche ultra-précises qui n’existent pas encore.
+ * Fichier : pages/rencontres/france.tsx
+ * Module : Pages publiques / SEO — Rencontres en France
+ * MAJ : 2025-11-24 — Badge prononciation Keefon + correction preload avatars
  */
 
 import Head from "next/head";
@@ -29,62 +10,53 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Paris et en Île-de-France | Keefon",
+  title: "Rencontres bienveillantes en France | Keefon",
   description:
-    "Keefon Paris est une page dédiée aux rencontres bienveillantes à Paris et en Île-de-France : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/paris",
+    "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+  canonical: "https://keefon.com/rencontres/france",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-Paris.jpg",
+  ogImage: "https://keefon.com/og/rencontres-france.jpg",
   keywords: [
     // Intent + features
-    "rencontre Paris",
-      "rencontre gratuit Paris",
-    "rencontres Paris",
-              "rencontre femme gratuit Paris",
-             "rencontre femme Paris",
-    "site de rencontre Paris",
-    "site de rencontre gratuit Paris",
-    "rencontres bienveillantes Paris",
-    "rencontre locale Paris",
-    "rencontre proche de chez moi Paris",
-    "rencontre Île-de-France",
-    "rencontres Île-de-France",
-    "rencontre IDF",
-    "chat gratuit Paris",
-    "chat rencontre gratuit Paris",
-    "messagerie gratuite Paris",
-    "profils certifiés",
-    "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
-    "rencontre respectueuse",
-    "dating Paris",
-    "dating Île-de-France",
-    "rencontre adultes consentants",
-    "dating bienveillant",
+    "rencontre","site de rencontre","site de rencontre gratuit","rencontres bienveillantes","site de rencontre français","appli de rencontre française",
+    "rencontre sérieuse","rencontres sérieuses","rencontre locale","rencontres locales",
+    "chat gratuit","chat rencontre gratuit","messagerie gratuite","discussion rencontre",
+    "profils certifiés","profil certifié","vérification profil",
+    "respect et sécurité","rencontre respectueuse","anti harcèlement",
+    "sans swipe","sans swipe infini","sans algorithme opaque","anti addiction",
+    "plateforme RGPD","respect CNIL","protection des données",
+    "dating France","site de dating France","rencontre adultes consentants",
+    "slow dating","dating bienveillant",
 
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Paris",
-    "Boulogne-Billancourt",
-    "Saint-Denis",
-    "Montreuil",
-    "Levallois-Perret",
-    "Issy-les-Moulineaux",
-    "Ivry-sur-Seine",
-    "Neuilly-sur-Seine",
-    "Vincennes",
-    "Île-de-France",
+    // Longue traîne
+    "site de rencontre sans swipe","site de rencontre bienveillant France",
+    "application de rencontre française sérieuse","chat rencontre gratuit France",
+    "rencontre proche de chez moi","rencontre par ville","rencontre par région",
+    "rencontre après 30 ans","rencontre après 40 ans","rencontre après 50 ans",
+
+    // Régions
+    "Île-de-France","Auvergne-Rhône-Alpes","Occitanie","Provence-Alpes-Côte d’Azur",
+    "Nouvelle-Aquitaine","Hauts-de-France","Grand Est","Bretagne","Normandie",
+    "Pays de la Loire","Bourgogne-Franche-Comté","Centre-Val de Loire","Corse",
+
+    // Grandes villes
+    "Paris","Lyon","Marseille","Toulouse","Nice","Nantes","Strasbourg","Montpellier",
+    "Bordeaux","Lille","Rennes","Reims","Toulon","Grenoble","Dijon","Angers","Nîmes",
+    "Villeurbanne","Clermont-Ferrand","Saint-Étienne","Le Havre","Aix-en-Provence",
+    "Brest","Tours","Amiens","Limoges","Metz","Besançon","Perpignan","Orléans",
+    "Mulhouse","Rouen","Boulogne-Billancourt","Nancy","Argenteuil","Saint-Denis",
 
     // Combinaisons courtes utiles
-    "rencontre sérieuse Paris",
-    "rencontre après 30 ans Paris",
-    "rencontre après 40 ans Paris",
-    "rencontre après 50 ans Île-de-France",
+    "rencontre Paris","rencontre Lyon","rencontre Marseille","rencontre Toulouse",
+    "rencontre Montpellier","rencontre Bordeaux","rencontre Nantes","rencontre Lille",
+    "rencontre Nice","rencontre Rennes","rencontre Strasbourg","rencontre Toulon",
+    "rencontre Grenoble","rencontre Dijon","rencontre Angers","rencontre Nîmes",
+    "rencontre Clermont-Ferrand","rencontre Reims","rencontre Metz","rencontre Rouen"
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com" },
-    { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Paris", url: "https://www.keefon.com/rencontres/paris" },
+    { name: "Accueil", url: "https://keefon.com/" },
+    { name: "Rencontres", url: "https://keefon.com/rencontres" },
+    { name: "France", url: "https://keefon.com/rencontres/france" },
   ],
 };
 
@@ -105,7 +77,7 @@ function FreeTopBar() {
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
-        boxShadow: "0 8px 28px rgba(0,0,0,0.22)",
+        boxShadow: "0 8px 28px rgba(0,0,0,.22)", // ombre légèrement renforcée
       }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
@@ -118,7 +90,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -138,7 +110,7 @@ function FreeTopBar() {
 
 function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
-  return <div className="h-[72px] w-full sm:h-[84px]" />;
+  return <div className="h-[72px] sm:h-[84px] w-full" />;
 }
 
 /* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
@@ -152,7 +124,7 @@ function FreeReminderCard() {
           style={{
             borderColor: "#F9E13A",
             background: COLORS.bannerGrad,
-            boxShadow: "0 10px 28px rgba(0,0,0,0.18)",
+            boxShadow: "0 10px 28px rgba(0,0,0,.18)", // ombre renforcée, cohérente avec la ligne jaune
           }}
         >
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -181,75 +153,84 @@ function FreeReminderCard() {
   );
 }
 
-/* ===========================  Bandeau “exemples de profils” — Paris  =========================== */
+/* ===========================  Bandeau “exemples de profils”  =========================== */
 function ProfileTeaserBand() {
-  /**
-   * ⚠️ Fichiers à placer dans : /public/avatars_France/Paris/
-   * IMPORTANT :
-   *  - pas d’accents ni d’espaces dans les noms de fichiers (Lea.png, Samir.png,
-   *    Elise.png, Thomas.png par exemple)
-   *  - le chemin doit suivre les valeurs avatarSrc ci-dessous.
-   *
-   * Visuels fictifs, inspirés de personnes réelles, pour illustrer la diversité des profils Parisiens.
-   */
   const profiles = [
     {
-      pseudo: "Alizee",
-      ageVille: "29 ans — Paris 11e",
-      badges: ["Free"],
+      pseudo: "Léa_Soleil",
+      ageVille: "29 ans — Toulouse (31)",
+      badges: ["Free", "Écho reçu"],
       phrase:
-        "Je travaille en télétravail une partie de la semaine et j’en ai eu marre des applis qui donnent l’impression de faire du shopping humain.",
-      avatarSrc: "/avatars_France/Paris/Alizee.png",
-      avatarAlt:
-        "Profil fictif Lea (jeune femme souriante dans une rue Parisienne avec immeubles en arrière-plan)",
+        "Sur les autres applis, on scrolle sans jamais vraiment se rencontrer. Ici, avec l’Écho et Keefon+, je croise enfin de vraies personnes, pas juste des profils.",
+      avatarSrc: "/avatars_France/France/lea-soleil.png",
+      avatarAlt: "Profil fictif Léa_Soleil",
       priority: true,
     },
     {
-      pseudo: "Bilou",
-      ageVille: "34 ans — Paris",
-      badges: ["Essentiel"],
+      pseudo: "Bertrand",
+      ageVille: "39 ans — Paris (75)",
+      badges: ["Keefon+"],
       phrase:
-        "Entre le boulot, le métro et les soirées entre amis, je n’ai pas envie de passer des heures à swiper. Je préfère quelques échanges clairs et respectueux.",
-      avatarSrc: "/avatars_France/Paris/Bilou.png",
-      avatarAlt:
-        "Profil fictif Samir (homme souriant sur un pont avec la Seine en arrière-plan)",
+        "J’aime beaucoup ce site. Avec Keefon+, je peux parler aussi avec des personnes non abonnées. C’est une autre dimension, avec beaucoup moins de pertes de temps.",
+      avatarSrc: "/avatars_France/France/bertrand.png",
+      avatarAlt: "Profil fictif Bertrand",
       priority: true,
     },
     {
-      pseudo: "Anne",
-      ageVille: "41 ans",
-      badges: ["Free"],
+      pseudo: "Sami",
+      ageVille: "34 ans — Montpellier (34)",
+      badges: ["Essentiel", "Profil certifié"],
       phrase:
-        "Je bouge entre mon boulot, les enfants et les trajets en RER. Keefon me permet de prendre le temps d’échanger sans pression.",
-      avatarSrc: "/avatars_France/Paris/Anne.png",
-      avatarAlt:
-        "Profil fictif Elise (femme souriante assise en terrasse dans une grande ville)",
+        "Déjà déçu par d’autres applis, ici je teste quelque chose de plus humain, j’adore.",
+      avatarSrc: "/avatars_France/France/sami.png",
+      avatarAlt: "Profil fictif Sami",
     },
     {
-      pseudo: "Eric",
-      ageVille: "48 ans",
+      pseudo: "Nora_azur",
+      ageVille: "29 ans — Lyon (69)",
+      badges: ["Essentiel", "Profil certifié"],
+      phrase:
+        "Rencontres posées et sincères, loin du bruit des applis classiques.",
+      avatarSrc: "/avatars_France/France/nora-azur.png",
+      avatarAlt: "Profil fictif Nora_azur",
+    },
+    {
+      pseudo: "Philou_océan",
+      ageVille: "56 ans — La Rochelle (17)",
+      badges: ["Free"],
+      phrase:
+        "Je vis près de l’océan. Ici, je fais des rencontres tranquilles, avec des personnes qui ont aussi envie de vraies discussions, pas seulement de petits likes.",
+      avatarSrc: "/avatars_France/France/Philou_ocean.png",
+      avatarAlt: "Profil fictif Philou_océan",
+    },
+    {
+      pseudo: "Claire_lys",
+      ageVille: "55 ans — Dijon (21)",
       badges: ["Essentiel"],
       phrase:
-        "Je travaille en région parisienne, je bouge beaucoup. Keefon m’aide à ouvrir des portes sans me perdre dans des centaines de profils.",
-      avatarSrc: "/avatars_France/Paris/Eric.png",
-      avatarAlt:
-        "Profil fictif Thomas (homme souriant dans une rue avec immeubles haussmanniens)",
+        "Après 50 ans, je ne cherche plus à collectionner les matchs. Ici je prends le temps d’échanger vraiment, sans pression c'est très different des autres sites..",
+      avatarSrc: "/avatars_France/France/Claire_lys.png",
+      avatarAlt: "Profil fictif Claire_lys",
     },
   ];
 
   return (
     <section className="section section-profiles-preview py-6">
       <div className="container mx-auto max-w-5xl px-4">
-        {/* Mention discrète (bulle jaune pâle) */}
+        <h2 className="text-sm sm:text-base font-semibold uppercase tracking-[0.18em] text-menuBtn">
+          Quelques exemples de profils sur Keefon
+        </h2>
+
+        {/* Mention discrète (jaune pâle, sans fond) */}
         <div
           className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] sm:text-[13px] leading-relaxed"
           style={{ color: "#FEFF93" }}
         >
-          Profils fictifs inspirés de vraies personnes. Chaque membre décide
-          ce qu&apos;il partage et reste protégé par les lois françaises.
+          Profils fictifs inspirés de vraies personnes. Chaque membre décide ce
+          qu&apos;il partage et reste protégé par les lois françaises.
         </div>
 
-        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible">
           {profiles.map((p) => (
             <article
               key={p.pseudo}
@@ -260,7 +241,7 @@ function ProfileTeaserBand() {
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
                   fill
-                  className="object-cover object-[50%_42%]"
+                  className="object-cover"
                   sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
                   priority={Boolean((p as any).priority)}
                 />
@@ -296,17 +277,17 @@ function ProfileTeaserBand() {
 }
 
 /* ===========================  Page  =========================== */
-export default function ParisRencontresPage() {
+export default function FranceRencontresPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebSite",
         name: SEO.siteName,
-        url: "https://www.keefon.com",
+        url: "https://keefon.com",
         potentialAction: {
           "@type": "SearchAction",
-          target: "https://www.keefon.com/recherche?q={query}",
+          target: "https://keefon.com/recherche?q={query}",
           "query-input": "required name=query",
         },
       },
@@ -315,8 +296,20 @@ export default function ParisRencontresPage() {
         name: SEO.title,
         url: SEO.canonical,
         description: SEO.description,
-        inLanguage: "fr-FR",
-        isPartOf: { "@id": "https://www.keefon.com#website" },
+        isPartOf: {
+          "@type": "WebSite",
+          name: SEO.siteName,
+          url: "https://keefon.com",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: SEO.breadcrumb.map((b, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: b.name,
+          item: b.url,
+        })),
       },
     ],
   };
@@ -328,15 +321,32 @@ export default function ParisRencontresPage() {
         <meta name="description" content={SEO.description} />
         <meta name="keywords" content={SEO.keywords} />
         <link rel="canonical" href={SEO.canonical} />
+        <link rel="alternate" hrefLang="fr" href={SEO.canonical} />
+        <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+        <meta property="og:locale" content="fr_FR" />
         <meta property="og:title" content={SEO.title} />
         <meta property="og:description" content={SEO.description} />
-        <meta property="og:image" content={SEO.ogImage} />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={SEO.canonical} />
         <meta property="og:site_name" content={SEO.siteName} />
+        <meta property="og:image" content={SEO.ogImage} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={SEO.title} />
+        <meta name="twitter:description" content={SEO.description} />
+        <meta name="twitter:image" content={SEO.ogImage} />
+        {/* Preload 2 visuels clés — chemin corrigé (dossier France) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/avatars_France/France/lea-soleil.png"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/avatars_France/France/bertrand.png"
+        />
         <script
-          key="ld-json"
           type="application/ld+json"
-          // JSON-LD statique, pas d’injection de données utilisateur
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </Head>
@@ -345,12 +355,6 @@ export default function ParisRencontresPage() {
       <FreeTopBarSpacer />
 
       <main
-        /**
-         * Image de fond :
-         *  - pour l’instant on réutilise bg-France-ext.png (déjà présent dans /public)
-         *  - tu pourras remplacer plus tard par un visuel type “bg-Paris-ext.png”
-         *    en ne changeant QUE la valeur de backgroundImage.
-         */
         className="min-h-screen"
         style={{
           backgroundImage: "url('/bg-France-ext.png')",
@@ -367,39 +371,49 @@ export default function ParisRencontresPage() {
               <div className="mb-2 flex items-center justify-center">
                 <span
                   aria-hidden="true"
-                  className="leading-none text-5xl font-extrabold tracking-tight sm:text-6xl"
+                  className="font-extrabold tracking-tight leading-none text-5xl sm:text-6xl"
                   style={{
                     color: "#93ef09ff",
                     textShadow:
-                      "0 2px 10px rgba(0,0,0,0.35), 0 6px 22px rgba(0,0,0,0.22)",
+                      "0 2px 10px rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.22)", // ombre renforcée pour le mot KEEFON
                   }}
                 >
                   KEEFON
                 </span>
               </div>
 
-              {/* H1 SEO */}
+              {/* Badge prononciation Keefon, optimisé mobile */}
+              <div className="mt-2 flex justify-center">
+                <p
+                  className="inline-block text-center text-[11px] sm:text-xs font-semibold rounded-full px-3 py-1"
+                  style={{ backgroundColor: "#93ef09ff" }}
+                >
+                  <span className="block">Se prononce « qui phone » 📞</span>
+                  <span className="block">et veut dire « on kiffe » ❤️</span>
+                </p>
+              </div>
+
+              {/* H1 SEO conservé (contraste via ombre légère) */}
               <h1
-                className="text-center text-3xl font-extrabold sm:text-4xl md:text-5xl"
+                className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold"
                 style={{
                   color: "#cdff58ff",
-                  textShadow: "0 2px 6px rgba(0,0,0,0.25)",
+                  textShadow: "0 2px 6px rgba(0,0,0,.25)",
                 }}
               >
-                Rencontres bienveillantes à Paris et en Île-de-France
+                Rencontres bienveillantes partout en France
               </h1>
 
-              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Une plateforme française pour celles et ceux qui vivent à Paris
-                ou en région parisienne et qui veulent des rencontres plus
-                humaines, sans swipe toxique, loin du côté “consommation”
-                qu&apos;on retrouve sur d&apos;autres applis.
+              <p className="mt-3 text-sm leading-relaxed sm:text-base text-center">
+                Une plateforme française pour celles et ceux qui veulent du
+                vrai, du respect et du temps de qualité. Sans swipe infini,
+                sans surjeu, sans cirque.
               </p>
 
-              <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
+              <p className="mt-2 text-xs leading-relaxed text-slate-800 sm:text-[13px] text-center">
                 Keefon est créée et hébergée en France, dans le cadre des lois
-                françaises de protection de la vie privée (RGPD, CNIL, droits
-                de l&apos;individu).
+                françaises de protection de la vie privée (RGPD, CNIL, droits de
+                l&apos;individu).
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -415,18 +429,6 @@ export default function ParisRencontresPage() {
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu gardes la main à chaque étape.
                 </p>
-                <Link
-  href="/login"
-  aria-label="Déjà inscrit ? Se connecter"
-  title="Se connecter"
-  className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
-  style={{
-    background: COLORS.bannerGrad,
-    border: "1px solid #F9E13A",
-  }}
->
-  Déjà inscrit ? Se connecter
-</Link>
               </div>
             </div>
           </div>
@@ -435,14 +437,14 @@ export default function ParisRencontresPage() {
         {/* Carte rappel période gratuite */}
         <FreeReminderCard />
 
-        {/* Exemples de profils (Paris) */}
+        {/* Exemples de profils */}
         <ProfileTeaserBand />
 
-        {/* Comment ça marche ? */}
+        {/* Comment ça marche */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche à Paris&nbsp;?
+              Comment ça marche&nbsp;?
             </h2>
             <div className="mt-6 grid gap-6 md:grid-cols-3">
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -450,7 +452,7 @@ export default function ParisRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques ta zone (Paris / Île-de-France)
+                  2. Tu dis ce que tu cherches
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -460,11 +462,11 @@ export default function ParisRencontresPage() {
           </div>
         </section>
 
-        {/* Pourquoi Keefon est différent ? */}
+        {/* Pourquoi Keefon */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Pourquoi Keefon est différent à Paris&nbsp;?
+              Pourquoi Keefon est différent&nbsp;?
             </h2>
             <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
               <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -481,47 +483,45 @@ export default function ParisRencontresPage() {
                 Plus d&apos;opportunités pour tous
               </p>
               <p className="text-sm leading-relaxed">
-                Les Échos et Keefon+ créent des ouvertures supplémentaires pour
+                Les échos et Keefon+ créent des ouvertures supplémentaires pour
                 les profils Free. L&apos;abonnement Essentiel reste
                 volontairement abordable pour aller plus loin sans exploser ton
-                budget, même avec le coût de la vie Parisienne.
+                budget.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Paris & Île-de-France ancrées dans le réel */}
+        {/* France */}
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Rencontrer à Paris, sans se perdre dans la masse
+              Rencontrer en France, sans se perdre dans la masse
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Grande ville, métro, RER, beaucoup de monde, beaucoup de bruit.
-              Keefon te permet d&apos;ouvrir des portes sans te perdre dans une
-              marée de profils anonymes.
+              Que tu sois en grande ville ou dans une petite commune, Keefon te
+              permet d&apos;ouvrir des portes sans te perdre dans une marée de
+              profils anonymes.
             </p>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Quartiers, arrondissements, petite couronne…
+                  Partout en France
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Que tu vives dans le centre, vers la rive gauche, dans un
-                  quartier plus excentré ou juste à côté de Paris, tu peux
-                  croiser des personnes qui partagent la même zone et la même
-                  réalité que toi.
+                  Des membres de toute la France métropolitaine et d&apos;outre-mer.
+                  À toi de choisir : proche de chez toi ou plus loin.
                 </p>
               </article>
 
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  Et le reste de l’Île-de-France si tu bouges
+                  Ancré dans le réel
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Si tu te déplaces souvent en petite couronne ou un peu plus
-                  loin, tu peux aussi utiliser Keefon dans ces zones, avec les
-                  mêmes principes de respect et de clarté.
+                  L&apos;objectif n&apos;est pas juste de matcher, mais de
+                  pouvoir se voir en vrai : un café, une balade, un événement,
+                  une activité partagée.
                 </p>
               </article>
             </div>
@@ -532,12 +532,12 @@ export default function ParisRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Envie de rencontres plus humaines à Paris&nbsp;?
+              Envie de rencontres plus humaines en France&nbsp;?
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
               Keefon s&apos;adresse à celles et ceux qui préfèrent un espace
               plus calme, plus clair, plus respectueux que les applis
-              classiques, tout en restant connectés à la vie Parisienne.
+              classiques.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
@@ -557,115 +557,7 @@ export default function ParisRencontresPage() {
           </div>
         </section>
 
-        {/* Idées de sorties locales (Paris & alentours) */}
-        <section className="py-6">
-          <div className="mx-auto max-w-5xl px-4">
-            <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-900 shadow-sm backdrop-blur-[2px]">
-              <h2 className="mb-1 text-xs font-semibold text-chatOuter">
-                Quelques idées de sorties autour de Paris
-              </h2>
-              <ul className="list-disc space-y-1 pl-4">
-                <li>
-                  Balade le long de la Seine ou sur les quais, avec un café en
-                  terrasse pour prendre le temps de discuter dans un lieu
-                  public.
-                </li>
-                <li>
-                  Promenade dans un grand parc (Buttes-Chaumont, Luxembourg,
-                  Montsouris, parc Monceau…) pour parler plus au calme, en
-                  restant dans un endroit fréquenté.
-                </li>
-                <li>
-                  Flânerie dans un quartier que vous aimez tous les deux
-                  (Canal Saint-Martin, Oberkampf, quartier latin…) avec la
-                  possibilité de s’arrêter dans un café ou un petit resto si le
-                  feeling passe.
-                </li>
-                <li>
-                  Visite tranquille d&apos;une expo, d&apos;un musée ou d&apos;un
-                  lieu culturel, en gardant toujours un point de rendez-vous
-                  simple et public.
-                </li>
-                <li>
-                  Si vous habitez en petite couronne ou plus loin, une balade
-                  dans un centre-ville local ou un parc proche de chez vous
-                  peut aussi être une bonne option, sans forcément traverser
-                  tout Paris.
-                </li>
-              </ul>
-              <p className="mt-2">
-                Ce ne sont que des idées : chacun choisit ses lieux de
-                rencontre, son rythme et ses limites, avec le confort et la
-                sécurité en priorité.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Liens internes SEO (France + autres villes) */}
-        <section className="py-6">
-          <div className="mx-auto max-w-5xl px-4">
-            <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
-              <p className="mb-2">
-                Tu peux aussi explorer la vue d&apos;ensemble&nbsp;:{" "}
-                <Link
-                  href="/rencontres/france"
-                  className="font-semibold underline-offset-2 hover:underline"
-                >
-                  rencontres en France
-                </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/nantes"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nantes
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Mention légale / CGU */}
+        {/* Footer légal discret */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
