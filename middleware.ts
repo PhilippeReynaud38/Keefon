@@ -1,29 +1,28 @@
-
-
-
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-  const pathname = url.pathname;
+  const url = req.nextUrl.clone();
+  const path = url.pathname;
 
-  // On ne touche qu'aux pages /rencontres/*
-  if (pathname.startsWith("/rencontres/")) {
-    const lower = pathname.toLowerCase();
+  // On normalise uniquement /rencontres/*
+  if (!path.toLowerCase().startsWith("/rencontres")) {
+    return NextResponse.next();
+  }
 
-    // Si quelqu'un arrive avec /rencontres/Rennes, /Rencontres/Paris, etc.
-    if (pathname !== lower) {
-      const redirectUrl = url.clone();
-      redirectUrl.pathname = lower;
-      return NextResponse.redirect(redirectUrl, 308);
-    }
+  // Supprime les slashs finaux (sauf "/")
+  const noTrailing = path !== "/" ? path.replace(/\/+$/, "") : path;
+
+  // Met tout en minuscule
+  const normalized = noTrailing.toLowerCase();
+
+  if (normalized !== path) {
+    url.pathname = normalized;
+    return NextResponse.redirect(url, 308);
   }
 
   return NextResponse.next();
 }
-
-
 
 export const config = {
   matcher: ["/rencontres/:path*"],

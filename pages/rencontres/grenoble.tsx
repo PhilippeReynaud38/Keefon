@@ -39,6 +39,8 @@ const SEO = {
     // Intent + features (adapté à Grenoble / métropole)
     "rencontre Grenoble",
        "rencontre gratuit Grenoble",
+          "rencontre femme gratuit Grenoble",
+             "rencontre femme Grenoble",
     "rencontres Grenoble",
     "site de rencontre Grenoble",
     "rencontres bienveillantes Grenoble",

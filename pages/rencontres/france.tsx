@@ -20,6 +20,8 @@ const SEO = {
     "rencontre",
      "rencontre gratuit",
     "site de rencontre",
+              "rencontre femme gratuit",
+             "rencontre femme",
     "site de rencontre gratuit",
     "rencontres bienveillantes",
     "site de rencontre français",

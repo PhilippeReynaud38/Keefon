@@ -40,6 +40,8 @@ const SEO = {
     "rencontre Paris",
       "rencontre gratuit Paris",
     "rencontres Paris",
+              "rencontre femme gratuit Paris",
+             "rencontre femme Paris",
     "site de rencontre Paris",
     "site de rencontre gratuit Paris",
     "rencontres bienveillantes Paris",

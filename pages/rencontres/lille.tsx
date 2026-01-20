@@ -193,7 +193,7 @@ function ProfileTeaserBand() {
       badges: ["Essentiel"],
       phrase:
         "Je sors beaucoup au resto et au théâtre, mais je n’aime pas les applis agressives. Ici je peux échanger calmement.",
-      avatarSrc: "/avatars_France/Lille/Valerie.png",
+      avatarSrc: "/avatars_France/Lille/Valérie.png",
       avatarAlt:        "(femme à Lille en fin de journée)",
       priority: true,
     },
@@ -222,7 +222,7 @@ function ProfileTeaserBand() {
       badges: ["Essentiel"],
       phrase:
         "Entre les friteries, les concerts et les potes, j’avais envie d’un endroit plus simple pour faire des rencontres, ici c’est très différent des autres sites.",
-      avatarSrc: "/avatars_France/Lille/Remi.png",
+      avatarSrc: "/avatars_France/Lille/Rémi.png",
       avatarAlt: "Profil fictif Remi (homme souriant devant un snack lumineux)",
       priority: true,
     },
