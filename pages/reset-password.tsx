@@ -6,8 +6,13 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-
+import Head from "next/head";
 type Status = "checking" | "ready" | "saving" | "done" | "error";
+
+<Head>
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Keefon</title>
+</Head>
 
 export default function ResetPasswordPage() {
   const [status, setStatus] = useState<Status>("checking");

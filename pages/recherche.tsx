@@ -35,6 +35,12 @@ import SearchResultCard, {
 } from "@/components/recherche/SearchResultCard";
 import useSubscription from "@/abonnement/useSubscription";
 import Footer from "@/components/Footer"; // ✅ petit lien légal en bas
+import Head from "next/head";
+
+<Head>
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Keefon</title>
+</Head>
 
 // ------------ Types ---------------------------------------------------------
 type RpcProfil = {
