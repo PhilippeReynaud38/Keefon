@@ -16,6 +16,7 @@ import { supabase } from '../lib/supabaseClient';
 
 
   
+import Head from "next/head";
 // --- Règle de complexité : 8+ caractères, 1 minuscule, 1 majuscule, 1 chiffre, 1 spécial.
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
@@ -145,6 +146,9 @@ export default function SignupPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-blue-100">
+      <Head>
+        <meta name="robots" content="noindex,nofollow" />
+      </Head>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-xl px-8 py-10 w-full max-w-md"

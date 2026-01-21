@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 
+import Head from "next/head";
 /**
  * Politique cookies — minimaliste.
  * Actuellement : cookies strictement nécessaires au fonctionnement.
@@ -10,6 +11,9 @@ import Link from "next/link";
 export default function CookiesPolicy() {
   return (
     <main className="max-w-3xl mx-auto p-6">
+      <Head>
+        <meta name="robots" content="noindex,nofollow" />
+      </Head>
       <h1 className="text-3xl font-semibold mb-6">Politique cookies</h1>
 
       <section className="space-y-2 mb-6">
