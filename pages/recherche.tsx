@@ -37,11 +37,6 @@ import useSubscription from "@/abonnement/useSubscription";
 import Footer from "@/components/Footer"; // ✅ petit lien légal en bas
 import Head from "next/head";
 
-<Head>
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Keefon</title>
-</Head>
-
 // ------------ Types ---------------------------------------------------------
 type RpcProfil = {
   id: string;
@@ -506,7 +501,13 @@ function Recherche() {
 
   // ------------------------------ UI ----------------------------------------
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden">
+    <>
+      <Head>
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Keefon</title>
+      </Head>
+
+      <div className="relative min-h-screen w-full overflow-x-hidden">
       {/* Fond image sécurisé */}
       <div
         aria-hidden="true"
@@ -818,7 +819,8 @@ function Recherche() {
 
       {/* ✅ Petit footer légal commun (CGU · Mentions légales) */}
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }
 

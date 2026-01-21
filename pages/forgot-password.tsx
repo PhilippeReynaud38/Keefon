@@ -14,12 +14,6 @@ const ForgotPasswordPage: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (event: FormEvent) => {
-
-<Head>
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Keefon</title>
-</Head>
-
     event.preventDefault();
 
     setSuccessMessage(null);
@@ -75,6 +69,7 @@ const ForgotPasswordPage: NextPage = () => {
   return (
     <>
       <Head>
+        <meta name="robots" content="noindex,nofollow" />
         <title>Mot de passe oublié – Keefon</title>
       </Head>
 

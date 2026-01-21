@@ -12,13 +12,8 @@ import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { supabase } from '../lib/supabaseClient';
-import Head from "next/head";
 
 
-<Head>
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Keefon</title>
-</Head>
 
   
 // --- Règle de complexité : 8+ caractères, 1 minuscule, 1 majuscule, 1 chiffre, 1 spécial.

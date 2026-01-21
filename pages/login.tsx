@@ -10,10 +10,8 @@ import Link from "next/link";
 import { supabase } from "../lib/supabaseClient";
 import Head from "next/head";
 
-<Head>
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Keefon</title>
-</Head>
+
+
 
 // --- Bandeau dismissible, large et lisible (fixe en haut)
 function DismissibleBanner({
@@ -50,14 +48,6 @@ function DismissibleBanner({
     </div>
   );
 }
-        {/* Lien "Mot de passe oublié ?" */}
-        {/* Fonction en maintenance tant que le flow Supabase "recovery" renvoie otp_expired */}
-        <p className="mt-2 text-center text-xs text-gray-600">
-          Mot de passe oublié ?
-          <br />
-          Fonction temporairement en maintenance. 
-          Si besoin, contacte le support Keefon pour récupérer l’accès à ton compte.
-        </p>
 
 export default function Login() {
   const router = useRouter();
@@ -119,6 +109,10 @@ export default function Login() {
 
   return (
     <main className="h-screen overflow-y-auto bg-blue-200 p-4 flex items-center justify-center">
+      <Head>
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Keefon</title>
+      </Head>
       {banner && (
         <DismissibleBanner
           {...banner}
@@ -193,9 +187,11 @@ export default function Login() {
 
         {/* Lien "Mot de passe oublié ?" */}
         <p className="mt-2 text-center text-xs text-gray-600">
-          <Link href="/forgot-password" className="underline hover:text-pink-600">
-            Mot de passe oublié ?
-          </Link>
+          Mot de passe oublié ?
+          <br />
+          Fonction temporairement en maintenance.
+          <br />
+          Si besoin, contacte le support Keefon pour récupérer l’accès à ton compte.
         </p>
       </form>
     </main>

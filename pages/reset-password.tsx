@@ -5,14 +5,12 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient";
 import Head from "next/head";
+import { supabase } from "@/lib/supabaseClient";
+
 type Status = "checking" | "ready" | "saving" | "done" | "error";
 
-<Head>
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Keefon</title>
-</Head>
+
 
 export default function ResetPasswordPage() {
   const [status, setStatus] = useState<Status>("checking");
@@ -96,7 +94,12 @@ export default function ResetPasswordPage() {
     status === "checking" || status === "saving" || status === "done";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#bcdcff] px-4">
+    <>
+      <Head>
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Keefon</title>
+      </Head>
+      <div className="min-h-screen flex items-center justify-center bg-[#bcdcff] px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg px-8 py-10">
         <h1 className="text-2xl font-bold text-center text-pink-600 mb-4">
           Nouveau mot de passe
@@ -216,5 +219,6 @@ export default function ResetPasswordPage() {
         )}
       </div>
     </div>
+  </>
   );
 }
