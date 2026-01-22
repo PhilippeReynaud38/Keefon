@@ -8,7 +8,7 @@
 //             (mais ne touche pas aux photos de galerie).
 //           - Enregistre presignup_data + photo principale.
 //           - Appelle la fonction SQL public.claim_opening_offer() pour inscrire
-//             l'utilisateur comme candidat à l'offre d'ouverture (300 premiers
+//             l'utilisateur comme candidat à l'offre d'ouverture (2000 premiers
 //             jusqu'à fin 2026), sans jamais bloquer l'inscription si ça échoue.
 //
 // Règles  : simple, robuste, commenté, UTF-8, pas d’usine à gaz.
@@ -358,7 +358,7 @@ const PresignupPage: React.FC = () => {
 
       if (photoError) throw photoError;
 
-      // Appel de l'offre d'ouverture (300 premiers / fin 2026)
+      // Appel de l'offre d'ouverture (2000 premiers / fin 2026)
       // NE BLOQUE PAS l'inscription si cette étape échoue.
       const { error: openingOfferError } = await supabase.rpc(
         'claim_opening_offer',

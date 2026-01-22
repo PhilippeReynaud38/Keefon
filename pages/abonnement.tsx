@@ -32,7 +32,7 @@
 // CHANGELOG (2025-11-29):
 //   - Ajout d’un bandeau d’avertissement “mode découverte” (paiements désactivés).
 // CHANGELOG (2025-12-08):
-//   - Rappel discret de l’offre d’ouverture (300 premiers) si l’utilisateur est éligible.
+//   - Rappel discret de l’offre d’ouverture (2000 premiers) si l’utilisateur est éligible.
 // CHANGELOG (2025-12-10):
 //   - Ne plus marquer “Déjà actif” sur Essentiel / Keefon+ en cas d’accès partiel
 //     (base = free, effectif ≠ free). Le bouton reste “Choisir …” dans ce cas.
@@ -167,7 +167,7 @@ export default function AbonnementPage() {
     }
   }, [])
 
-  // Rappel de l'offre d'ouverture (300 premiers) si l'utilisateur est éligible
+  // Rappel de l'offre d'ouverture (2000 premiers) si l'utilisateur est éligible
   useEffect(() => {
     let on = true
     ;(async () => {
@@ -334,7 +334,7 @@ export default function AbonnementPage() {
                   ? new Date(openingOffer.freeUntil).toLocaleDateString('fr-FR')
                   : '31/12/2026'}
               </strong>{' '}
-              (parmi les 300 premiers inscrits).
+              (parmi les 2000 premiers inscrits).
             </span>
           </div>
         )}

@@ -569,7 +569,7 @@ export default function Dashboard() {
 
   const [planLabel, setPlanLabel] = useState<string>("Gratuit");
 
-  // ✅ Statut de l'offre d'ouverture (300 premiers)
+  // ✅ Statut de l'offre d'ouverture (2000 premiers)
   const [openingOffer, setOpeningOffer] = useState<{
     isEligible: boolean;
     freeUntil: string | null;
@@ -666,7 +666,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Bandeau automatique pour l'offre d'ouverture (300 premiers) */}
+        {/* Bandeau automatique pour l'offre d'ouverture (2000 premiers) */}
         {openingOffer?.isEligible && showOpeningBanner && (
           <div
             className="mt-3 mx-auto w-full max-w-md rounded-2xl px-3 py-2 text-xs sm:text-sm text-slate-900 shadow"

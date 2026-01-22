@@ -157,7 +157,7 @@ function FreeTopBar() {
   return (
     <div
       role="status"
-      aria-label="Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 300 premiers inscrit"
+      aria-label="Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 2000 premiers inscrit"
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
@@ -172,7 +172,7 @@ function FreeTopBar() {
               gratuité du site jusqu&apos;à fin 2026
             </span>{" "}
             pour les{" "}
-            <span className="font-black">300 premiers inscrit</span>
+            <span className="font-black">2000 premiers inscrit</span>
           </span>
           <span className="mt-0.5 block text-[11px] sm:text-[14px] font-semibold opacity-90">
             Aucune carte bancaire demandée, chat et échanges illimités pendant
@@ -183,7 +183,7 @@ function FreeTopBar() {
 
         <a
           href="/signup"
-          aria-label="Créer un compte gratuitement et faire partie des 300 premiers inscrit"
+          aria-label="Créer un compte gratuitement et faire partie des 2000 premiers inscrit"
           title="Créer un compte gratuitement"
           className="shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
           style={{ background: COLORS.paleGreen }}
@@ -223,11 +223,11 @@ function FreeReminderCard() {
                   gratuité du site jusqu&apos;à fin 2026
                 </span>{" "}
                 pour les{" "}
-                <span className="font-black">300 premiers inscrit</span>.
+                <span className="font-black">2000 premiers inscrit</span>.
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
                 Tu peux créer ton profil, échanger librement et tester Keefon
-                sans carte bancaire. Si tu fais partie des 300 premiers, tu
+                sans carte bancaire. Si tu fais partie des 2000 premiers, tu
                 gardes la gratuité jusqu&apos;à fin 2026 — et bien sûr, nous
                 espérons que tu auras trouvé ta moitié bien avant, et que le
                 bonheur t&apos;accompagne.
@@ -235,7 +235,7 @@ function FreeReminderCard() {
             </div>
             <a
               href="/signup"
-              aria-label="Profiter de la gratuité jusqu'à fin 2026 si tu fais partie des 300 premiers inscrit"
+              aria-label="Profiter de la gratuité jusqu'à fin 2026 si tu fais partie des 2000 premiers inscrit"
               title="Profiter de la gratuité jusqu'à fin 2026"
               className="rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
               style={{ background: COLORS.paleGreen }}

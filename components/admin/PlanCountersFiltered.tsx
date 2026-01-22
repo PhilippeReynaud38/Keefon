@@ -1,79 +1,95 @@
 // -*- coding: utf-8 -*-
 // File: components/admin/PlanCountersFiltered.tsx
 // Purpose: Compteurs filtrés (Free / Essentiel / Élite) via un APPEL RPC UNIQUE.
-// Notes : Mode SÛR. On normalise country/dept/ville|cp et on évite toute logique fragile côté front.
-//         Objectif immédiat : faire marcher le filtre DÉPARTEMENT et supprimer les divergences haut/bas.
 
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
-import { fetchAdminCounts } from '@/lib/fetchAdminCounts' // /lib/fetchAdminCounts.ts donné plus haut
+import { useEffect, useMemo, useState } from "react"
+import { supabase } from "../../lib/supabaseClient"
+import { fetchAdminCounts } from "../../lib/fetchAdminCounts"
 
-type TierKey = 'free' | 'essentiel' | 'elite'
+type TierKey = "free" | "essentiel" | "elite"
 type Counts = Record<TierKey, number>
 
-// Le composant accepte "n'importe quel" shape de filtres pour éviter les erreurs de type
-export default function PlanCountersFiltered({ filters }: { filters: any }) {
-  const [counts, setCounts]   = useState<Counts>({ free: 0, essentiel: 0, elite: 0 })
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError]     = useState<string | null>(null)
+type FiltersInput = {
+  country?: string | null
+  dept?: string | null
+  postal_prefix?: string | null
 
-  // Normalisation robuste des inputs (on couvre plusieurs noms possibles côté barre de filtres)
+  // UI ville
+  cityOrCp?: string | null
+  city?: string | null
+  ville?: string | null
+
+  // UI multi/single selon composants
+  gender?: string[] | string | null
+  orientation?: string[] | string | null
+
+  // UI bins ou min/max
+  age_bins?: Array<[number, number]> | null
+  ageMin?: number | null
+  ageMax?: number | null
+}
+
+export default function PlanCountersFiltered({ filters }: { filters: FiltersInput }) {
+  const [counts, setCounts] = useState<Counts>({ free: 0, essentiel: 0, elite: 0 })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const norm = useMemo(() => {
-    const val = (v: any) => (v === undefined || v === null ? null : String(v))
+    const asStr = (v: unknown) => (v === undefined || v === null ? null : String(v))
     const clean = (s: string | null) => (s ? s.trim() : null)
 
-    // country : FR / fr / Fr -> 'FR'
-    const country =
-      (clean(val(filters?.country)) || null)?.toUpperCase() ?? null
+    const country = (clean(asStr(filters?.country)) || null)?.toUpperCase() ?? null
 
-    // dept : ne garder que les chiffres (on laisse le RPC trancher FR=2 chiffres, autres=1..5)
-    const deptRaw = clean(val(filters?.dept))
-    const dept = deptRaw ? deptRaw.replace(/\D/g, '') || null : null
+    const deptRaw = clean(asStr(filters?.dept))
+    const dept = deptRaw ? (deptRaw.replace(/\D/g, "") || null) : null
 
-    // cityOrCp : 3e input « Nom de ville ou code postal »
+    // IMPORTANT: postal_prefix doit pouvoir alimenter le RPC (via cityOrCp),
+    // sinon le filtre "Tous pays" / "autre pays" ne sert à rien.
+    const postalPrefix = clean(asStr(filters?.postal_prefix))
+
     const cityOrCp =
-      clean(val(filters?.cityOrCp)) ??
-      clean(val(filters?.city)) ??
-      clean(val(filters?.ville)) ??
+      clean(asStr(filters?.cityOrCp)) ??
+      clean(asStr(filters?.city)) ??
+      clean(asStr(filters?.ville)) ??
+      postalPrefix ??
       null
 
-    // gender : si tableau -> si 1 seul élément on le passe, sinon on laisse NULL (pas d’OR côté RPC)
+    // gender: si multi => on ne filtre pas (le RPC prend un scalar)
     let gender: string | null = null
     if (Array.isArray(filters?.gender) && filters.gender.length === 1) {
-      gender = String(filters.gender[0])
-    } else if (typeof filters?.gender === 'string') {
+      gender = String(filters.gender[0]).trim() || null
+    } else if (typeof filters?.gender === "string") {
       gender = clean(filters.gender)
     }
 
-    // orientation : idem (scalar de préférence)
+    // orientation: RPC attend un string[]
     let orientation: string[] | null = null
-    if (Array.isArray(filters?.orientation) && filters.orientation.length === 1) {
-      orientation = [String(filters.orientation[0])]
-    } else if (typeof filters?.orientation === 'string' && filters.orientation.trim()) {
-      orientation = [filters.orientation.trim()]
-    } else {
-      orientation = null
+    if (Array.isArray(filters?.orientation)) {
+      const arr = filters.orientation.map(x => String(x).trim()).filter(Boolean)
+      orientation = arr.length ? arr : null
+    } else if (typeof filters?.orientation === "string") {
+      const v = filters.orientation.trim()
+      orientation = v ? [v] : null
     }
 
-    // âges : si l’UI renvoie des bins (ex: [[18,24],[25,34]]), on combine en min..max
-    // (c’est volontairement simple pour ce mode SÛR ; on pourra étendre à l’OR plus tard côté RPC)
+    // ages
     let ageMin: number | null = null
     let ageMax: number | null = null
+
     if (Array.isArray(filters?.age_bins) && filters.age_bins.length) {
-      const mins = filters.age_bins.map((b: any) => Number(b?.[0])).filter(Number.isFinite)
-      const maxs = filters.age_bins.map((b: any) => Number(b?.[1])).filter(Number.isFinite)
+      const mins = filters.age_bins.map(b => Number(b?.[0])).filter(Number.isFinite)
+      const maxs = filters.age_bins.map(b => Number(b?.[1])).filter(Number.isFinite)
       if (mins.length && maxs.length) {
         ageMin = Math.min(...mins)
         ageMax = Math.max(...maxs)
       }
     } else {
-      // si jamais tu fournis déjà ageMin/ageMax scalar
-      ageMin = Number(filters?.ageMin)
-      ageMax = Number(filters?.ageMax)
-      if (!Number.isFinite(ageMin)) ageMin = null
-      if (!Number.isFinite(ageMax)) ageMax = null
+      const aMin = Number(filters?.ageMin)
+      const aMax = Number(filters?.ageMax)
+      ageMin = Number.isFinite(aMin) ? aMin : null
+      ageMax = Number.isFinite(aMax) ? aMax : null
     }
 
     return { country, dept, cityOrCp, gender, orientation, ageMin, ageMax }
@@ -86,27 +102,27 @@ export default function PlanCountersFiltered({ filters }: { filters: any }) {
 
     ;(async () => {
       try {
-        // Appel unique au RPC —> évite toute divergence haut/bas
         const data = await fetchAdminCounts(supabase, {
-          country:     norm.country,
-          dept:        norm.dept,
-          cityOrCp:    norm.cityOrCp,
-          gender:      norm.gender,
+          country: norm.country,
+          dept: norm.dept,
+          cityOrCp: norm.cityOrCp, // <-- contient aussi postal_prefix si présent
+          gender: norm.gender,
           orientation: norm.orientation,
-          ageMin:      norm.ageMin,
-          ageMax:      norm.ageMax,
+          ageMin: norm.ageMin,
+          ageMax: norm.ageMax,
         })
+
         if (!cancelled) {
           setCounts({
-            free:      data.free_count ?? 0,
+            free: data.free_count ?? 0,
             essentiel: data.essentiel_count ?? 0,
-            elite:     data.elite_count ?? 0,
+            elite: data.elite_count ?? 0,
           })
         }
       } catch (e: any) {
         if (!cancelled) {
-          console.error('[Admin] PlanCountersFiltered (RPC) →', e?.message || e)
-          setError(e?.message || 'Erreur inconnue.')
+          console.error("[Admin] PlanCountersFiltered (RPC) →", e?.message || e)
+          setError(e?.message || "Erreur inconnue.")
           setCounts({ free: 0, essentiel: 0, elite: 0 })
         }
       } finally {
@@ -114,14 +130,17 @@ export default function PlanCountersFiltered({ filters }: { filters: any }) {
       }
     })()
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [norm])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card title="Free (filtré)"      value={counts.free}      loading={loading} />
+      <Card title="Free (filtré)" value={counts.free} loading={loading} />
       <Card title="Essentiel (filtré)" value={counts.essentiel} loading={loading} />
-      <Card title="Élite (filtré)"     value={counts.elite}     loading={loading} />
+      <Card title="Élite (filtré)" value={counts.elite} loading={loading} />
+
       {error && (
         <div className="md:col-span-3 text-xs md:text-sm text-red-300 border border-red-700 bg-red-900/20 rounded p-2">
           {error}
