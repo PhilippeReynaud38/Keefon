@@ -25,7 +25,19 @@ type ProfileRow = {
   ville: string | null;
   birthday: string | null;
 };
-type PhotoRow = { user_id: string; url: string; is_main: boolean | null };
+// ⚠️ IMPORTANT (cadrage / qualité)
+// Ici, on ne fait PAS de recadrage/redimensionnement côté CDN Supabase.
+// On récupère l'URL publique du fichier original, puis on applique le
+// cadrage visuel en CSS (object-fit/object-position) avec focus_x/focus_y.
+// Avantage : aucun "crop serveur" qui casserait l'alignement.
+// (Le fichier image n'est jamais modifié.)
+type PhotoRow = {
+  user_id: string;
+  url: string;
+  is_main: boolean | null;
+  focus_x: number | null;
+  focus_y: number | null;
+};
 
 type Item = {
   id: string;
@@ -34,7 +46,15 @@ type Item = {
   age?: number;
   likedAt: string;
   avatarUrl?: string;
+  // Focus enregistré (0..100) pour cadrer l'avatar dans un cercle.
+  // Si absent, on retombe sur des valeurs "neutres".
+  avatarFocusX?: number;
+  avatarFocusY?: number;
 };
+
+// Valeurs par défaut (cohérentes avec ce que tu stockes déjà dans ta table).
+const DEFAULT_FOCUS_X = 50;
+const DEFAULT_FOCUS_Y = 15;
 
 function calcAge(birthdayISO: string | null): number | undefined {
   if (!birthdayISO) return undefined;
@@ -125,17 +145,33 @@ export default function MesLikes() {
         const byId = new Map<string, ProfileRow>();
         (profs ?? []).forEach((p) => byId.set((p as any).id, p as any));
 
-        // 3) Photos principales
+        // 3) Photos principales (+ focus_x/focus_y pour le cadrage)
         const { data: photos, error: e3 } = await supabase
           .from("photos")
-          .select("user_id, url, is_main")
+          // focus_x / focus_y : 0..100 (cadrage visuel en CSS)
+          .select("user_id, url, is_main, focus_x, focus_y")
           .in("user_id", ids)
           .eq("is_main", true);
         if (e3) throw e3;
-        const avatarByUser = new Map<string, string>();
+        // On stocke URL + focus afin de l'appliquer dans la liste (avatars ronds).
+        const avatarMetaByUser = new Map<
+          string,
+          { url: string; focusX: number; focusY: number }
+        >();
+
         for (const ph of (photos ?? []) as PhotoRow[]) {
           const { data } = supabase.storage.from("avatars").getPublicUrl(ph.url);
-          if (data?.publicUrl) avatarByUser.set(ph.user_id, data.publicUrl);
+          if (!data?.publicUrl) continue;
+
+          // Fallback si pas encore renseigné en base.
+          const focusX = typeof ph.focus_x === "number" ? ph.focus_x : DEFAULT_FOCUS_X;
+          const focusY = typeof ph.focus_y === "number" ? ph.focus_y : DEFAULT_FOCUS_Y;
+
+          avatarMetaByUser.set(ph.user_id, {
+            url: data.publicUrl,
+            focusX,
+            focusY,
+          });
         }
 
         // 4) Mapping final
@@ -147,7 +183,9 @@ export default function MesLikes() {
             city: p?.ville ?? undefined,
             age: calcAge(p?.birthday ?? null),
             likedAt: l.created_at,
-            avatarUrl: avatarByUser.get(l.to_user),
+            avatarUrl: avatarMetaByUser.get(l.to_user)?.url,
+            avatarFocusX: avatarMetaByUser.get(l.to_user)?.focusX,
+            avatarFocusY: avatarMetaByUser.get(l.to_user)?.focusY,
           };
         });
 
@@ -243,6 +281,21 @@ export default function MesLikes() {
                         src={it.avatarUrl}
                         alt={it.name}
                         className="h-full w-full object-cover"
+                        // Cadrage (focus) : on déplace la zone visible dans le cercle.
+                        //  - 50/50 = centré
+                        //  - X/Y sont des pourcentages (0..100)
+                        //  - Ne modifie pas la photo, uniquement le rendu.
+                        style={{
+                          objectPosition: `${
+                            typeof it.avatarFocusX === "number"
+                              ? it.avatarFocusX
+                              : DEFAULT_FOCUS_X
+                          }% ${
+                            typeof it.avatarFocusY === "number"
+                              ? it.avatarFocusY
+                              : DEFAULT_FOCUS_Y
+                          }%`,
+                        }}
                       />
                     ) : (
                       <div className="h-full w-full grid place-items-center text-gray-400 text-xl md:text-2xl">
