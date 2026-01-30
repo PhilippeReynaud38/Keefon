@@ -56,9 +56,28 @@ type Enriched = {
   ville: string | null;
   age: number | null;
   avatar: string | null;
+  // Focus (0..100) pour cadrer correctement l’image (object-position)
+  focus_x: number | null;
+  focus_y: number | null;
 };
 
 // ----------------------- Utilitaires ----------------------
+// Focus par défaut (en %) — idem que sur /profile et /profileplus
+// - focus_x = 50 : centré horizontalement
+// - focus_y = 15 : légèrement vers le haut (évite les têtes coupées)
+// Ces valeurs sont stockées dans la table photos.focus_x / photos.focus_y.
+const DEFAULT_FOCUS_X = 50;
+const DEFAULT_FOCUS_Y = 15;
+
+// Photo principale + focus associé (cadrage non destructif : on ne modifie pas l'image)
+type MainPhoto = {
+  // URL publique Supabase Storage (pas de "render" CDN => pas de crop serveur qui casse le focus)
+  url: string;
+  // Focus en % (0..100)
+  focus_x: number;
+  focus_y: number;
+};
+
 function publicUrl(path: string | null): string | null {
   if (!path) return null;
   return supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl ?? null;
@@ -77,9 +96,10 @@ function ageFromISO(b?: string | null) {
 
 async function enrichProfiles(ids: string[]) {
   const byId = new Map<string, PublicRow>();
-  const avatar = new Map<string, string>();
-  if (!ids.length) return { byId, avatar };
+  const mainPhoto = new Map<string, MainPhoto>();
+  if (!ids.length) return { byId, mainPhoto };
 
+  // 1) Infos publiques (username/ville/birthday)
   const view = await supabase
     .from("public_full_profiles")
     .select("id, username, ville, birthday")
@@ -87,18 +107,31 @@ async function enrichProfiles(ids: string[]) {
   if (view.error) throw view.error;
   (view.data ?? []).forEach((r) => byId.set((r as any).id, r as PublicRow));
 
+  // 2) Photo principale + focus (stockés dans photos)
+  // IMPORTANT : on utilise getPublicUrl (fichier original) => pas de crop/resize côté CDN.
   const photos = await supabase
     .from("photos")
-    .select("user_id, url, is_main")
+    .select("user_id, url, is_main, focus_x, focus_y")
     .in("user_id", ids)
     .eq("is_main", true);
   if (photos.error) throw photos.error;
+
   for (const ph of photos.data ?? []) {
     if (!ph?.url) continue;
-    const u = supabase.storage.from("avatars").getPublicUrl(ph.url).data.publicUrl;
-    if (u) avatar.set((ph as any).user_id, u);
+    const publicUrl = supabase.storage.from("avatars").getPublicUrl(ph.url).data.publicUrl;
+    if (!publicUrl) continue;
+
+    const fx = Number((ph as any).focus_x);
+    const fy = Number((ph as any).focus_y);
+
+    mainPhoto.set(String((ph as any).user_id), {
+      url: publicUrl,
+      focus_x: Number.isFinite(fx) ? fx : DEFAULT_FOCUS_X,
+      focus_y: Number.isFinite(fy) ? fy : DEFAULT_FOCUS_Y,
+    });
   }
-  return { byId, avatar };
+
+  return { byId, mainPhoto };
 }
 
 // ------------------------- Cartes UI -------------------------
@@ -107,16 +140,41 @@ function RevealedCard({
   row,
   onArchive,
   priority,
+  photo,
 }: {
   row: RpcRow | Enriched;
   onArchive: () => void;
   priority?: boolean;
+  // Photo (URL + focus) fournie par le parent quand on veut garantir le cadrage.
+  // IMPORTANT : ne pas passer de photo pour les cartes masquées (sinon fuite d'identité via les requêtes réseau).
+  photo?: MainPhoto | null;
 }) {
-  const img =
-    "photo_path" in row ? publicUrl(row.photo_path) : (row as any).avatar ?? null;
+  // 1) Déterminer la photo à afficher
+  // - Si le parent a fourni une photo, on l'utilise (inclut focus)
+  // - Sinon, si la ligne est déjà enrichie, on prend avatar + focus
+  // - Sinon (RpcRow brut), on fallback sur photo_path (focus inconnu => défaut)
+  const inferred: MainPhoto | null =
+    photo ??
+    ((row as any).avatar
+      ? {
+          url: (row as any).avatar as string,
+          focus_x: Number.isFinite(Number((row as any).focus_x))
+            ? Number((row as any).focus_x)
+            : DEFAULT_FOCUS_X,
+          focus_y: Number.isFinite(Number((row as any).focus_y))
+            ? Number((row as any).focus_y)
+            : DEFAULT_FOCUS_Y,
+        }
+      : null);
+
+  const img = inferred?.url ?? ("photo_path" in row ? publicUrl(row.photo_path) : null);
   const username = "username" in row ? row.username : (row as any).username;
   const city = "city" in row ? row.city : (row as any).ville;
   const age = "age" in row ? row.age : (row as any).age;
+
+  // Focus (object-position) : défaut si absent
+  const focusX = inferred?.focus_x ?? DEFAULT_FOCUS_X;
+  const focusY = inferred?.focus_y ?? DEFAULT_FOCUS_Y;
 
   return (
     <Link href={`/profileplus/${row.other_user}`} className="group block focus:outline-none">
@@ -129,6 +187,7 @@ function RevealedCard({
             sizes="(max-width: 768px) 50vw, 240px"
             priority={priority}
             className="object-cover"
+            style={{ objectPosition: `${focusX}% ${focusY}%` }}
           />
         ) : (
           <div className="absolute inset-0 bg-gray-200" />
@@ -321,8 +380,12 @@ export default function MesCoupsDeCoeur() {
   const [echoRevealedSet, setEchoRevealedSet] = React.useState<Set<string>>(new Set());
   const [revealedInPlace, setRevealedInPlace] = React.useState<Set<string>>(new Set());
   const [promotedInfo, setPromotedInfo] = React.useState<
-    Record<string, { username: string | null; ville: string | null; age: number | null; avatar: string | null }>
+    Record<string, { username: string | null; ville: string | null; age: number | null; avatar: string | null; focus_x: number | null; focus_y: number | null }>
   >({});
+  // Cache local : photo principale + focus pour les cartes "révélées".
+  // IMPORTANT : ne JAMAIS précharger de photos pour les cartes masquées (sinon fuite d'identité via les requêtes réseau).
+  const [mainPhotoCache, setMainPhotoCache] = React.useState<Record<string, MainPhoto>>({});
+
 
   // Erreur globale
   const [error, setError] = React.useState<string | null>(null);
@@ -431,17 +494,20 @@ export default function MesCoupsDeCoeur() {
     if (!ids.length) return;
     (async () => {
       try {
-        const { byId, avatar } = await enrichProfiles(ids);
+        const { byId, mainPhoto } = await enrichProfiles(ids);
         setPromotedInfo((prev) => {
           const next = { ...prev } as any;
           for (const id of ids) {
             if (next[id]) continue;
             const v = byId.get(id);
+            const ph = mainPhoto.get(id);
             next[id] = {
               username: v?.username ?? null,
               ville: v?.ville ?? null,
               age: ageFromISO(v?.birthday),
-              avatar: v ? avatar.get(id) ?? null : null,
+              avatar: ph?.url ?? null,
+              focus_x: ph?.focus_x ?? DEFAULT_FOCUS_X,
+              focus_y: ph?.focus_y ?? DEFAULT_FOCUS_Y,
             };
           }
           return next;
@@ -514,6 +580,8 @@ export default function MesCoupsDeCoeur() {
               ville: info.ville,
               age: info.age,
               avatar: info.avatar,
+              focus_x: info.focus_x ?? DEFAULT_FOCUS_X,
+              focus_y: info.focus_y ?? DEFAULT_FOCUS_Y,
             } as Enriched)
           : base;
       });
@@ -524,7 +592,46 @@ export default function MesCoupsDeCoeur() {
     [rowsFiltered, strictMatchIds]
   );
 
-  const maskedWithMock = React.useMemo(() => {
+    // IDs dont on affiche réellement la photo (cartes révélées uniquement).
+  const revealedPhotoIds = React.useMemo(() => {
+    const s = new Set<string>();
+    matchRows.forEach((r) => s.add(r.other_user));
+    sent.forEach((r) => s.add(r.other_user));
+    receivedRevealed.forEach((r) => s.add(r.other_user));
+    return Array.from(s);
+  }, [matchRows, sent, receivedRevealed]);
+
+  const revealedPhotoKey = React.useMemo(
+    () => revealedPhotoIds.slice().sort().join("|"),
+    [revealedPhotoIds]
+  );
+
+  // Précharge du focus pour les cartes révélées (sans jamais toucher à la qualité de l'image)
+  React.useEffect(() => {
+    if (!revealedPhotoIds.length) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { mainPhoto } = await enrichProfiles(revealedPhotoIds);
+        if (cancelled) return;
+
+        setMainPhotoCache((prev) => {
+          const next = { ...prev };
+          for (const [uid, ph] of mainPhoto.entries()) next[uid] = ph;
+          return next;
+        });
+      } catch {
+        /* non bloquant */
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [revealedPhotoKey]);
+
+const maskedWithMock = React.useMemo(() => {
     const used = new Set<number>();
     return receivedMasked.map((it) => {
       const pick = pickMaskedAvatar(it.other_user, used);
@@ -584,11 +691,12 @@ export default function MesCoupsDeCoeur() {
           return;
         }
 
-        const { byId, avatar } = await enrichProfiles(ids);
+        const { byId, mainPhoto } = await enrichProfiles(ids);
 
         const map = (list: typeof rRows | typeof sRows): Enriched[] =>
           list.map((x) => {
             const v = byId.get(x.other_user);
+            const ph = mainPhoto.get(x.other_user);
             return {
               direction: x.direction,
               other_user: x.other_user,
@@ -596,7 +704,9 @@ export default function MesCoupsDeCoeur() {
               username: v?.username ?? null,
               ville: v?.ville ?? null,
               age: ageFromISO(v?.birthday),
-              avatar: v ? avatar.get(v.id) ?? null : null,
+              avatar: ph?.url ?? null,
+              focus_x: ph?.focus_x ?? DEFAULT_FOCUS_X,
+              focus_y: ph?.focus_y ?? DEFAULT_FOCUS_Y,
             };
           });
 
@@ -785,15 +895,18 @@ export default function MesCoupsDeCoeur() {
   async function ensurePromotedInfo(otherId: string) {
     if (promotedInfo[otherId]) return;
     try {
-      const { byId, avatar } = await enrichProfiles([otherId]);
+      const { byId, mainPhoto } = await enrichProfiles([otherId]);
       const v = byId.get(otherId);
+      const ph = mainPhoto.get(otherId);
       setPromotedInfo((m) => ({
         ...m,
         [otherId]: {
           username: v?.username ?? null,
           ville: v?.ville ?? null,
           age: ageFromISO(v?.birthday),
-          avatar: v ? avatar.get(otherId) ?? null : null,
+          avatar: ph?.url ?? null,
+          focus_x: ph?.focus_x ?? DEFAULT_FOCUS_X,
+          focus_y: ph?.focus_y ?? DEFAULT_FOCUS_Y,
         },
       }));
     } catch {
@@ -892,6 +1005,7 @@ export default function MesCoupsDeCoeur() {
                   <RevealedCard
                     key={`match-${it.other_user}-${it.created_at}`}
                     row={it}
+                    photo={mainPhotoCache[it.other_user] ?? null}
                     onArchive={() =>
                       archive({ direction: it.direction, other_user: it.other_user })
                     }
@@ -928,6 +1042,7 @@ export default function MesCoupsDeCoeur() {
                   <RevealedCard
                     key={`promoted-${r.other_user}-${"created_at" in r ? (r as any).created_at : i}`}
                     row={r}
+                    photo={mainPhotoCache[r.other_user] ?? null}
                     onArchive={() => archive({ direction: "received", other_user: r.other_user })}
                     priority={i === 0}
                   />
@@ -973,6 +1088,7 @@ export default function MesCoupsDeCoeur() {
                   <RevealedCard
                     key={`s-${it.other_user}-${it.created_at}`}
                     row={it}
+                    photo={mainPhotoCache[it.other_user] ?? null}
                     onArchive={() => archive({ direction: "sent", other_user: it.other_user })}
                     priority={i === 0}
                   />
@@ -1020,6 +1136,7 @@ export default function MesCoupsDeCoeur() {
                                 height={112}
                                 priority={i === 0}
                                 className="object-cover w-full h-full"
+                                style={{ objectPosition: `${(p.focus_x ?? DEFAULT_FOCUS_X)}% ${(p.focus_y ?? DEFAULT_FOCUS_Y)}%` }}
                               />
                             ) : (
                               <div className="w-full h-full bg-gray-300" />
@@ -1102,6 +1219,7 @@ export default function MesCoupsDeCoeur() {
                               height={112}
                               priority={i === 0}
                               className="object-cover w-full h-full"
+                                style={{ objectPosition: `${(p.focus_x ?? DEFAULT_FOCUS_X)}% ${(p.focus_y ?? DEFAULT_FOCUS_Y)}%` }}
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-300" />
