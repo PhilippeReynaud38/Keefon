@@ -65,6 +65,13 @@ type Peer = {
   lat: number | null;
   lon: number | null;
   avatarUrl: string | null;
+  /**
+   * Focus (0..100) pour object-position.
+   * Stocké en base dans photos.focus_x / photos.focus_y.
+   * NB : on ne modifie jamais l'image ; c'est un cadrage d'affichage.
+   */
+  focusX?: number | null;
+  focusY?: number | null;
   distanceKm?: number | null;
 };
 
@@ -165,6 +172,8 @@ async function loadPeersAndGeo(
       code_postal: r.code_postal ?? null,
       lat: null, lon: null,
       avatarUrl: null,
+      focusX: null,
+      focusY: null,
       distanceKm: null,
     };
   }
@@ -173,18 +182,40 @@ async function loadPeersAndGeo(
     .from("profiles").select("id, username").in("id", ids);
   for (const p of (profs ?? []) as any[]) {
     (out[p.id] ??= {
-      id: p.id, username: null, age: null, ville: null, code_postal: null, lat: null, lon: null, avatarUrl: null, distanceKm: null
+      id: p.id, username: null, age: null, ville: null, code_postal: null, lat: null, lon: null, avatarUrl: null, focusX: null, focusY: null, distanceKm: null
     }).username = (p.username ?? "").trim() || null;
   }
 
   const { data: photos } = await supabase
-    .from("photos").select("user_id, url, is_main")
+    .from("photos").select("user_id, url, is_main, focus_x, focus_y")
     .in("user_id", ids).eq("is_main", true);
   for (const ph of (photos ?? []) as any[]) {
     const { data } = supabase.storage.from("avatars").getPublicUrl(ph.url);
-    (out[ph.user_id] ??= {
-      id: ph.user_id, username: null, age: null, ville: null, code_postal: null, lat: null, lon: null, avatarUrl: null, distanceKm: null
-    }).avatarUrl = data?.publicUrl || null;
+
+    // Focus (0..100) — utilisé via CSS object-position pour éviter les têtes coupées.
+    // IMPORTANT : on ne recadre PAS le fichier image (aucun re-upload / aucun zoom).
+    const fxRaw = ph.focus_x;
+    const fyRaw = ph.focus_y;
+    const fx = (typeof fxRaw === "number" && Number.isFinite(fxRaw)) ? fxRaw : (fxRaw != null ? Number(fxRaw) : null);
+    const fy = (typeof fyRaw === "number" && Number.isFinite(fyRaw)) ? fyRaw : (fyRaw != null ? Number(fyRaw) : null);
+
+    const peer = (out[ph.user_id] ??= {
+      id: ph.user_id,
+      username: null,
+      age: null,
+      ville: null,
+      code_postal: null,
+      lat: null,
+      lon: null,
+      avatarUrl: null,
+      focusX: null,
+      focusY: null,
+      distanceKm: null,
+    });
+
+    peer.avatarUrl = data?.publicUrl || null;
+    peer.focusX = Number.isFinite(fx as any) ? Math.max(0, Math.min(100, Math.round(fx as number))) : null;
+    peer.focusY = Number.isFinite(fy as any) ? Math.max(0, Math.min(100, Math.round(fy as number))) : null;
   }
 
   const idsWithMe = Array.from(new Set([me, ...ids]));
@@ -1100,6 +1131,7 @@ function SectionList({
                           src={p.avatarUrl}
                           alt={titleTxt || "Avatar"}
                           className="h-full w-full object-cover"
+                          style={{ objectPosition: `${(p.focusX ?? 50)}% ${(p.focusY ?? 15)}%` }}
                         />
                       ) : hide ? (
                         maskedAvatar ? (

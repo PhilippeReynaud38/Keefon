@@ -459,19 +459,38 @@ function Recherche() {
       }
 
       // Photos public URL
+      // -------------------------------------------------------------------
+      // ✅ Focus (recadrage non destructif)
+      // On récupère aussi focus_x / focus_y (0..100) stockés dans public.photos.
+      // Ces valeurs servent UNIQUEMENT à l'affichage via CSS (object-position).
+      // On ne retouche jamais le fichier image : pas de crop serveur, pas de
+      // recompression. La qualité reste inchangée.
       const { data: photos, error: phErr } = await supabase
         .from("photos")
-        .select("user_id, url, is_main")
+        .select("user_id, url, is_main, focus_x, focus_y")
         .in("user_id", keptIds);
       if (phErr) throw phErr;
 
-      const grouped = new Map<string, { url: string; is_main?: boolean }[]>();
+      const grouped = new Map<
+        string,
+        { url: string; is_main?: boolean; focus_x?: number; focus_y?: number }[]
+      >();
       for (const row of photos ?? []) {
         const list = grouped.get(row.user_id) ?? [];
         const { data } = supabase.storage.from("avatars").getPublicUrl(row.url);
         const publicUrl = data?.publicUrl || null;
-        if (publicUrl)
-          list.push({ url: publicUrl, is_main: row.is_main ?? undefined });
+        if (publicUrl) {
+          // Par défaut, même valeurs que le reste du projet.
+          const fx = typeof (row as any).focus_x === "number" ? (row as any).focus_x : 50;
+          const fy = typeof (row as any).focus_y === "number" ? (row as any).focus_y : 15;
+
+          list.push({
+            url: publicUrl,
+            is_main: row.is_main ?? undefined,
+            focus_x: fx,
+            focus_y: fy,
+          });
+        }
         grouped.set(row.user_id, list);
       }
 
