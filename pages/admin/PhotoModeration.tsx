@@ -35,11 +35,30 @@ function resolveAnyUrl(raw: string | null): string | null {
   return getSafePublicUrl(s);
 }
 
+
+
+// -------------------- Focus (recadrage non destructif) ---------------------
+// Le recadrage manuel est stocké dans la table `photos` via focus_x / focus_y (0..100).
+// On applique ce focus via CSS: object-position: "<x>% <y>%".
+const DEFAULT_FOCUS_X = 50;
+const DEFAULT_FOCUS_Y_MAIN = 10;  // comme /profile pour la principale si NULL
+const DEFAULT_FOCUS_Y_OTHER = 15; // comme /profile pour les autres si NULL
+
+function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, n));
+}
+
+function normalizeFocus(value: unknown, fallback: number) {
+  const v = Number(value);
+  if (!Number.isFinite(v)) return fallback;
+  return clamp(Math.round(v), 0, 100);
+}
+
 // Transforme une URL publique Supabase "object" en URL "render" (redimensionnée) + srcSet (1x/2x)
 // => même compromis que SearchResultCard.tsx (rendu plus net, moins de flou)
 function toSupabaseRenderUrl(
   rawUrl: string,
-  opts: { width: number; height: number; quality?: number }
+  opts: { width: number; height: number; quality?: number; resize?: "cover" | "contain" }
 ): { src: string; srcSet?: string } {
   const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
   if (!supabaseUrl) return { src: rawUrl };
@@ -53,14 +72,15 @@ function toSupabaseRenderUrl(
 
     const publicPath = u.pathname.slice(idx + marker.length).replace(/^\//, "");
     const q = opts.quality ?? 80;
+    const r = opts.resize ?? "contain";
 
     const v = u.searchParams.get("v");
     const base = `${supabaseUrl}/storage/v1/render/image/public/${publicPath}`;
 
-    const src1 = `${base}?width=${opts.width}&height=${opts.height}&quality=${q}${
+    const src1 = `${base}?width=${opts.width}&height=${opts.height}&quality=${q}&resize=${r}${
       v ? `&v=${encodeURIComponent(v)}` : ""
     }`;
-    const src2 = `${base}?width=${opts.width * 2}&height=${opts.height * 2}&quality=${q}${
+    const src2 = `${base}?width=${opts.width * 2}&height=${opts.height * 2}&quality=${q}&resize=${r}${
       v ? `&v=${encodeURIComponent(v)}` : ""
     }`;
     return { src: src1, srcSet: `${src1} 1x, ${src2} 2x` };
@@ -77,6 +97,8 @@ interface PhotoWithUser {
   moderation_note?: string | null;
   email: string;
   is_main: boolean; // TRUE = photo principale
+  focus_x?: number | null;
+  focus_y?: number | null;
 }
 
 type DensityKey = "xcompact" | "compact" | "standard";
@@ -150,7 +172,7 @@ export default function PhotoModeration() {
       // Base : filtre par statut
       let query = supabase
         .from("photos")
-        .select("id, user_id, url, status, moderation_note, created_at, is_main")
+        .select("id, user_id, url, status, moderation_note, created_at, is_main, focus_x, focus_y")
         .eq("status", statusFilter)
         .order("created_at", { ascending: false });
 
@@ -171,6 +193,8 @@ export default function PhotoModeration() {
         status: any;
         moderation_note?: string | null;
         is_main: boolean;
+        focus_x?: number | null;
+        focus_y?: number | null;
       }>;
 
       // mapping user_id -> email via helper
@@ -186,6 +210,8 @@ export default function PhotoModeration() {
         moderation_note: p.moderation_note ?? "",
         email: emailMap[p.user_id] || "(email inconnu)",
         is_main: !!p.is_main,
+        focus_x: (p as any).focus_x ?? null,
+        focus_y: (p as any).focus_y ?? null,
       }));
 
       // init notes locales
@@ -482,7 +508,19 @@ export default function PhotoModeration() {
                       srcSet={imgSrcSet}
                       sizes={`${baseW}px`}
                       alt="Photo à modérer"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover focusCrop"
+                      style={{
+                        // On force via CSS (avec !important) pour éviter toute règle globale qui écrase object-position.
+                        objectPosition: `${normalizeFocus(p.focus_x, DEFAULT_FOCUS_X)}% ${normalizeFocus(
+                          p.focus_y,
+                          p.is_main ? DEFAULT_FOCUS_Y_MAIN : DEFAULT_FOCUS_Y_OTHER
+                        )}%`,
+                        ["--fx" as any]: `${normalizeFocus(p.focus_x, DEFAULT_FOCUS_X)}%`,
+                        ["--fy" as any]: `${normalizeFocus(
+                          p.focus_y,
+                          p.is_main ? DEFAULT_FOCUS_Y_MAIN : DEFAULT_FOCUS_Y_OTHER
+                        )}%`,
+                      } as React.CSSProperties}
                       loading="lazy"
                       decoding="async"
                       onClick={() => setPreviewUrl(p.url || null)}
@@ -537,7 +575,14 @@ export default function PhotoModeration() {
         </div>
       </div>
 
-      {/* aperçu plein écran */}
+      
+        {/* Force focus crop (prioritaire) */}
+        <style jsx>{`
+          img.focusCrop {
+            object-position: var(--fx, 50%) var(--fy, 15%) !important;
+          }
+        `}</style>
+{/* aperçu plein écran */}
       {previewUrl && (
         <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"

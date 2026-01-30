@@ -9,11 +9,14 @@
 // avec bouton “+X photos” EN DESSOUS de la grille (petit, vert #93ef09ff).
 // -----------------------------------------------------------------------------
 //
-// FIX (08/01/2026) — Cadrage photos : têtes parfois coupées
+// FIX (30/01/2026) — Cadrage photos : appliquer le focus enregistré en base
 // - On garde object-cover (pas de bandes noires)
-// - On ajuste uniquement le point focal (object-position) :
-//   • Avatar rond : "50% 10%" (monte légèrement le cadrage)
-//   • Tuiles galerie : "50% 15%" (même logique que les cartes de recherche)
+// - On ajuste uniquement le point focal (object-position) via les colonnes
+//   focus_x / focus_y sur la table `photos` (valeurs 0..100).
+// - Important : pour que object-position ait un effet, il ne faut PAS que
+//   Supabase "crop" déjà l'image côté CDN. On évite donc d'envoyer un couple
+//   width+height (qui force souvent un cover/crop), et on laisse le navigateur
+//   faire le recadrage final via CSS.
 
 import * as React from "react";
 import Head from "next/head";
@@ -29,23 +32,6 @@ import Link from "next/link";
 
 const TILE_RATIO = "4 / 5" as const;
 
-// -------------------- Focus (recadrage non destructif) ---------------------
-// Le recadrage manuel est stocké dans la table `photos` via focus_x / focus_y (0..100).
-// On applique ce focus via CSS: object-position: "<x>% <y>%".
-// Par défaut on garde le même focus que la page /profile (50/15).
-const DEFAULT_FOCUS_X = 50;
-const DEFAULT_FOCUS_Y = 15;
-
-function clamp(n: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, n));
-}
-
-function normalizeFocus(value: unknown, fallback: number) {
-  const v = Number(value);
-  if (!Number.isFinite(v)) return fallback;
-  return clamp(Math.round(v), 0, 100);
-}
-
 /**
  * ---- Image rendering (Supabase) ----
  * Objectif : éviter que le navigateur "floute" certaines images (ex: PNG Copilot),
@@ -58,17 +44,59 @@ function normalizeFocus(value: unknown, fallback: number) {
  *
  * Important : on NE met PAS `format=` (chez toi, ça a déjà provoqué des 400).
  */
-type RenderOpts = {
-  width: number;
-  height?: number;
-  quality?: number;
-  // Important : on force resize=contain (comme /profile) pour éviter un crop serveur.
-  // Le crop est ensuite piloté côté CSS via object-fit:cover + object-position (focus).
-  resize?: "cover" | "contain";
+type RenderOpts = { width: number; height?: number; quality?: number };
+
+// ---------------------------------------------------------------------------
+// IMPORTANT (30/01/2026) — Qualité vs Focus (object-position)
+// ---------------------------------------------------------------------------
+// Supabase propose un endpoint "render" (CDN) pour redimensionner/compresser
+// les images à la volée : /storage/v1/render/image/public/...
+//
+// On a DEUX objectifs :
+// 1) Conserver un rendu NET (surtout sur écrans Retina / desktop).
+// 2) Permettre le recadrage via focus_x/focus_y côté navigateur (object-position).
+//
+// ⚠️ Si on envoie width+height au CDN, il peut "crop" déjà l'image côté serveur,
+// ce qui casse le focus (il ne reste plus de marge à déplacer).
+//
+// ✅ Choix ici : on RÉACTIVE le CDN "render" pour la netteté,
+// mais on n'envoie QUE `width` (pas de height) :
+// - le CDN fait un simple redimensionnement (sans crop)
+// - le navigateur fait le crop FINAL via CSS (object-fit + object-position)
+//
+// => L'image stockée ne change jamais. On ne fait que choisir la meilleure URL
+// à télécharger pour l'affichage.
+// ---------------------------------------------------------------------------
+const USE_SUPABASE_RENDER_CDN = true;
+
+const AVATAR_RENDER: RenderOpts = { width: 512, quality: 90 }; // avatar rond (CSS ≈160px -> x3 pour Retina, sans height pour éviter le crop CDN)
+const TILE_RENDER: RenderOpts = { width: 960, quality: 90 };   // tuile galerie (large sur desktop -> haute résolution, sans height pour éviter le crop CDN)
+
+// Données "photo" prêtes à être rendues (URL publique + focus normalisé 0..100).
+type DisplayPhoto = {
+  publicUrl: string;
+  focusX: number;
+  focusY: number;
 };
 
-const AVATAR_RENDER: RenderOpts = { width: 320, height: 320, quality: 80, resize: "contain" }; // avatar rond (≈160px en CSS -> x2 Retina)
-const TILE_RENDER: RenderOpts = { width: 480, height: 600, quality: 80, resize: "contain" };   // tuile 4/5 (mobile 2 colonnes -> x2 Retina)
+function clamp0to100(v: unknown, fallback: number): number {
+  const n = typeof v === "number" ? v : Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(0, Math.min(100, n));
+}
+
+function toDisplayPhoto(
+  publicUrl: string,
+  focus_x: unknown,
+  focus_y: unknown,
+  defaults: { x: number; y: number }
+): DisplayPhoto {
+  return {
+    publicUrl,
+    focusX: clamp0to100(focus_x, defaults.x),
+    focusY: clamp0to100(focus_y, defaults.y),
+  };
+}
 
 function supabaseRenderUrlFromPublicObjectUrl(publicUrl: string, opts: RenderOpts): string {
   if (!publicUrl) return publicUrl;
@@ -83,9 +111,10 @@ function supabaseRenderUrlFromPublicObjectUrl(publicUrl: string, opts: RenderOpt
     if (u.pathname.includes("/storage/v1/render/image/public/")) {
       const out = new URL(publicUrl);
       out.searchParams.set("width", String(opts.width));
+      // Si on ne passe pas de height, on la SUPPRIME pour éviter tout crop CDN résiduel.
       if (opts.height) out.searchParams.set("height", String(opts.height));
+      else out.searchParams.delete("height");
       out.searchParams.set("quality", String(opts.quality ?? 80));
-      if (opts.resize) out.searchParams.set("resize", opts.resize);
       return out.toString();
     }
 
@@ -98,14 +127,23 @@ function supabaseRenderUrlFromPublicObjectUrl(publicUrl: string, opts: RenderOpt
 
     const out = new URL(`${origin}/storage/v1/render/image/public/${rest}`);
     out.searchParams.set("width", String(opts.width));
+    // Si on ne passe pas de height, on ne la met pas (évite le crop serveur).
     if (opts.height) out.searchParams.set("height", String(opts.height));
     out.searchParams.set("quality", String(opts.quality ?? 80));
-    if (opts.resize) out.searchParams.set("resize", opts.resize);
     return out.toString();
   } catch {
     // URL invalide -> on renvoie tel quel
     return publicUrl;
   }
+}
+
+/**
+ * Source finale pour une photo.
+ * - Mode par défaut : on sert l'URL publique (qualité 100% inchangée).
+ * - Mode optimisation (optionnel) : on passe par le CDN Supabase "render".
+ */
+function getPhotoSrc(publicUrl: string, opts: RenderOpts): string {
+  return USE_SUPABASE_RENDER_CDN ? supabaseRenderUrlFromPublicObjectUrl(publicUrl, opts) : publicUrl;
 }
 
 
@@ -140,15 +178,9 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
 
   const [loading, setLoading] = React.useState(true);
   const [profile, setProfile] = React.useState<any>(null);
-  const [avatarUrl, setAvatarUrl] = React.useState<string | null>(null);
-  const [avatarFocus, setAvatarFocus] = React.useState<{ x: number; y: number }>({
-    x: DEFAULT_FOCUS_X,
-    y: DEFAULT_FOCUS_Y,
-  });
-
-  const [gallery, setGallery] = React.useState<
-    { url: string; focus_x?: number | null; focus_y?: number | null }[]
-  >([]);
+  // Photo principale + galerie avec focus (object-position) appliqué côté navigateur.
+  const [avatar, setAvatar] = React.useState<DisplayPhoto | null>(null);
+  const [gallery, setGallery] = React.useState<DisplayPhoto[]>([]);
   const [postal, setPostal] = React.useState<string | null>(null);
   const [isBlockedEitherWay, setIsBlockedEitherWay] = React.useState(false);
 
@@ -179,6 +211,7 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
         if (!p) return;
 
         // fetch main + photos + localisation en parallèle
+        // NOTE : on récupère aussi focus_x/focus_y pour appliquer le cadrage (object-position).
         const [{ data: main }, { data: photos }, { data: loc }] = await Promise.all([
           supabase
             .from("photos")
@@ -199,37 +232,40 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
 
         if (!alive) return;
 
-        // Avatar principal
+        // Avatar principal (photo main) + focus
         if (main?.url) {
           const { data } = supabase.storage.from("avatars").getPublicUrl(main.url);
-          setAvatarUrl(data?.publicUrl || null);
-          setAvatarFocus({
-            x: normalizeFocus((main as any).focus_x, DEFAULT_FOCUS_X),
-            y: normalizeFocus((main as any).focus_y, DEFAULT_FOCUS_Y),
-          });
+          const publicUrl = data?.publicUrl || null;
+
+          // Par défaut, on remonte un peu le focus vertical pour l'avatar rond.
+          setAvatar(
+            publicUrl
+              ? toDisplayPhoto(publicUrl, (main as any).focus_x, (main as any).focus_y, { x: 50, y: 10 })
+              : null
+          );
         } else {
-          setAvatarUrl(null);
-          setAvatarFocus({ x: DEFAULT_FOCUS_X, y: DEFAULT_FOCUS_Y });
+          setAvatar(null);
         }
 
-        // Galerie (non principales)
+        // Galerie (non principales) + focus
         if (Array.isArray(photos)) {
-          const map = new Map<
-            string,
-            { url: string; focus_x?: number | null; focus_y?: number | null }
-          >();
-
-          photos
+          const items: DisplayPhoto[] = photos
             .filter((ph: any) => !ph.is_main)
-            .forEach((ph: any) => {
+            .map((ph: any) => {
               const u = supabase.storage.from("avatars").getPublicUrl(ph.url).data?.publicUrl;
-              if (!u) return;
-              if (map.has(u)) return;
-              map.set(u, { url: u, focus_x: ph.focus_x ?? null, focus_y: ph.focus_y ?? null });
-            });
+              if (!u) return null;
+              return toDisplayPhoto(u, ph.focus_x, ph.focus_y, { x: 50, y: 15 });
+            })
+            .filter((x: DisplayPhoto | null): x is DisplayPhoto => !!x);
 
-          setGallery(Array.from(map.values()));
+          // Dé-duplication (au cas où) en gardant le premier focus associé.
+          const uniq = new Map<string, DisplayPhoto>();
+          for (const it of items) if (!uniq.has(it.publicUrl)) uniq.set(it.publicUrl, it);
+
+          setGallery(Array.from(uniq.values()));
           setShowAllGallery(false);
+        } else {
+          setGallery([]);
         }
 
         // Code postal
@@ -500,14 +536,16 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
           )}
         </div>
 
-        {avatarUrl && (
+        {avatar?.publicUrl && (
           <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg mb-4">
             <img
-              src={supabaseRenderUrlFromPublicObjectUrl(avatarUrl, AVATAR_RENDER)}
+              // ⚠️- On ne modifie pas la photo : on choisit juste quelle URL charger.
+              // Par défaut : URL publique brute (qualité intacte).
+              src={getPhotoSrc(avatar.publicUrl, AVATAR_RENDER)}
               alt="Photo principale"
               className="w-full h-full object-cover"
-              // Recadrage manuel (focus_x/focus_y) enregistré en DB.
-              style={{ objectPosition: `${avatarFocus.x}% ${avatarFocus.y}%` }}
+              // Focus dynamique (0..100) pour limiter les têtes coupées.
+              style={{ objectPosition: `${avatar.focusX}% ${avatar.focusY}%` }}
             />
           </div>
         )}
@@ -571,23 +609,19 @@ const PublicProfile: NextPage & { requireAuth?: boolean } = () => {
             <h3 className="text-center text-xl font-semibold text-black mb-4">Galerie</h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {visibleGallery.map((p, i) => (
+              {visibleGallery.map((ph, i) => (
                 <div
-                  key={i}
+                  key={ph.publicUrl || i}
                   className="relative w-full overflow-hidden rounded-md shadow"
                   style={{ aspectRatio: TILE_RATIO }}
                 >
                   <img
-                    src={supabaseRenderUrlFromPublicObjectUrl(p.url, TILE_RENDER)}
+                    // ⚠️ Même logique : on ne "crop" pas côté CDN par défaut.
+                    src={getPhotoSrc(ph.publicUrl, TILE_RENDER)}
                     alt={`Photo ${i + 1}`}
                     className="absolute inset-0 w-full h-full object-cover"
-                    // Recadrage manuel (focus_x/focus_y) enregistré en DB.
-                    style={{
-                      objectPosition: `${normalizeFocus(p.focus_x, DEFAULT_FOCUS_X)}% ${normalizeFocus(
-                        p.focus_y,
-                        DEFAULT_FOCUS_Y
-                      )}%`,
-                    }}
+                    // Focus dynamique (0..100) pour limiter les têtes coupées.
+                    style={{ objectPosition: `${ph.focusX}% ${ph.focusY}%` }}
                   />
                 </div>
               ))}

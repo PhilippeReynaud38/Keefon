@@ -134,15 +134,6 @@ export default function ChatPage() {
   } | null>(null);
   const [headerAvatarUrl, setHeaderAvatarUrl] = useState<string>("/default-avatar.png");
 
-  /**
-   * Focus (0..100) appliqué à l’avatar rond du header via `object-position`.
-   * IMPORTANT : on ne modifie pas la photo, c’est uniquement un cadrage d’affichage.
-   * Fallback : (50,15) = centrage horizontal + focus vertical légèrement vers le haut.
-   */
-  const [headerFocusX, setHeaderFocusX] = useState<number>(50);
-  const [headerFocusY, setHeaderFocusY] = useState<number>(15);
-
-
   // Menu + signalement
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -277,39 +268,14 @@ export default function ChatPage() {
     let cancel = false;
     (async () => {
       let url: string | null = null;
-
-      // Focus (affichage seulement) : permet de centrer correctement l’avatar rond
-      // sans jamais modifier la photo source.
-      const clampFocus = (v: any, fallback: number) => {
-        const n =
-          typeof v === "number" && Number.isFinite(v)
-            ? v
-            : v != null
-            ? Number(v)
-            : Number.NaN;
-        return Number.isFinite(n)
-          ? Math.max(0, Math.min(100, Math.round(n)))
-          : fallback;
-      };
-
       const { data: mainPhoto } = await supabase
         .from("photos")
-        .select("url, focus_x, focus_y")
+        .select("url")
         .eq("user_id", peerId)
         .eq("is_main", true)
         .limit(1)
         .maybeSingle();
-
       if (mainPhoto?.url) url = await resolvePublicUrl(mainPhoto.url);
-
-      // Appliquer le focus si présent (sinon fallback 50/15)
-      const fx = mainPhoto ? clampFocus((mainPhoto as any).focus_x, 50) : 50;
-      const fy = mainPhoto ? clampFocus((mainPhoto as any).focus_y, 15) : 15;
-      if (!cancel) {
-        setHeaderFocusX(fx);
-        setHeaderFocusY(fy);
-      }
-
       if (!url) url = await resolvePublicUrl(peerData.avatar_url);
       if (!cancel) setHeaderAvatarUrl(url || "/default-avatar.png");
     })();
@@ -436,8 +402,6 @@ export default function ChatPage() {
                   alt={peerData?.username || "Contact"}
                   fill
                   sizes="(max-width:768px) 56px, 80px"
-                  // Focus = object-position ; n’affecte pas la qualité, uniquement le cadrage dans le cercle
-                  style={{ objectPosition: `${headerFocusX}% ${headerFocusY}%` }}
                   className="rounded-full object-cover bg-white ring-2 ring-white/70 shadow-sm"
                   priority
                 />
