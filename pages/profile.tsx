@@ -635,44 +635,57 @@ function GalleryWithActions({
           const fx = normalizeFocus(p.focus_x, DEFAULT_FOCUS_X);
           const fy = normalizeFocus(p.focus_y, DEFAULT_FOCUS_Y);
           return (
-            <div
-              key={p.id}
-              className="relative rounded-lg ring-1 ring-gray-200 overflow-hidden bg-white/70"
-              style={{ aspectRatio: "4 / 5" }}
-            >
-              <img
-                src={publicUrl}
-                alt="Photo de la galerie"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: `${fx}% ${fy}%` }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/default-avatar.png";
-                }}
-              />
-              <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 bg-gradient-to-t from-white/90 to-transparent p-2">
+            <div key={p.id} className="flex flex-col">
+              {/*
+                IMPORTANT UX : "Recadrer" est placé SOUS la photo (pas en overlay) pour rester lisible partout.
+                Aucune modification du fichier image : on enregistre uniquement focus_x/focus_y.
+              */}
+              <div
+                className="relative rounded-lg ring-1 ring-gray-200 overflow-hidden bg-white/70"
+                style={{ aspectRatio: "4 / 5" }}
+              >
+                <img
+                  src={publicUrl}
+                  alt="Photo de la galerie"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: `${fx}% ${fy}%` }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/default-avatar.png";
+                  }}
+                />
+            
+                {/* Actions gardées en overlay (remplacer/supprimer) : déjà contrastées. */}
+                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 bg-gradient-to-t from-white/90 to-transparent p-2">
+                  <button
+                    onClick={() => replaceMain(p.id)}
+                    className="text-xs text-blue-700 hover:underline disabled:opacity-60"
+                    disabled={!!busyId}
+                    title="Définir comme photo principale"
+                  >
+                    {busyId === p.id ? "…" : ""} Remplacer la photo principale
+                  </button>
+                  <button
+                    onClick={() => handleDelete(p.id, p.url)}
+                    className="text-xs text-red-600 hover:underline disabled:opacity-60"
+                    disabled={!!busyId}
+                    title="Supprimer cette photo"
+                  >
+                    🗑️ Supprimer
+                  </button>
+                </div>
+              </div>
+            
+              {/* Bouton Recadrer sous la photo : lisible sur tous les fonds */}
+              <div className="mt-2 flex items-center justify-center">
                 <button
+                  type="button"
                   onClick={() => onRequestCrop?.(p)}
-                  className="text-xs text-gray-800 hover:underline disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/90 text-gray-900 shadow-sm ring-1 ring-black/10 hover:bg-white disabled:opacity-60"
                   disabled={!!busyId}
                   title="Recadrer cette photo (non destructif)"
                 >
-                  ✂️ Recadrer
-                </button>
-                <button
-                  onClick={() => replaceMain(p.id)}
-                  className="text-xs text-blue-700 hover:underline disabled:opacity-60"
-                  disabled={!!busyId}
-                  title="Définir comme photo principale"
-                >
-                  {busyId === p.id ? "…" : ""} Remplacer la photo principale
-                </button>
-                <button
-                  onClick={() => handleDelete(p.id, p.url)}
-                  className="text-xs text-red-600 hover:underline disabled:opacity-60"
-                  disabled={!!busyId}
-                  title="Supprimer cette photo"
-                >
-                  🗑️ Supprimer
+                  <span aria-hidden className="text-yellow-500">✂️</span>
+                  <span className="text-sm font-semibold">Recadrer</span>
                 </button>
               </div>
             </div>
