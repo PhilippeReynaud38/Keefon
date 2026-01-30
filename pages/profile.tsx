@@ -14,6 +14,10 @@
 //   • On n’exige plus de "main photo" pour accéder au profil (seulement presignup_data).
 //   • Si la photo principale manque, on affiche un avatar par défaut + message d’avertissement.
 //   • Aucun changement SQL/RLS, uniquement côté front.
+// - [2026-01-30] Ajout recadrage utilisateur (non destructif) sur la page profil :
+//   • Modal "Recadrer" (drag + sliders) → enregistre focus_x/focus_y (0..100) dans `photos`.
+//   • Affichage avatar + galerie : resize=contain côté Supabase + crop via CSS (object-fit:cover + object-position).
+//   • Par défaut : focus 50/15.
 //
 // Règles Vivaya : code simple, robuste, commenté, UTF-8, pas d’usine à gaz.
 
@@ -28,6 +32,30 @@ import AddPhotoButton from "@/components/AddPhotoButton";
 import Footer from "@/components/Footer"; // ✅ Footer légal commun
 
 // -------------------------------- Helpers ---------------------------------
+
+/**
+ * Focus par défaut pour le recadrage (en %).
+ * - x=50 : centré horizontalement
+ * - y=15 : légèrement vers le haut (évite de couper le haut du visage)
+ *
+ * IMPORTANT : on ne modifie jamais le fichier image (pas de crop destructif, pas de zoom ajouté).
+ * On enregistre uniquement un point de focus (focus_x/focus_y) et on l'applique via `object-position`.
+ */
+const DEFAULT_FOCUS_X = 50;
+const DEFAULT_FOCUS_Y = 15;
+
+type FocusPoint = { x: number; y: number };
+
+function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, n));
+}
+
+/** Coerce un focus DB (nullable) vers un % valide. */
+function normalizeFocus(value: unknown, fallback: number) {
+  const v = Number(value);
+  if (!Number.isFinite(v)) return fallback;
+  return clamp(Math.round(v), 0, 100);
+}
 
 /**
  * Normalise une chaîne de plan vers l'énum UI.
@@ -208,17 +236,316 @@ async function ensureMainPhotoExistsForCurrentUser(userId: string) {
   await supabase.from("photos").update({ is_main: true }).eq("id", candidateId);
 }
 
+// ----------------------------- UI: Recadrage --------------------------------
+
+/**
+ * Modal léger de recadrage "non destructif".
+ * - L'utilisateur déplace l'image (drag) dans un cadre fixe (ratio imposé)
+ * - On enregistre uniquement focus_x / focus_y (0..100) pour piloter object-position
+ *
+ * ⚠️ Aucun traitement sur le fichier (pas de compression, pas de zoom ajouté, pas de re-upload).
+ */
+function PhotoCropModal({
+  open,
+  title,
+  imageSrc,
+  aspectRatio,
+  circle,
+  initialFocus,
+  onClose,
+  onSave,
+}: {
+  open: boolean;
+  title: string;
+  imageSrc: string;
+  aspectRatio: number; // ex: 1 pour avatar, 4/5 pour cartes
+  circle?: boolean;
+  initialFocus: FocusPoint;
+  onClose: () => void;
+  onSave: (next: FocusPoint) => void;
+}) {
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const naturalRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
+  const dragRef = useRef<{
+    dragging: boolean;
+    startX: number;
+    startY: number;
+    startFocus: FocusPoint;
+    rangeX: number;
+    rangeY: number;
+  } | null>(null);
+
+  const [focus, setFocus] = useState<FocusPoint>(initialFocus);
+  const [ranges, setRanges] = useState<{ rangeX: number; rangeY: number } | null>(null);
+
+  /**
+   * Ajuste l'"amplitude" du drag.
+   * But : éviter de devoir faire 3 mètres de drag pour changer le focus sur des photos
+   * très "hautes" (rangeY important). On ne change PAS la qualité ni le zoom, juste
+   * la sensibilité de l'interaction.
+   */
+  const DRAG_SENSITIVITY_X = 1.6;
+  // Plus élevé car tu as constaté que le déplacement vertical était trop faible.
+  // Ça ne change PAS le recadrage possible (0..100), juste la vitesse pour y arriver.
+  const DRAG_SENSITIVITY_Y = 3.6;
+
+  /**
+   * Taille du cadre dans le viewport.
+   * Problème constaté : la carte (modal) pouvait devenir trop haute et sortir de l'écran.
+   * Solution : on calcule un cadre (w/h) qui respecte le ratio et qui tient dans la fenêtre.
+   */
+  const [framePx, setFramePx] = useState<{ w: number; h: number } | null>(null);
+
+  // À chaque ouverture (ou changement de cible), on repart du focus actuel.
+  useEffect(() => {
+    if (!open) return;
+    setFocus({ x: initialFocus.x, y: initialFocus.y });
+  }, [open, initialFocus.x, initialFocus.y]);
+
+  // Calcule une taille de cadre qui tient à l'écran (évite une modal trop grande).
+  useEffect(() => {
+    if (!open) return;
+
+    const compute = () => {
+      // Marges globales du backdrop (p-4) + un peu de confort.
+      const horizontalPadding = 32;
+
+      // Réserve approximative pour : header + boutons + paddings.
+      // (On a supprimé les sliders Focus X/Y, donc c'est plus compact.)
+      const reservedVertical = 210;
+
+      // On cappe volontairement la largeur (sinon la carte devient "immense" sur desktop).
+      const maxW = Math.max(260, Math.min(window.innerWidth - horizontalPadding, 360));
+      const maxH = Math.max(260, window.innerHeight - reservedVertical);
+
+      // aspectRatio = width / height  =>  height = width / aspectRatio  =>  width = height * aspectRatio
+      const w = Math.min(maxW, maxH * aspectRatio);
+      const h = w / aspectRatio;
+      setFramePx({ w: Math.round(w), h: Math.round(h) });
+    };
+
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [open, aspectRatio]);
+
+  // Recalcule les "ranges" nécessaires au drag (dépend du cadre ET des dims naturelles).
+  const recomputeRanges = () => {
+    const box = boxRef.current;
+    const nat = naturalRef.current;
+    if (!box || !nat.w || !nat.h) return;
+
+    const rect = box.getBoundingClientRect();
+    const cw = Math.max(1, rect.width);
+    const ch = Math.max(1, rect.height);
+
+    // Même logique que object-fit: cover
+    const scale = Math.max(cw / nat.w, ch / nat.h);
+    const dw = nat.w * scale;
+    const dh = nat.h * scale;
+
+    // Ranges négatifs (ou nuls) : (container - image)
+    const rangeX = cw - dw;
+    const rangeY = ch - dh;
+
+    setRanges({ rangeX, rangeY });
+  };
+
+  // Responsive : si le cadre change de taille (mobile / resize), on recalc.
+  useEffect(() => {
+    if (!open) return;
+    const box = boxRef.current;
+    if (!box) return;
+    // Certaines WebViews anciennes peuvent ne pas supporter ResizeObserver.
+    // Dans ce cas on retombe sur un écouteur window.resize (moins fin mais suffisant ici).
+    if (typeof (globalThis as any).ResizeObserver === "undefined") {
+      const onResize = () => recomputeRanges();
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
+    }
+
+    const ro = new ResizeObserver(() => recomputeRanges());
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, [open]);
+
+  // ESC pour fermer (UX)
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4">
+      {/*
+        Conteneur de modal volontairement plus compact :
+        - évite de sortir de l'écran
+        - pas de scrollbars inutiles
+      */}
+      <div className="w-full max-w-sm rounded-2xl bg-white shadow-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-gray-900">{title}</p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Glisse l’image pour ajuster le cadrage (on enregistre seulement le focus, la photo n’est pas modifiée).
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200"
+            title="Fermer"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-4 space-y-3">
+          {/* Cadre de recadrage */}
+          <div
+            ref={boxRef}
+            className={`relative mx-auto bg-gray-100 overflow-hidden ring-1 ring-gray-200 select-none touch-none ${
+              circle ? "rounded-full" : "rounded-xl"
+            }`}
+            // Cadre dimensionné pour tenir dans le viewport.
+            // On ne dépend pas de scroll / hauteur de contenu.
+            style={{
+              width: framePx ? `${framePx.w}px` : "100%",
+              height: framePx ? `${framePx.h}px` : undefined,
+              // Fallback instantané (avant le compute()) pour éviter un cadre "0px" sur le 1er render.
+              aspectRatio: framePx ? undefined : aspectRatio,
+            }}
+            // Important : permet un drag fluide sur mobile (sinon le scroll intercepte).
+            onPointerDown={(e) => {
+              // On ne démarre le drag que si on a des ranges calculés.
+              if (!ranges) return;
+              (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+              dragRef.current = {
+                dragging: true,
+                startX: e.clientX,
+                startY: e.clientY,
+                startFocus: { ...focus },
+                rangeX: ranges.rangeX,
+                rangeY: ranges.rangeY,
+              };
+            }}
+            onPointerMove={(e) => {
+              const d = dragRef.current;
+              if (!d?.dragging) return;
+
+              const dx = e.clientX - d.startX;
+              const dy = e.clientY - d.startY;
+
+              // Mapping pixel -> % basé sur la formule CSS d'object-position:
+              // offset = (container - image) * (pos% / 100)
+              // => pos% = pos%_start + dx * 100 / (container - image)
+              const nextX =
+                d.rangeX !== 0
+                  ? d.startFocus.x + (dx * 100 * DRAG_SENSITIVITY_X) / d.rangeX
+                  : d.startFocus.x;
+              const nextY =
+                d.rangeY !== 0
+                  ? d.startFocus.y + (dy * 100 * DRAG_SENSITIVITY_Y) / d.rangeY
+                  : d.startFocus.y;
+
+              setFocus({
+                x: clamp(Math.round(nextX), 0, 100),
+                y: clamp(Math.round(nextY), 0, 100),
+              });
+            }}
+            onPointerUp={() => {
+              dragRef.current = null;
+            }}
+            onPointerCancel={() => {
+              dragRef.current = null;
+            }}
+          >
+            <img
+              src={imageSrc}
+              alt="Recadrage"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: `${focus.x}% ${focus.y}%` }}
+              draggable={false}
+              // Quand l'image est chargée, on récupère les dimensions naturelles et on recalc.
+              onLoad={(e) => {
+                const img = e.currentTarget as HTMLImageElement;
+                naturalRef.current = { w: img.naturalWidth || 0, h: img.naturalHeight || 0 };
+                recomputeRanges();
+              }}
+            />
+
+            {/* Petite grille d'aide (discrète) */}
+            <div className="absolute inset-0 pointer-events-none opacity-30">
+              <div className="absolute left-1/3 top-0 bottom-0 w-px bg-black" />
+              <div className="absolute left-2/3 top-0 bottom-0 w-px bg-black" />
+              <div className="absolute top-1/3 left-0 right-0 h-px bg-black" />
+              <div className="absolute top-2/3 left-0 right-0 h-px bg-black" />
+            </div>
+          </div>
+
+          {/*
+            NOTE : on a volontairement retiré les sliders Focus X / Focus Y.
+            Tu as demandé qu'ils n'apparaissent pas.
+            Le réglage se fait uniquement par drag (plus naturel + moins de UI en bas).
+          */}
+
+          <div className="flex items-center justify-between gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setFocus({ x: DEFAULT_FOCUS_X, y: DEFAULT_FOCUS_Y })}
+              className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold"
+              title="Revenir au focus par défaut"
+            >
+              Réinitialiser
+            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-sm font-semibold"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={() => onSave({ x: focus.x, y: focus.y })}
+                className="px-4 py-2 rounded-xl bg-yellowGreen text-black font-semibold shadow-md hover:opacity-90 transition"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ---------------- Galerie (listage + remplacer + suppression) --------------
 function GalleryWithActions({
   userId,
   onChanged,
   refreshKey = 0,
+  onRequestCrop,
 }: {
   userId: string;
   onChanged: () => void;
   refreshKey?: number;
+  onRequestCrop?: (p: { id: string; url: string; is_main: boolean; focus_x?: number | null; focus_y?: number | null }) => void;
 }) {
-  type Row = { id: string; url: string; is_main: boolean; status?: string | null };
+  type Row = {
+    id: string;
+    url: string;
+    is_main: boolean;
+    status?: string | null;
+    focus_x?: number | null;
+    focus_y?: number | null;
+  };
   const [photos, setPhotos] = useState<Row[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -227,7 +554,8 @@ function GalleryWithActions({
     setError(null);
     const { data, error } = await supabase
       .from("photos")
-      .select("id, url, is_main, status")
+      // focus_x/focus_y : point de focus (0..100) utilisé pour object-position.
+      .select("id, url, is_main, status, focus_x, focus_y")
       .eq("user_id", userId)
       // .neq("status", "rejected") // décommente si tu veux masquer côté UI
       .order("created_at", { ascending: true });
@@ -295,7 +623,17 @@ function GalleryWithActions({
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
         {nonMain.map((p) => {
           const key = toStorageKey(p.url);
-          const publicUrl = renderUrlFromKey(key, GALLERY_RENDER, refreshKey); // cache-buster
+          // ⚠️ IMPORTANT : on passe en resize=contain côté Supabase pour éviter un crop serveur.
+          // Le recadrage se fait côté CSS via object-fit:cover + object-position (focus_x/y).
+          // => permet à l'utilisateur de choisir son cadrage sans altérer le fichier.
+          const publicUrl = renderUrlFromKey(
+            key,
+            { ...GALLERY_RENDER, resize: "contain" },
+            refreshKey
+          ); // cache-buster
+
+          const fx = normalizeFocus(p.focus_x, DEFAULT_FOCUS_X);
+          const fy = normalizeFocus(p.focus_y, DEFAULT_FOCUS_Y);
           return (
             <div
               key={p.id}
@@ -306,11 +644,20 @@ function GalleryWithActions({
                 src={publicUrl}
                 alt="Photo de la galerie"
                 className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: `${fx}% ${fy}%` }}
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/default-avatar.png";
                 }}
               />
               <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1 bg-gradient-to-t from-white/90 to-transparent p-2">
+                <button
+                  onClick={() => onRequestCrop?.(p)}
+                  className="text-xs text-gray-800 hover:underline disabled:opacity-60"
+                  disabled={!!busyId}
+                  title="Recadrer cette photo (non destructif)"
+                >
+                  ✂️ Recadrer
+                </button>
                 <button
                   onClick={() => replaceMain(p.id)}
                   className="text-xs text-blue-700 hover:underline disabled:opacity-60"
@@ -399,8 +746,25 @@ function ProfilePage() {
   const [city, setCity] = useState<string | null>(null);
   const [certified, setCertified] = useState(false);
   const [mainPhotoUrl, setMainPhotoUrl] = useState<string | null>(null);
+  const [mainPhotoId, setMainPhotoId] = useState<string | null>(null);
+  const [mainPhotoKey, setMainPhotoKey] = useState<string | null>(null);
+  const [mainFocus, setMainFocus] = useState<FocusPoint>({
+    x: DEFAULT_FOCUS_X,
+    y: DEFAULT_FOCUS_Y,
+  });
   const [error, setError] = useState<string | null>(null);
   const [isMainPhotoLoading, setIsMainPhotoLoading] = useState<boolean>(true);
+
+  // Recadrage: cible (photo) actuellement en cours d'édition
+  const [cropTarget, setCropTarget] = useState<
+    | null
+    | {
+        photoId: string;
+        key: string; // clé storage (avatars/xxx.jpg)
+        focus: FocusPoint;
+        mode: "avatar" | "gallery";
+      }
+  >(null);
 
   useProtectedCompletedSignup();
 
@@ -436,18 +800,32 @@ function ProfilePage() {
           .maybeSingle();
         setBirthday(pre?.birthday ?? null);
 
+        // Main photo + focus (recadrage)
+        // NOTE : resize=contain côté Supabase pour éviter un crop serveur.
+        // Le cadrage est piloté par CSS via object-position (focus_x/y).
         const { data: photo } = await supabase
           .from("photos")
-          .select("url")
+          .select("id, url, focus_x, focus_y")
           .eq("user_id", uid)
           .eq("is_main", true)
           .maybeSingle();
 
         if (photo?.url) {
           const key = toStorageKey(photo.url);
-          setMainPhotoUrl(renderUrlFromKey(key, AVATAR_RENDER, galleryKey)); // cache-buster
+          setMainPhotoId(photo.id ?? null);
+          setMainPhotoKey(key);
+          setMainFocus({
+            x: normalizeFocus((photo as any).focus_x, DEFAULT_FOCUS_X),
+            y: normalizeFocus((photo as any).focus_y, DEFAULT_FOCUS_Y),
+          });
+          setMainPhotoUrl(
+            renderUrlFromKey(key, { ...AVATAR_RENDER, resize: "contain" }, galleryKey)
+          ); // cache-buster
         } else {
           setMainPhotoUrl(null);
+          setMainPhotoId(null);
+          setMainPhotoKey(null);
+          setMainFocus({ x: DEFAULT_FOCUS_X, y: DEFAULT_FOCUS_Y });
         }
       } finally {
         setIsMainPhotoLoading(false);
@@ -497,6 +875,63 @@ function ProfilePage() {
     else router.push("/abonnement");
   };
 
+  // -------------------------- Recadrage (focus_x/y) -------------------------
+  /** Ouvre le recadrage pour la photo principale (avatar). */
+  const requestCropAvatar = () => {
+    if (!mainPhotoId || !mainPhotoKey) return;
+    setCropTarget({
+      photoId: mainPhotoId,
+      key: mainPhotoKey,
+      focus: { ...mainFocus },
+      mode: "avatar",
+    });
+  };
+
+  /** Ouvre le recadrage pour une photo de la galerie (ratio 4/5). */
+  const requestCropGallery = (p: {
+    id: string;
+    url: string;
+    focus_x?: number | null;
+    focus_y?: number | null;
+  }) => {
+    const key = toStorageKey(p.url);
+    setCropTarget({
+      photoId: p.id,
+      key,
+      focus: {
+        x: normalizeFocus(p.focus_x, DEFAULT_FOCUS_X),
+        y: normalizeFocus(p.focus_y, DEFAULT_FOCUS_Y),
+      },
+      mode: "gallery",
+    });
+  };
+
+  /** Sauvegarde le focus dans la table `photos` (non destructif). */
+  const saveCrop = async (next: FocusPoint) => {
+    if (!userId || !cropTarget) return;
+    setError(null);
+
+    const { error } = await supabase
+      .from("photos")
+      .update({ focus_x: next.x, focus_y: next.y })
+      .eq("id", cropTarget.photoId)
+      .eq("user_id", userId);
+
+    if (error) {
+      setError("❌ Recadrage non enregistré : " + error.message);
+      return;
+    }
+
+    // UX : feedback + rafraîchissement.
+    setError("✅ Recadrage enregistré.");
+
+    // Si on vient d'éditer la photo principale, on met à jour le state local aussi.
+    if (cropTarget.photoId === mainPhotoId) setMainFocus({ ...next });
+
+    setCropTarget(null);
+    setGalleryKey((k) => k + 1);
+  };
+
   if (isLoading || !session) {
     return (
       <div className="text-center mt-12 text-gray-600">
@@ -507,6 +942,36 @@ function ProfilePage() {
 
   return (
     <ProfileLayout>
+      {/*
+        Recadrage (modal) — non destructif.
+        IMPORTANT : on utilise resize=contain côté Supabase pour éviter le crop serveur.
+        Le cadrage final dépend uniquement de object-position (focus_x/y).
+      */}
+      {cropTarget && (
+        <PhotoCropModal
+          open={true}
+          title={
+            cropTarget.mode === "avatar" ? "Recadrer ta photo principale" : "Recadrer une photo de la galerie"
+          }
+          imageSrc={renderUrlFromKey(
+            cropTarget.key,
+            {
+              width: cropTarget.mode === "avatar" ? 1200 : 1200,
+              height: cropTarget.mode === "avatar" ? 1200 : 1500,
+              resize: "contain",
+              quality: 92,
+            },
+            // on réutilise galleryKey pour casser le cache si besoin
+            galleryKey
+          )}
+          aspectRatio={cropTarget.mode === "avatar" ? 1 : 4 / 5}
+          circle={cropTarget.mode === "avatar"}
+          initialFocus={cropTarget.focus}
+          onClose={() => setCropTarget(null)}
+          onSave={saveCrop}
+        />
+      )}
+
       {/* Bouton retour */}
       <div className="absolute top-4 left-4 z-10">
         <button
@@ -560,11 +1025,26 @@ function ProfilePage() {
           {!isMainPhotoLoading && (
             <>
               {mainPhotoUrl ? (
-                <img
-                  src={mainPhotoUrl}
-                  alt="Photo principale"
-                  className="w-32 h-32 rounded-full object-cover"
-                />
+                <>
+                  <img
+                    src={mainPhotoUrl}
+                    alt="Photo principale"
+                    className="w-32 h-32 rounded-full object-cover"
+                    // object-position piloté par focus_x/focus_y (non destructif)
+                    style={{ objectPosition: `${mainFocus.x}% ${mainFocus.y}%` }}
+                  />
+                  {/* Recadrage (focus) */}
+                  {mainPhotoId && mainPhotoKey && (
+                    <button
+                      type="button"
+                      onClick={requestCropAvatar}
+                      className="text-xs text-gray-800 hover:underline"
+                      title="Recadrer ta photo principale (sans modifier le fichier)"
+                    >
+                      ✂️ Recadrer
+                    </button>
+                  )}
+                </>
               ) : (
                 <img
                   src="/default-avatar.png"
@@ -578,7 +1058,7 @@ function ProfilePage() {
                 <p className="mt-1 text-xs text-yellow-800 bg-yellow-50 border border-yellow-200 rounded px-3 py-2 text-center max-w-xs">
                   Ta photo principale est manquante ou a été refusée par la modération.
                   Ton compte reste actif, mais merci d’ajouter une nouvelle photo qui respecte
-                  les règles (pas de visages d’enfants, pas de nudité, pas de violence, pas de célébrités).
+                  les règles ( pas de visages d’enfants, pas de nudité, pas de violence, pas de célébrités ... ).
                 </p>
               )}
             </>
@@ -646,6 +1126,9 @@ function ProfilePage() {
                     user_id: userId,
                     url: storageKey, // on stocke la CLE, pas l’URL
                     is_main: false,
+                    // Focus par défaut : centré X, Y un peu plus haut (évite les têtes coupées)
+                    focus_x: DEFAULT_FOCUS_X,
+                    focus_y: DEFAULT_FOCUS_Y,
                     status: "pending",
                     created_at: new Date().toISOString(),
                   });
@@ -669,6 +1152,7 @@ function ProfilePage() {
               userId={userId}
               refreshKey={galleryKey}
               onChanged={() => setGalleryKey((k) => k + 1)}
+              onRequestCrop={requestCropGallery}
             />
           )}
         </div>

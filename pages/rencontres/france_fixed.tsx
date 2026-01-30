@@ -336,7 +336,7 @@ function ProfileTeaserBand() {
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
                   fill
-                  className="object-cover object-top"
+                  className=""
                   sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
                   quality={95}
                   priority={Boolean((p as any).priority)}

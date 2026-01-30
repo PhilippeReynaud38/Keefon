@@ -1,0 +1,188 @@
+Pour les compteurs d'utilisateurs abonés ou pas on à utiliser et parfois modifié les fichiers components/recherche/CityAutocomplete.tsx     pages/admin/index.tsx    lib/adminFilters.ts  FiltersBar.tsx est d'autres 
+
+
+
+
+
+
+Oui. Voilà un README / “LIS-MOI” clair, orienté maintenance, que tu peux coller tel quel dans ton repo (ex: components/admin/LIS-MOI-filtres-admin.md).
+
+LIS-MOI — Filtres Admin (compteurs Free / Essentiel / Élite)
+Objectif
+
+La page /admin affiche :
+
+des compteurs globaux (Free / Essentiel / Élite)
+
+des compteurs filtrés (Free (filtré) / Essentiel (filtré) / Élite (filtré))
+
+Les compteurs filtrés ne sont pas calculés côté front : le front envoie les critères à une RPC Supabase qui renvoie directement les 3 counts.
+
+Architecture (qui fait quoi)
+1) Front (UI)
+
+L’admin saisit des filtres : pays, département (2 chiffres), ville ou code postal, genre, orientation, âge.
+
+Quand tu cliques Appliquer, le front appelle fetchAdminCounts(...).
+
+2) fetchAdminCounts.ts
+
+C’est le “pont” vers Supabase.
+
+Il appelle la RPC (fonction SQL) :
+
+public.admin_counts_by_filters_via_view(...)
+
+Il récupère { free_count, essentiel_count, elite_count }
+
+Il mappe ça vers l’état React { free, essentiel, elite }.
+
+3) RPC SQL (source de vérité)
+
+La fonction SQL :
+
+part d’une vue “admin visible” (ex: public.visible_profiles_admin_v)
+
+applique les filtres dans un WHERE
+
+retourne uniquement 3 nombres (counts par abonnement)
+
+Point critique : Ville / CP et Département
+Département (p_dept)
+
+Le champ UI accepte 2 chiffres (ex: 92)
+
+La fonction compare ces 2 chiffres avec le “préfixe” stocké en DB (souvent zone_prefix ou code_postal selon tes données)
+
+Important : tu ne dois pas faire dépendre ce filtre du front (ex: regex côté front).
+Le front transmet tel quel, la DB tranche.
+
+Ville / Code Postal (p_city_or_cp)
+
+Le champ UI affiche (et peut envoyer) une valeur au format :
+
+Nanterre (92000)
+ou parfois juste :
+
+Nanterre
+
+92000
+
+La logique robuste à garder côté SQL est :
+
+Si l’entrée contient des chiffres ⇒ on considère que c’est un code postal (ou qu’on peut en extraire un).
+
+Exemple : "Nanterre (92000)" → on extrait "92000"
+
+Exemple : "92000" → on garde "92000"
+
+Ensuite on filtre par :
+
+code_postal LIKE '92000%'
+
+Si l’entrée ne contient pas de chiffre ⇒ on considère que c’est un nom de ville.
+
+On filtre en ILIKE '%nanterre%' (insensible à la casse).
+
+✅ Conclusion : le front peut envoyer “Nanterre (92000)” sans transformation, c’est la DB qui doit extraire les digits et gérer la branche CP.
+
+Pourquoi il ne faut pas toucher à CityAutocomplete.tsx
+
+CityAutocomplete.tsx est un composant utilisé ailleurs (pages publiques).
+Modifier sa logique “pour arranger l’admin” peut :
+
+casser l’autocomplete sur le public
+
+changer le format des valeurs
+
+créer des régressions invisibles
+
+➡️ La règle : on corrige l’admin dans l’admin (PlanCountersFiltered / fetchAdminCounts / RPC), pas dans un composant partagé.
+
+Symptômes typiques et causes probables
+1) “Ville / Département → résultat 0 puis plus rien ne marche jusqu’au refresh”
+
+Cause classique :
+
+une erreur JS non catchée (fetch qui throw + state incohérent)
+
+ou un mapping de réponse invalide (ex: data.free au lieu de data.free_count)
+
+ou un appel RPC qui échoue silencieusement et laisse le state dans un état “cassé”
+
+Correctif :
+
+try/catch autour du fetch
+
+ne jamais laisser l’état counts en undefined
+
+en cas d’erreur : afficher l’erreur + conserver les derniers counts valides ou remettre à 0 proprement
+
+2) “Tous les filtres renvoient toujours le total (ex: 22)”
+
+Cause :
+
+les paramètres ne sont pas transmis à la RPC (toujours null)
+
+ou la RPC ignore les filtres (WHERE mal écrit / variables non utilisées)
+
+ou mauvais mapping des noms de paramètres côté supabase (p_city_or_cp etc.)
+
+Correctif :
+
+log du payload envoyé à fetchAdminCounts
+
+test direct dans Supabase SQL Editor :
+
+select * from public.admin_counts_by_filters_via_view('fr','92','Nanterre (92000)',null,null,null,null);
+
+
+comparer avec un appel null,null,null...
+
+3) “VSCode souligne data.free / data.essentiel / data.elite”
+
+Cause :
+
+la RPC renvoie free_count / essentiel_count / elite_count
+
+mais le TS s’attend à free / essentiel / elite
+
+Correctif :
+
+mapper correctement dans fetchAdminCounts.ts
+
+free: data.free_count
+
+essentiel: data.essentiel_count
+
+elite: data.elite_count
+
+Procédure de test (à refaire après chaque modification)
+
+Page admin : vérifier les totaux
+
+Département seul : 92
+
+CP seul : 92000
+
+Ville seule : Nanterre
+
+“Nanterre (92000)” complet
+
+Ajouter un filtre genre + âge pour vérifier combinaison
+
+Réinitialiser sans refresh
+
+Si une des étapes casse tout : on annule le dernier changement (git revert) et on inspecte où ça casse (front vs RPC).
+
+Règles de maintenance (à respecter)
+
+✅ Toujours corriger le filtrage dans la RPC et le mapping dans fetchAdminCounts
+
+✅ Le front admin doit être “dumb”: il envoie les valeurs, il n’invente pas de logique métier fragile
+
+❌ Ne pas modifier CityAutocomplete.tsx pour corriger l’admin
+
+✅ Toujours tester la RPC directement dans Supabase SQL Editor
+
+✅ Toujours faire un commit “point de retour” dès qu’une version marche
