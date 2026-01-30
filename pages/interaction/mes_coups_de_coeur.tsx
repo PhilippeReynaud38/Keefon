@@ -618,7 +618,13 @@ export default function MesCoupsDeCoeur() {
 
         setMainPhotoCache((prev) => {
           const next = { ...prev };
-          for (const [uid, ph] of mainPhoto.entries()) next[uid] = ph;
+          // NOTE (Vercel / TS target) :
+          // Éviter `for..of` sur `MapIterator` car TypeScript peut refuser la compilation
+          // si le projet cible un ES trop bas (ex: ES5) sans `downlevelIteration`.
+          // `Map.forEach` fonctionne partout et ne change rien au résultat.
+          mainPhoto.forEach((ph, uid) => {
+            next[uid] = ph;
+          });
           return next;
         });
       } catch {
