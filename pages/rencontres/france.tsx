@@ -7,7 +7,9 @@
 import Head from "next/head";
 import Link from "next/link";
 
+
 import Image from "next/image";
+
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
   title: "Rencontres bienveillantes en France | Keefon",
@@ -47,7 +49,6 @@ const SEO = {
     "rencontre célibataire",
     "amour",
     "âme soeur",
-    "plan cul",
 
 
     // Longue traîne
@@ -374,6 +375,7 @@ function ProfileTeaserBand() {
 
 /* ===========================  Page  =========================== */
 export default function FranceRencontresPage() {
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -480,6 +482,39 @@ export default function FranceRencontresPage() {
                   KEEFON
                 </span>
               </div>
+
+                <div className="mt-3 flex justify-center">
+<nav className="mt-1 flex flex-wrap justify-center gap-x-2 gap-y-1 text-[10px] leading-tight text-slate-700/60">
+  <Link href="/rencontres/paris" className="hover:underline">Paris</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/lyon" className="hover:underline">Lyon</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/marseille" className="hover:underline">Marseille</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/toulouse" className="hover:underline">Toulouse</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/nice" className="hover:underline">Nice</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/nantes" className="hover:underline">Nantes</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/montpellier" className="hover:underline">Montpellier</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/strasbourg" className="hover:underline">Strasbourg</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/rennes" className="hover:underline">Rennes</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/lille" className="hover:underline">Lille</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/bordeaux" className="hover:underline">Bordeaux</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/grenoble" className="hover:underline">Grenoble</Link>
+  <span className="text-slate-700/30">·</span>
+  <Link href="/rencontres/saint-etienne" className="hover:underline">Saint-Étienne</Link>
+</nav>
+
+
+
+  </div>
 
               {/* Badge prononciation Keefon, optimisé mobile */}
               <div className="mt-2 flex justify-center">
