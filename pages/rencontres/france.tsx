@@ -1,5 +1,5 @@
 /**
- * Fichier : pages/rencontres/France.tsx
+ * Fichier : pages/rencontres/france.tsx
  * Module : Pages publiques / SEO — Rencontres en France
  * MAJ : 2025-12-01 — Remplacement next/image → <img> pour les avatars locaux
  */
@@ -325,8 +325,8 @@ function ProfileTeaserBand() {
           Chaque membre décide ce qu'il partage et reste protégé par les lois françaises.
         </div>
 
-        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible">
-          {profiles.map((p) => (
+	        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible">
+	          {profiles.map((p, idx) => (
             <article
               key={p.pseudo}
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
@@ -337,8 +337,8 @@ function ProfileTeaserBand() {
                   alt={p.avatarAlt}
                   fill
                   sizes="(max-width: 768px) 80vw, (max-width: 1024px) 45vw, 25vw"
-                  className="object-cover object-[50%_20%]"
-                  priority={p.priority}
+	                  className="object-cover object-[50%_20%]"
+	                  priority={idx < 2}
                   quality={95}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
