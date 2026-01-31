@@ -141,64 +141,81 @@ export default function AlternativeMeeticPage() {
 
           <section className="mt-8">
             <h2 className="text-lg font-bold text-slate-900">Comparaison rapide</h2>
-            {/* Retour au tableau (mobile-friendly via scroll horizontal) — sans cadres */}
-            <div className="mt-3 -mx-4 px-4 overflow-x-auto">
-              <table className="min-w-[760px] w-full text-sm">
-                <thead className="text-left">
-                  <tr className="border-b border-slate-200/60">
-                    <th className="p-3 font-bold text-slate-900">Critère</th>
-                    <th className="p-3 font-bold text-slate-900">Keefon</th>
-                    <th className="p-3 font-bold text-slate-900">Services populaires</th>
-                  </tr>
-                </thead>
-                <tbody className="text-slate-800">
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Découverte</td>
-                    <td className="p-3">Sans swipe</td>
-                    <td className="p-3">Varie selon la plateforme</td>
-                  </tr>
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Tempo / pression</td>
-                    <td className="p-3">Moins de pression, échanges posés</td>
-                    <td className="p-3">Plus “zapping” / décisions rapides</td>
-                  </tr>
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Positionnement</td>
-                    <td className="p-3">Échanges bienveillants</td>
-                    <td className="p-3">Varie selon la plateforme</td>
-                  </tr>
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Sans abonnement</td>
-                    <td className="p-3">Plus de possibilités de rencontres</td>
-                    <td className="p-3">Souvent plus limité</td>
-                  </tr>
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Navigation</td>
-                    <td className="p-3">Clair, on se repère vite</td>
-                    <td className="p-3">Varie selon la plateforme</td>
-                  </tr>
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Tarifs (si abonnement)</td>
-                    <td className="p-3">Prix stables &amp; accessibles (même prix mensuel sur 1 ou 6 mois)</td>
-                    <td className="p-3">Réductions souvent liées à l’engagement</td>
-                  </tr>
-                  <tr className="border-b border-slate-200/40">
-                    <td className="p-3">Modération</td>
-                    <td className="p-3">Simple : signaler, filtrer, gérer</td>
-                    <td className="p-3">Varie selon la plateforme</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3">Favoris &amp; échanges</td>
-                    <td className="p-3">Accès clair : favoris, messages, accroches</td>
-                    <td className="p-3">Varie selon la plateforme</td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* Comparatif “côte à côte” (principe : critère = séparateur, puis 2 colonnes) */}
+            <div className="mt-3">
+              {/* En-têtes */}
+              <div className="grid grid-cols-2 gap-x-4 text-[12px] sm:text-[13px] font-semibold text-slate-900">
+                <div>Keefon</div>
+                <div className="text-right">Services populaires</div>
+              </div>
+
+              {/* Lignes */}
+              <div className="mt-2 grid gap-2">
+                {[
+                  {
+                    c: "Découverte",
+                    k: "Sans swipe",
+                    o: "Varie selon la plateforme",
+                  },
+                  {
+                    c: "Tempo / pression",
+                    k: "Moins de pression, échanges posés",
+                    o: "Plus “zapping” / décisions rapides",
+                  },
+                  {
+                    c: "Positionnement",
+                    k: "Échanges bienveillants",
+                    o: "Varie selon la plateforme",
+                  },
+                  {
+                    c: "Sans abonnement",
+                    k: "Plus de possibilités de rencontres",
+                    o: "Souvent plus limité",
+                  },
+                  {
+                    c: "Navigation",
+                    k: "Clair, on se repère vite",
+                    o: "Varie selon la plateforme",
+                  },
+                  {
+                    c: "Tarifs (si abonnement)",
+                    k: "Prix stables & accessibles (même prix mensuel sur 1 ou 6 mois)",
+                    o: "Réductions souvent liées à l’engagement",
+                  },
+                  {
+                    c: "Modération",
+                    k: "Simple : signaler, filtrer, gérer",
+                    o: "Varie selon la plateforme",
+                  },
+                  {
+                    c: "Favoris & échanges",
+                    k: "Accès clair : favoris, messages, accroches",
+                    o: "Varie selon la plateforme",
+                  },
+                ].map((row) => (
+                  <div key={row.c} className="pt-2 border-t border-slate-200/60">
+                    {/* Critère (séparateur) */}
+                    <div className="flex justify-center">
+                      <span className="inline-flex items-center justify-center rounded-full bg-yellow-200/75 border border-yellow-300/70 px-3 py-0.5 text-[10px] sm:text-[11px] font-semibold tracking-tight text-slate-900 w-[170px] sm:w-[210px] max-w-[90%] leading-none">
+                        {row.c}
+                      </span>
+                    </div>
+
+                    {/* 2 colonnes */}
+                    <div className="mt-1.5 grid grid-cols-2 gap-x-4 text-[12px] sm:text-[13px] leading-snug">
+                      <div className="text-slate-900">{row.k}</div>
+                      <div className="text-right text-slate-800">{row.o}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-3 text-xs text-slate-700">
+                Note : comparaison volontairement générale (les fonctionnalités exactes évoluent selon les services).
+              </p>
             </div>
 
-            <p className="mt-2 text-xs text-slate-700">
-              Note : comparaison volontairement générale (les fonctionnalités exactes évoluent selon les services).
-            </p>
+
           </section>
           <section className="mt-8">
             <h2 className="text-lg font-bold text-slate-900">Pourquoi chercher une alternative à Meetic ?</h2>
