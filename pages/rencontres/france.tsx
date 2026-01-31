@@ -21,6 +21,7 @@ const SEO = {
   keywords: [
     // Intent + features
     "rencontre",
+      "meilleur site de rencontre",
      "rencontre gratuit",
     "site de rencontre",
               "rencontre femme gratuit",
@@ -261,7 +262,6 @@ function ProfileTeaserBand() {
         "Sur les autres applis, on scrolle sans jamais vraiment se rencontrer. Ici, avec l’Écho et Keefon+, je croise enfin de vraies personnes, pas juste des profils.",
       avatarSrc: "/avatars_France/France/lea-soleil.png",
       avatarAlt: "Profil fictif Léa_Soleil",
-      priority: true,
     },
     {
       pseudo: "Bertrand",
@@ -271,7 +271,6 @@ function ProfileTeaserBand() {
         "J’aime beaucoup ce site. Avec Keefon+, je peux parler aussi avec des personnes non abonnées. C’est une autre dimension, avec beaucoup moins de pertes de temps.",
       avatarSrc: "/avatars_France/France/bertrand.png",
       avatarAlt: "Profil fictif Bertrand",
-      priority: true,
     },
     {
       pseudo: "Sami",
@@ -435,17 +434,7 @@ export default function FranceRencontresPage() {
         <meta name="twitter:title" content={SEO.title} />
         <meta name="twitter:description" content={SEO.description} />
         <meta name="twitter:image" content={SEO.ogImage} />
-        {/* Preload 2 visuels clés — chemin corrigé (dossier France) */}
-        <link
-          rel="preload"
-          as="image"
-          href="/avatars_France/France/lea-soleil.png"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/avatars_France/France/bertrand.png"
-        />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -723,7 +712,10 @@ export default function FranceRencontresPage() {
 <nav
   aria-label="Villes"
   className="mt-8 border-t border-slate-300/40 pt-3 text-[10px] leading-tight text-slate-700/55"
->
+><Link href="/comparatif/alternative-meetic" className="hover:underline">
+  Alternative à Meetic
+</Link>
+
   <div className="flex flex-wrap justify-center gap-x-2 gap-y-1">
     <Link href="/rencontres/paris" className="hover:underline">Paris</Link><span className="text-slate-700/25">·</span>
     <Link href="/rencontres/lyon" className="hover:underline">Lyon</Link><span className="text-slate-700/25">·</span>
