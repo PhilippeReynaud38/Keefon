@@ -1,68 +1,66 @@
 import Head from "next/head";
 import Link from "next/link";
 
-/**
- * Page article SEO
- * URL: /comparatif/alternative-meetic
- * Objectif: capter les requêtes "alternative à Meetic" sans spam, sans texte caché.
- */
-
 const SEO = {
-  title: "Alternative à Meetic : Keefon, rencontre sans swipe",
+  title: "Alternative à Meetic : une approche sans swipe | Keefon",
   description:
-    "Vous cherchez une alternative à Meetic ? Découvrez Keefon : une plateforme indépendante de rencontres sans swipe, pensée pour des échanges plus humains et respectueux.",
+    "Alternative à Meetic : Keefon propose une approche sans swipe, plus posée et bienveillante, avec une navigation claire et une modération simple.",
   canonical: "https://www.keefon.com/comparatif/alternative-meetic",
   ogImage: "https://www.keefon.com/og/alternative-meetic.jpg",
 };
 
+type Row = {
+  label: string;
+  keefon: string;
+  services: string;
+};
+
 export default function AlternativeMeeticPage() {
-  const faq = [
+  const rows: Row[] = [
+    { label: "Découverte", keefon: "Sans swipe", services: "Varie selon la plateforme" },
     {
-      q: "Keefon est-il affilié à Meetic ?",
-      a: "Non. Keefon est une plateforme indépendante et ne revendique aucune association avec Meetic.",
+      label: "Tempo / pression",
+      keefon: "Moins de pression, échanges posés",
+      services: 'Plus “zapping” / décisions rapides',
     },
+    { label: "Positionnement", keefon: "Échanges bienveillants", services: "Varie selon la plateforme" },
     {
-      q: "Pourquoi chercher une alternative à Meetic ?",
-      a: "Beaucoup de personnes veulent une expérience plus simple, plus calme, et moins centrée sur le “scroll” ou les décisions rapides. L’idée est de favoriser des échanges plus posés.",
+      label: "Sans abonnement",
+      keefon: "Plus de possibilités de rencontres",
+      services: "Souvent plus limité",
     },
+    { label: "Navigation", keefon: "Clair, on se repère vite", services: "Varie selon la plateforme" },
     {
-      q: "Qu’est-ce que “sans swipe” veut dire ?",
-      a: "Au lieu de faire défiler des profils en série, l’approche met l’accent sur la discussion, la découverte et la qualité des échanges.",
+      label: "Tarifs (si abonnement)",
+      keefon: "Prix stables & accessibles (même prix mensuel sur 1 ou 6 mois)",
+      services: "Réductions souvent liées à l’engagement",
     },
+    { label: "Modération", keefon: "Simple : signaler, filtrer, gérer", services: "Varie selon la plateforme" },
     {
-      q: "Keefon est-il gratuit ?",
-      a: "Keefon propose une période d’ouverture avec chat et échanges gratuits. Les modalités peuvent évoluer : vérifiez toujours la page d’inscription pour les conditions à jour.",
+      label: "Favoris & échanges",
+      keefon: "Accès clair : favoris, messages, accroches",
+      services: "Varie selon la plateforme",
     },
   ];
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        name: SEO.title,
-        url: SEO.canonical,
-        description: SEO.description,
-        isPartOf: { "@type": "WebSite", name: "Keefon", url: "https://www.keefon.com" },
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Accueil", item: "https://www.keefon.com" },
-          { "@type": "ListItem", position: 2, name: "Comparatif", item: "https://www.keefon.com/comparatif/alternative-meetic" },
-          { "@type": "ListItem", position: 3, name: "Alternative à Meetic", item: SEO.canonical },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faq.map((f) => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a },
-        })),
-      },
-    ],
-  };
+  const faq = [
+    {
+      q: "Keefon est-il affilié à Meetic ?",
+      a: "Non. Keefon est indépendant et ne revendique aucune association avec Meetic (ni avec d’autres plateformes).",
+    },
+    {
+      q: "Pourquoi chercher une alternative à Meetic ?",
+      a: "Souvent pour une expérience plus calme, moins basée sur le tri rapide, et avec une navigation plus simple.",
+    },
+    {
+      q: "Qu’est-ce que “sans swipe” veut dire ?",
+      a: "Ça veut dire : moins de décisions instantanées, plus de place à l’échange et à la discussion.",
+    },
+    {
+      q: "Keefon est-il gratuit ?",
+      a: "Selon la période : il peut y avoir une gratuité d’ouverture (ex. jusqu’à fin 2026 pour les 2 000 premiers inscrits, selon conditions). Ensuite, l’abonnement est pensé pour rester abordable.",
+    },
+  ];
 
   return (
     <>
@@ -70,247 +68,193 @@ export default function AlternativeMeeticPage() {
         <title>{SEO.title}</title>
         <meta name="description" content={SEO.description} />
         <link rel="canonical" href={SEO.canonical} />
-
-        {/* Open Graph */}
-        <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="Keefon" />
         <meta property="og:title" content={SEO.title} />
         <meta property="og:description" content={SEO.description} />
-        <meta property="og:url" content={SEO.canonical} />
         <meta property="og:image" content={SEO.ogImage} />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={SEO.title} />
-        <meta name="twitter:description" content={SEO.description} />
-        <meta name="twitter:image" content={SEO.ogImage} />
-
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <meta property="og:type" content="website" />
       </Head>
 
-      <main className="min-h-screen" style={{ background: "linear-gradient(180deg, rgba(184,229,93,0.55) 0%, rgba(160,220,255,0.60) 35%, rgba(232,255,241,0.95) 100%)" }}>
-        <article className="mx-auto max-w-3xl px-4 py-10">
-          <div className="rounded-3xl border border-slate-200/70 bg-slate-50/60/70 p-6 shadow-sm backdrop-blur sm:p-8">
-          <p className="text-xs text-slate-600">
-            <Link href="/" className="hover:underline">
-              Accueil
-            </Link>{" "}
-            <span className="opacity-50">/</span>{" "}
-            <span className="text-slate-800">Alternative à Meetic</span>
-          </p>
+      <main className="min-h-screen bg-gradient-to-b from-sky-100 via-cyan-100 to-emerald-100">
+        <article className="mx-auto max-w-4xl px-4 py-10">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-6 sm:p-10 shadow-sm">
+            {/* Breadcrumb */}
+            <nav className="text-xs text-slate-600">
+              <Link href="/" className="hover:underline">
+                Accueil
+              </Link>{" "}
+              <span className="opacity-60">/</span>{" "}
+              <span className="font-medium text-slate-700">Alternative à Meetic</span>
+            </nav>
 
-          <header className="mt-3">
-            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-              Alternative à Meetic : une approche sans swipe
-            </h1>
-            <p className="mt-3 text-base leading-relaxed text-slate-800">
-              Si vous cherchez une <strong>alternative à Meetic</strong>, c’est souvent pour une raison simple : vous voulez
-              des échanges plus posés, plus clairs, et une expérience moins “bruyante”. Keefon est une plateforme{" "}
-              <strong>indépendante</strong> qui met l’accent sur une approche <strong>sans swipe</strong> et sur la qualité
-              des conversations.
-            </p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link
-                href="/presignup"
-                className="rounded-full bg-lime-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:brightness-95"
-              >
-                Créer mon profil
-              </Link>
-              <Link
-                href="/rencontres/france"
-                className="rounded-full border border-sky-200/80 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-sky-50/60"
-              >
-                Rencontres en France
-              </Link>
-            </div>
-
-            {/* Offre de lancement (optionnel) */}
-            <div className="mt-4 rounded-2xl border border-yellow-300/70 bg-yellow-100/80 p-4">
-              <p className="text-sm font-semibold text-slate-900">Offre de lancement</p>
-              <p className="mt-1 text-sm text-slate-800">
-                Gratuité jusqu’à fin 2026 pour les <strong>2&nbsp;000 premiers inscrits</strong> (selon conditions en vigueur).
+            {/* Title */}
+            <header className="mt-3">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+                Alternative à Meetic : une approche sans swipe
+              </h1>
+              <p className="mt-3 text-slate-800">
+                Si vous cherchez une <strong>alternative à Meetic</strong>, c’est souvent pour une raison simple : vous
+                voulez des échanges plus posés, plus clairs, et une expérience moins “bruyante”. Keefon est une plateforme{" "}
+                <strong>indépendante</strong> qui met l’accent sur une approche <strong>sans swipe</strong> et sur la qualité
+                des conversations.
               </p>
-              <p className="mt-1 text-xs text-slate-600">
-                Et quand un abonnement est proposé, il est pensé pour rester <strong>abordable</strong>.
-              </p>
-            </div>
-          </header>
 
-
-
-          <section className="mt-8">
-            <h2 className="text-lg font-bold text-slate-900">Comparaison rapide</h2>
-            {/* Comparatif “côte à côte” (principe : critère = séparateur, puis 2 colonnes) */}
-            <div className="mt-3">
-              {/* En-têtes */}
-              <div className="grid grid-cols-2 gap-x-4 text-[12px] sm:text-[13px] font-semibold text-slate-900">
-                <div>Keefon</div>
-                <div className="text-right">Services populaires</div>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  href="/signup"
+                  className="rounded-full bg-lime-400 px-5 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:bg-lime-300"
+                >
+                  Créer mon profil
+                </Link>
+                <Link
+                  href="/rencontres/france"
+                  className="rounded-full border border-slate-300 bg-white/70 px-5 py-2 text-sm font-semibold text-slate-800 hover:bg-white"
+                >
+                  Rencontres en France
+                </Link>
               </div>
+            </header>
 
-              {/* Lignes */}
-              <div className="mt-2 grid gap-2">
-                {[
-                  {
-                    c: "Découverte",
-                    k: "Sans swipe",
-                    o: "Varie selon la plateforme",
-                  },
-                  {
-                    c: "Tempo / pression",
-                    k: "Moins de pression, échanges posés",
-                    o: "Plus “zapping” / décisions rapides",
-                  },
-                  {
-                    c: "Positionnement",
-                    k: "Échanges bienveillants",
-                    o: "Varie selon la plateforme",
-                  },
-                  {
-                    c: "Sans abonnement",
-                    k: "Plus de possibilités de rencontres",
-                    o: "Souvent plus limité",
-                  },
-                  {
-                    c: "Navigation",
-                    k: "Clair, on se repère vite",
-                    o: "Varie selon la plateforme",
-                  },
-                  {
-                    c: "Tarifs (si abonnement)",
-                    k: "Prix stables & accessibles (même prix mensuel sur 1 ou 6 mois)",
-                    o: "Réductions souvent liées à l’engagement",
-                  },
-                  {
-                    c: "Modération",
-                    k: "Simple : signaler, filtrer, gérer",
-                    o: "Varie selon la plateforme",
-                  },
-                  {
-                    c: "Favoris & échanges",
-                    k: "Accès clair : favoris, messages, accroches",
-                    o: "Varie selon la plateforme",
-                  },
-                ].map((row) => (
-                  <div key={row.c} className="pt-2 border-t border-slate-200/60">
-                    {/* Critère (séparateur) */}
-                    <div className="flex justify-center">
-                      <span className="inline-flex items-center justify-center rounded-full bg-yellow-200/75 border border-yellow-300/70 px-3 py-0.5 text-[10px] sm:text-[11px] font-semibold tracking-tight text-slate-900 w-[170px] sm:w-[210px] max-w-[90%] leading-none">
-                        {row.c}
-                      </span>
-                    </div>
+            {/* Offer box */}
+            <section className="mt-8">
+              <div className="rounded-2xl border border-yellow-300/70 bg-yellow-200/60 p-4 sm:p-5">
+                <h2 className="text-sm font-bold text-slate-900">Offre de lancement</h2>
+                <p className="mt-1 text-slate-800">
+                  Gratuité jusqu’à fin 2026 pour les <strong>2 000 premiers inscrits</strong> (selon conditions en vigueur).
+                </p>
+                <p className="mt-1 text-sm text-slate-700">
+                  Et quand un abonnement est proposé, il est pensé pour rester <strong>abordable</strong>.
+                </p>
+              </div>
+            </section>
 
-                    {/* 2 colonnes */}
-                    <div className="mt-1.5 grid grid-cols-2 gap-x-4 text-[12px] sm:text-[13px] leading-snug">
-                      <div className="text-slate-900">{row.k}</div>
-                      <div className="text-right text-slate-800">{row.o}</div>
+            {/* Comparison */}
+            <section className="mt-8">
+              <h2 className="text-xl font-extrabold text-slate-900">Comparaison rapide</h2>
+
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-white/55 p-4">
+                <div className="grid grid-cols-2 gap-x-3 sm:gap-x-6 text-[12px] sm:text-[13px] font-semibold text-slate-800">
+                  <div>Keefon</div>
+                  <div className="text-right">Services populaires</div>
+                </div>
+
+                <div className="mt-3 space-y-4">
+                  {rows.map((r) => (
+                    <div key={r.label}>
+                      <div className="flex justify-center">
+                        <span className="inline-flex items-center justify-center rounded-full bg-yellow-200/75 border border-yellow-300/70 px-4 py-[2px] text-[9.5px] sm:text-[10px] font-semibold tracking-tight text-slate-900 w-[220px] sm:w-[260px] max-w-[96%] leading-none">
+                          {r.label}
+                        </span>
+                      </div>
+
+                      <div className="mt-1.5 grid grid-cols-2 gap-x-3 sm:gap-x-6 text-[12px] sm:text-[13px] leading-snug">
+                        <div className="text-slate-900">{r.keefon}</div>
+                        <div className="text-right text-slate-700">{r.services}</div>
+                      </div>
+
+                      <div className="mt-2 h-px bg-slate-200/60" />
                     </div>
-                  </div>
+                  ))}
+                </div>
+
+                <p className="mt-2 text-[12px] text-slate-600">
+                  Note : comparaison volontairement générale (les fonctionnalités exactes évoluent selon les services).
+                </p>
+              </div>
+            </section>
+
+            {/* Why */}
+            <section className="mt-10">
+              <h2 className="text-xl font-extrabold text-slate-900">Pourquoi chercher une alternative à Meetic ?</h2>
+              <p className="mt-3 text-slate-800">
+                Beaucoup de personnes veulent sortir du “défilement” sans fin et retrouver un espace plus humain :
+              </p>
+              <ul className="mt-3 list-disc pl-5 text-slate-800 space-y-1">
+                <li>Moins de défilement, plus d’échange : une approche sans swipe qui privilégie la discussion.</li>
+                <li>
+                  <strong>Ouvert à tous les âges</strong> : une expérience pensée pour celles et ceux qui veulent du sérieux,
+                  du respect, et du temps de qualité.
+                </li>
+                <li>
+                  <strong>Plateforme française</strong> : un cadre conçu en France, avec une attention particulière à la
+                  clarté et à la transparence.
+                </li>
+                <li>
+                  <strong>Plusieurs options de tri</strong> : vous gardez le contrôle sur qui vous intéresse (et ce que vous
+                  ne voulez pas).
+                </li>
+                <li>
+                  <strong>Outils de signalement / modération</strong> : pour gérer les profils ou comportements qui vous
+                  interpellent.
+                </li>
+                <li>Un environnement plus clair, où l’on se repère facilement (pages, infos, parcours).</li>
+              </ul>
+            </section>
+
+            {/* What changes */}
+            <section className="mt-8">
+              <h2 className="text-lg font-bold text-slate-900">Keefon : ce qui change (sans promesse floue)</h2>
+              <p className="mt-3 text-slate-800">
+                L’objectif n’est pas de “faire mieux que tout le monde” avec des slogans, mais de proposer une alternative
+                claire :
+              </p>
+              <ul className="mt-3 list-disc pl-5 text-slate-800 space-y-1">
+                <li>
+                  <strong>Sans swipe</strong> : moins de décisions instantanées, plus de place à l’échange.
+                </li>
+                <li>
+                  <strong>Approche bienveillante</strong> : un cadre pensé pour des interactions respectueuses.
+                </li>
+                <li>
+                  <strong>Indépendant</strong> : Keefon ne revendique aucune association avec les grandes plateformes.
+                </li>
+              </ul>
+            </section>
+
+            <section className="mt-8">
+              <h2 className="text-lg font-bold text-slate-900">Une approche plus ouverte, même sans abonnement</h2>
+              <p className="mt-3 text-slate-800">
+                Keefon fait attention aux personnes qui ne souhaitent pas payer un abonnement. L’idée, c’est de garder une
+                expérience accessible : plusieurs façons de découvrir et d’échanger restent possibles, et pendant la période
+                d’ouverture, le chat peut être proposé gratuitement selon les conditions du moment.
+              </p>
+              <p className="mt-2 text-sm text-slate-700">
+                Notre objectif : aider un maximum de personnes à créer de vraies rencontres, sans exclure celles et ceux qui
+                n’ont pas envie (ou pas la possibilité) de payer — et avec un site clair, où l’on ne se perd pas.
+              </p>
+            </section>
+
+            <section className="mt-8">
+              <h2 className="text-lg font-bold text-slate-900">FAQ</h2>
+              <div className="mt-3 space-y-3">
+                {faq.map((f) => (
+                  <details key={f.q} className="rounded-xl border border-slate-200 bg-white/60 p-4">
+                    <summary className="cursor-pointer select-none font-semibold text-slate-900">{f.q}</summary>
+                    <p className="mt-2 text-slate-800">{f.a}</p>
+                  </details>
                 ))}
               </div>
+            </section>
 
-              <p className="mt-3 text-xs text-slate-700">
-                Note : comparaison volontairement générale (les fonctionnalités exactes évoluent selon les services).
+            <section className="mt-8 rounded-xl border border-slate-200 bg-white/60 p-4">
+              <h2 className="text-sm font-bold text-slate-900">Mention</h2>
+              <p className="mt-1 text-xs text-slate-700">
+                Alternative aux applications de rencontre (exemples : Meetic, Tinder, Badoo, Bumble). Keefon est indépendant et
+                ne revendique aucune association avec ces marques.
               </p>
-            </div>
+              <p className="mt-1 text-[11px] text-slate-600">
+                Meetic, Tinder, Badoo et Bumble sont des marques appartenant à leurs propriétaires respectifs. Aucune affiliation.
+              </p>
+            </section>
 
-
-          </section>
-          <section className="mt-8">
-            <h2 className="text-lg font-bold text-slate-900">Pourquoi chercher une alternative à Meetic ?</h2>
-            <p className="mt-3 text-slate-800">
-              Beaucoup de personnes veulent sortir du “défilé infini” et retrouver un espace plus humain : on prend le temps
-              de parler, de se respecter, et de choisir avec plus de sérénité.
-            </p>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-800">
-              <li>
-                <strong>Moins de défilement, plus d’échange</strong> : une approche sans swipe qui privilégie la conversation.
-              </li>
-              <li>
-                <strong>Ouvert à tous les âges</strong> : une expérience pensée pour celles et ceux qui veulent du sérieux, du respect,
-                et du temps de qualité.
-              </li>
-              <li>
-                <strong>Plateforme française</strong> : un cadre conçu en France, avec une attention particulière à la clarté et à la
-                transparence.
-              </li>
-              <li>
-                <strong>Plusieurs options de tri</strong> : vous gardez le contrôle sur ce qui vous intéresse (et ce que vous ne voulez pas).
-              </li>
-              <li>
-                <strong>Outils de signalement / modération</strong> : pour gérer les profils ou comportements qui vous interpellent.
-              </li>
-            </ul>
-            <p className="mt-3 text-sm text-slate-700">
-              Et surtout : un environnement plus clair, où l’on se repère facilement (pages, infos, parcours).
-            </p>
-          </section>
-
-          <section className="mt-8">
-            <h2 className="text-lg font-bold text-slate-900">Keefon : ce qui change (sans promesse floue)</h2>
-            <p className="mt-3 text-slate-800">
-              L’objectif n’est pas de “faire mieux que tout le monde” avec des slogans, mais de proposer une alternative
-              claire :
-            </p>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-slate-800">
-              <li>
-                <strong>Sans swipe</strong> : moins de décisions instantanées, plus de place à l’échange.
-              </li>
-              <li>
-                <strong>Approche bienveillante</strong> : un cadre pensé pour des interactions respectueuses.
-              </li>
-              <li>
-                <strong>Indépendant</strong> : Keefon ne revendique aucune association avec les grandes plateformes.
-              </li>
-            </ul>
-          </section>
-
-          <section className="mt-8">
-            <h2 className="text-lg font-bold text-slate-900">Une approche plus ouverte, même sans abonnement</h2>
-            <p className="mt-3 text-slate-800">
-              Keefon fait attention aux personnes qui ne souhaitent pas payer un abonnement. L’idée, c’est de garder une
-              expérience accessible : plusieurs façons de découvrir et d’échanger restent possibles, et pendant la période
-              d’ouverture, le chat peut être proposé gratuitement selon les conditions du moment.
-            </p>
-            <p className="mt-2 text-sm text-slate-700">
-              Notre objectif : aider un maximum de personnes à créer de vraies rencontres, sans exclure celles et ceux qui
-              n’ont pas envie (ou pas la possibilité) de payer — et avec un site clair, où l’on ne se perd pas.
-            </p>
-          </section>
-
-          <section className="mt-8">
-            <h2 className="text-lg font-bold text-slate-900">FAQ</h2>
-            <div className="mt-3 space-y-3">
-              {faq.map((f) => (
-                <details key={f.q} className="rounded-xl border border-slate-200 bg-white/60 p-4">
-                  <summary className="cursor-pointer select-none font-semibold text-slate-900">{f.q}</summary>
-                  <p className="mt-2 text-slate-800">{f.a}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-8 rounded-xl border border-slate-200 bg-white/60 p-4">
-            <h2 className="text-sm font-bold text-slate-900">Mention</h2>
-            <p className="mt-1 text-xs text-slate-700">
-              Alternative aux applications de rencontre (exemples : Meetic, Tinder, Badoo, Bumble). Keefon est indépendant et
-              ne revendique aucune association avec ces marques.
-            </p>
-            <p className="mt-1 text-[11px] text-slate-600">
-              Meetic, Tinder, Badoo et Bumble sont des marques appartenant à leurs propriétaires respectifs. Aucune affiliation.
-            </p>
-          </section>
-
-          <footer className="mt-8 text-xs text-slate-600">
-            <p>
-              Astuce : pour une recherche locale, essayez{" "}
-              <Link href="/rencontres/paris" className="hover:underline">
-                Rencontre Paris
-              </Link>{" "}
-              (ou votre ville) et comparez l’expérience.
-            </p>
-          </footer>
+            <footer className="mt-8 text-xs text-slate-600">
+              <p>
+                Astuce : pour une recherche locale, essayez{" "}
+                <Link href="/rencontres/paris" className="hover:underline">
+                  Rencontre Paris
+                </Link>{" "}
+                (ou votre ville) et comparez l’expérience.
+              </p>
+            </footer>
           </div>
         </article>
       </main>
