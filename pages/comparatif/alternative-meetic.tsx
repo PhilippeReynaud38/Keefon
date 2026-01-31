@@ -141,65 +141,64 @@ export default function AlternativeMeeticPage() {
 
           <section className="mt-8">
             <h2 className="text-lg font-bold text-slate-900">Comparaison rapide</h2>
-
-            <div className="mt-3 rounded-2xl border border-yellow-300/70 bg-yellow-100/80 p-4">
-<div className="mt-3 overflow-x-auto rounded-xl border border-yellow-300/60 bg-white/55">
-              <table className="w-full text-sm">
-                <thead className="bg-yellow-100/50 text-left">
-                  <tr>
-                    <th className="p-3 font-semibold text-slate-700">Critère</th>
-                    <th className="p-3 font-semibold text-slate-700">Keefon</th>
-                    <th className="p-3 font-semibold text-slate-700">Services populaires</th>
+            {/* Retour au tableau (mobile-friendly via scroll horizontal) — sans cadres */}
+            <div className="mt-3 -mx-4 px-4 overflow-x-auto">
+              <table className="min-w-[760px] w-full text-sm">
+                <thead className="text-left">
+                  <tr className="border-b border-slate-200/60">
+                    <th className="p-3 font-bold text-slate-900">Critère</th>
+                    <th className="p-3 font-bold text-slate-900">Keefon</th>
+                    <th className="p-3 font-bold text-slate-900">Services populaires</th>
                   </tr>
                 </thead>
                 <tbody className="text-slate-800">
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Découverte</td>
                     <td className="p-3">Sans swipe</td>
                     <td className="p-3">Varie selon la plateforme</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Tempo / pression</td>
                     <td className="p-3">Moins de pression, échanges posés</td>
                     <td className="p-3">Plus “zapping” / décisions rapides</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Positionnement</td>
                     <td className="p-3">Échanges bienveillants</td>
                     <td className="p-3">Varie selon la plateforme</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Sans abonnement</td>
                     <td className="p-3">Plus de possibilités de rencontres</td>
                     <td className="p-3">Souvent plus limité</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Navigation</td>
                     <td className="p-3">Clair, on se repère vite</td>
                     <td className="p-3">Varie selon la plateforme</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Tarifs (si abonnement)</td>
                     <td className="p-3">Prix stables &amp; accessibles (même prix mensuel sur 1 ou 6 mois)</td>
                     <td className="p-3">Réductions souvent liées à l’engagement</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-b border-slate-200/40">
                     <td className="p-3">Modération</td>
                     <td className="p-3">Simple : signaler, filtrer, gérer</td>
                     <td className="p-3">Varie selon la plateforme</td>
                   </tr>
-                  <tr className="border-t border-slate-100">
+                  <tr>
                     <td className="p-3">Favoris &amp; échanges</td>
                     <td className="p-3">Accès clair : favoris, messages, accroches</td>
                     <td className="p-3">Varie selon la plateforme</td>
-                  </tr></tbody>
+                  </tr>
+                </tbody>
               </table>
             </div>
 
-            <p className="mt-2 text-xs text-slate-600">
-              Note : cette comparaison est volontairement générale (les fonctionnalités exactes évoluent selon les services). Les tarifs et conditions peuvent évoluer : vérifiez toujours les infos affichées sur Keefon.
+            <p className="mt-2 text-xs text-slate-700">
+              Note : comparaison volontairement générale (les fonctionnalités exactes évoluent selon les services).
             </p>
-            </div>
           </section>
           <section className="mt-8">
             <h2 className="text-lg font-bold text-slate-900">Pourquoi chercher une alternative à Meetic ?</h2>
