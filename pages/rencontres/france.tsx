@@ -483,38 +483,7 @@ export default function FranceRencontresPage() {
                 </span>
               </div>
 
-                <div className="mt-3 flex justify-center">
-<nav className="mt-1 flex flex-wrap justify-center gap-x-2 gap-y-1 text-[10px] leading-tight text-slate-700/60">
-  <Link href="/rencontres/paris" className="hover:underline">Paris</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/lyon" className="hover:underline">Lyon</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/marseille" className="hover:underline">Marseille</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/toulouse" className="hover:underline">Toulouse</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/nice" className="hover:underline">Nice</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/nantes" className="hover:underline">Nantes</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/montpellier" className="hover:underline">Montpellier</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/strasbourg" className="hover:underline">Strasbourg</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/rennes" className="hover:underline">Rennes</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/lille" className="hover:underline">Lille</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/bordeaux" className="hover:underline">Bordeaux</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/grenoble" className="hover:underline">Grenoble</Link>
-  <span className="text-slate-700/30">·</span>
-  <Link href="/rencontres/saint-etienne" className="hover:underline">Saint-Étienne</Link>
-</nav>
 
-
-
-  </div>
 
               {/* Badge prononciation Keefon, optimisé mobile */}
               <div className="mt-2 flex justify-center">
@@ -750,6 +719,29 @@ export default function FranceRencontresPage() {
 
         {/* Footer légal discret */}
         <footer className="pt-4 pb-10">
+{/* Liens villes (en bas, discret, SEO OK) */}
+<nav
+  aria-label="Villes"
+  className="mt-8 border-t border-slate-300/40 pt-3 text-[10px] leading-tight text-slate-700/55"
+>
+  <div className="flex flex-wrap justify-center gap-x-2 gap-y-1">
+    <Link href="/rencontres/paris" className="hover:underline">Paris</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/lyon" className="hover:underline">Lyon</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/marseille" className="hover:underline">Marseille</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/toulouse" className="hover:underline">Toulouse</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/nice" className="hover:underline">Nice</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/nantes" className="hover:underline">Nantes</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/montpellier" className="hover:underline">Montpellier</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/strasbourg" className="hover:underline">Strasbourg</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/rennes" className="hover:underline">Rennes</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/lille" className="hover:underline">Lille</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/bordeaux" className="hover:underline">Bordeaux</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/grenoble" className="hover:underline">Grenoble</Link><span className="text-slate-700/25">·</span>
+    <Link href="/rencontres/saint-etienne" className="hover:underline">Saint-Étienne</Link>
+  </div>
+</nav>
+
+
           <div className="mx-auto max-w-5xl px-4">
             <p className="mt-2 text-[11px] text-center text-slate-900">
               <Link href="/cgu" className="hover:underline">
