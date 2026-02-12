@@ -31,54 +31,39 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Nantes et autour | Keefon",
+  title: "Rencontres à Nantes (44) et alentours | Keefon",
   description:
-    "Keefon Nantes est une page dédiée aux rencontres bienveillantes à Nantes et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Rencontre à Nantes et autour (Rezé, Saint-Herblain, Orvault, Vertou…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/nantes",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-nantes.jpg",
   keywords: [
-    // Intent + features
-    "rencontre Nantes",
-    "rencontre gratuit Nantes",
-    "rencontres Nantes",
-    "site de rencontre Nantes",
-    "rencontres bienveillantes Nantes",
-    "rencontre locale Nantes",
-    "rencontre proche de chez moi Nantes",
-    "rencontre Loire-Atlantique",
-    "rencontres Loire-Atlantique",
-    "rencontres Pays de la Loire",
-    "chat gratuit Nantes",
-    "chat rencontre gratuit Nantes",
-    "messagerie gratuite Nantes",
-    "profils certifiés",
-    "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
-    "rencontre respectueuse",
-    "dating Nantes",
-    "dating Loire-Atlantique",
-    "rencontre adultes consentants",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Nantes",
-    "Rezé",
-    "Saint-Herblain",
-    "Orvault",
-    "Carquefou",
-    "Saint-Sébastien-sur-Loire",
-    "Bouguenais",
-    "Vertou",
-    "La Chapelle-sur-Erdre",
-    "Loire-Atlantique",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Nantes",
-    "rencontre après 30 ans Nantes",
-    "rencontre après 40 ans Nantes",
-    "rencontre après 50 ans Loire-Atlantique",
+    "rencontre nantes",
+    "rencontres nantes",
+    "site de rencontre nantes",
+    "rencontre nantes 44",
+    "rencontre loire-atlantique",
+    "rencontres pays de la loire",
+    "dating nantes",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit nantes",
+    "messagerie gratuite nantes",
+    "rencontre sérieuse nantes",
+    "rencontre nantes centre-ville",
+    "rencontre île de nantes",
+    "rencontre graslin",
+    "rencontre bouffay",
+    "rencontre trentemoult",
+    "rencontre rezé",
+    "rencontre saint-herblain",
+    "rencontre orvault",
+    "rencontre vertou",
+    "rencontre saint-sébastien-sur-loire",
+    "rencontre carquefou",
+    "rencontre après 30 ans nantes",
+    "rencontre après 40 ans nantes",
+    "rencontre après 50 ans nantes",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -386,12 +371,11 @@ export default function NantesRencontresPage() {
                 Rencontres bienveillantes à Nantes et autour
               </h1>
 
-              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Une plateforme française pour celles et ceux qui vivent à Nantes
-                et dans les villes autour (Rezé, Saint-Herblain, bords de Loire
-                et de l’Erdre…) et qui veulent des rencontres plus humaines,
-                sans swipe toxique.
-              </p>
+              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">Une plateforme française pour celles et ceux qui vivent à
+                Nantes et dans la métropole (Rezé, Saint-Herblain,
+                Orvault, Vertou…) et qui veulent des rencontres plus
+                humaines, sans swipe toxique — avec l’idée de se voir facilement
+                (Bouffay, Graslin, Île de Nantes, Trentemoult…).</p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
                 Keefon est créée et hébergée en France, dans le cadre des lois
@@ -447,7 +431,7 @@ export default function NantesRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Nantes / Loire-Atlantique
+                  2. Tu indiques ta zone (Nantes & alentours) / Loire-Atlantique
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -596,7 +580,103 @@ export default function NantesRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Nantes : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Nantes : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Nantes est une ville où on peut se voir facilement si on choisit
+                un cadre simple : centre, île, bords de l’Erdre. Le bon réflexe :
+                un rendez-vous public court, puis une activité légère si le courant
+                passe (sans surcharger le plan).
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Bouffay</strong> : central, vivant, beaucoup de cafés.
+                </li>
+                <li>
+                  <strong>Graslin</strong> : ambiance plus posée, parfait pour un
+                  premier verre simple.
+                </li>
+                <li>
+                  <strong>Île de Nantes</strong> : balade facile, spots publics,
+                  option “moderne” et claire.
+                </li>
+                <li>
+                  <strong>Trentemoult</strong> : cadre sympa (si vous fixez un point précis),
+                  bon pour une balade.
+                </li>
+                <li>
+                  <strong>Erdre</strong> : marche au calme, très public, idéal pour discuter.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui créent du lien (sans pression)
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Sport, danse, clubs, assos, ateliers, sorties culturelles… À Nantes,
+                une expo, un marché, ou une marche bords de l’Erdre donnent un cadre
+                simple. Et pour les plus actifs : activités outdoor et clubs de sport
+                aident à rencontrer naturellement, sans “forcer” la conversation.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Nantes ?
+                  </summary>
+                  <p className="mt-1">
+                    Bouffay ou Graslin pour un café, ou une balade courte Île de Nantes / Erdre :
+                    public, clair, facile à écourter.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en périphérie (Rezé, Saint-Herblain, etc.) ?
+                  </summary>
+                  <p className="mt-1">
+                    Choisissez un point “pivot” accessible (centre, tram). Le but :
+                    se voir sans friction et pouvoir se revoir facilement.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment éviter les échanges qui n’aboutissent jamais ?
+                  </summary>
+                  <p className="mt-1">
+                    Quelques messages utiles, puis un plan simple. Si ça ne bouge pas,
+                    tu passes à autre chose : c’est la meilleure protection.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Marché + café, ou balade au bord de l’Erdre : tu as un cadre, un sujet,
+                    et moins de pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -608,45 +688,7 @@ export default function NantesRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/lille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/grenoble"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Grenoble
-                  </Link>
-                </li>
-              </ul>
+                .         </p>
             </div>
           </div>
         </section>

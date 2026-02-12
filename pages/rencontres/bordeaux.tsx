@@ -557,7 +557,108 @@ export default function BordeauxRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Bordeaux : quartiers, loisirs, mini-FAQ (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Bordeaux : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Bordeaux est une ville facile pour se voir… si tu restes simple.
+                Entre les quais de Garonne, les terrasses et les quartiers très
+                identifiables, tu peux proposer un rendez-vous public clair,
+                sans “grand scénario”. L’idée : choisir un point de repère
+                évident et éviter les trajets compliqués.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des zones pratiques pour un premier rendez-vous
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Saint-Pierre / Quinconces</strong> : centre, facile à
+                  retrouver, beaucoup de terrasses.
+                </li>
+                <li>
+                  <strong>Chartrons</strong> : ambiance plus calme, cafés, balade
+                  le long des quais.
+                </li>
+                <li>
+                  <strong>Victoire</strong> : vivant, simple pour un café rapide
+                  (si tu veux rester “court”).
+                </li>
+                <li>
+                  <strong>Bastide (rive droite)</strong> : alternative tranquille
+                  avec vue, pratique selon où vous habitez.
+                </li>
+                <li>
+                  <strong>Métropole</strong> (Mérignac, Pessac, Talence, Bègles…)
+                  : ok si vous choisissez un lieu “pivot” accessible en tram.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui créent du lien (sans pression)
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Les rencontres marchent bien quand il y a un “prétexte” léger :
+                running / vélo sur les quais, sport, danse, ateliers (photo,
+                cuisine), associations, marchés (Capucins) ou une expo.
+                Ça évite l’effet entretien d’embauche et ça rend la discussion
+                naturelle.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un rendez-vous simple à Bordeaux ?
+                  </summary>
+                  <p className="mt-1">
+                    Un café vers Quinconces / Saint-Pierre, ou une marche courte
+                    sur les quais côté Chartrons : public, facile, sans pression.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on habite en périphérie ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point “pivot” tram / centre plutôt que de vous
+                    compliquer la vie. L’objectif, c’est de pouvoir se revoir,
+                    pas de faire une expédition.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment garder un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    Toujours en public, à une heure raisonnable, et avec un plan
+                    simple. Tu gardes la main sur le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée facile pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Marché + café (Capucins / centre) ou petite balade sur les
+                    quais : ça donne un sujet et ça enlève la pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">

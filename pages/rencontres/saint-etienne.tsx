@@ -595,7 +595,106 @@ export default function SaintEtienneRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Saint-Étienne : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Saint-Étienne : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                À Saint-Étienne, l’avantage c’est la simplicité : on peut se voir
+                sans se noyer dans la foule, et garder des rendez-vous courts,
+                clairs et publics. Le bon réflexe : choisir un point de repère
+                évident (tram, centre), puis proposer une activité légère si le
+                courant passe.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Centre / Hôtel de Ville</strong> : repères simples,
+                  terrasses, facile à retrouver.
+                </li>
+                <li>
+                  <strong>Place Jean-Jaurès</strong> : central, accessible,
+                  pratique pour un café rapide.
+                </li>
+                <li>
+                  <strong>Cité du Design / Manufacture</strong> : cadre original,
+                  balade/expo, bon “prétexte” pour discuter.
+                </li>
+                <li>
+                  <strong>Parcs</strong> (Parc de l’Europe…) : option “safe” et
+                  très publique pour parler au calme.
+                </li>
+                <li>
+                  <strong>Autour</strong> (Saint-Chamond, Firminy, Andrézieux…)
+                  : choisissez un point pivot accessible pour rester fluide.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent naturellement
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Sport, danse, clubs, associations, ateliers créatifs, sorties
+                culturelles… Ce sont des contextes où tu rencontres sans pression,
+                et où la discussion vient naturellement. Le but : moins de bruit,
+                plus de concret.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Saint-Étienne ?
+                  </summary>
+                  <p className="mt-1">
+                    Jean-Jaurès ou Hôtel de Ville : c’est central, public, et
+                    facile à écourter si besoin.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en périphérie ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point pivot (tram/centre) plutôt que de compliquer
+                    les trajets. L’objectif : se voir facilement, et pouvoir se revoir.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment garder un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    Rendez-vous en public, heure raisonnable, plan simple. Tu gardes
+                    la main sur le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Petite balade + café (centre) ou expo : vous avez un sujet,
+                    et moins de pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -607,45 +706,7 @@ export default function SaintEtienneRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/grenoble"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Grenoble
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
-                  </Link>
-                </li>
-              </ul>
+                .            </p>
             </div>
           </div>
         </section>

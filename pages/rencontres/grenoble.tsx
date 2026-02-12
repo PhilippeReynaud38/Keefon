@@ -1,7 +1,7 @@
 /**
  * Fichier : pages/rencontres/grenoble.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Grenoble / Métropole
- * MAJ : 2025-11-19 — Version basée sur Lyon.tsx, adaptée à Grenoble + métropole
+ * MAJ : 2025-12-01 — Remplacement next/image → <img> pour les avatars locaux
  *
  * Contexte :
  * - Page vitrine dédiée à la zone Grenoble / Métropole, en plus de la page générale France.
@@ -9,7 +9,7 @@
  * - Pas de promesse de filtres avancés : on parle de “Grenoble et sa métropole” de façon large.
  *
  * Dépendances :
- * - next/head, next/image, next/link
+ * - next/head, next/link
  * - Tailwind pour les classes utilitaires
  *
  * Données lues :
@@ -24,23 +24,20 @@
  */
 
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
   title: "Rencontres bienveillantes à Grenoble et dans la métropole | Keefon",
   description:
     "Keefon Grenoble est une page dédiée aux rencontres bienveillantes à Grenoble et dans sa métropole : échanges respectueux, profils protégés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
-  canonical: "https://www.keefon.com/rencontres/grenoble",
+  canonical: "https://www.keefon.com/rencontres/Grenoble",
   siteName: "Keefon",
-  ogImage: "https://www.keefon.com/og/rencontres-Grenoble.jpg",
+  ogImage: "https://www.keefon.com/og/rencontres-grenoble.jpg",
   keywords: [
     // Intent + features (adapté à Grenoble / métropole)
     "rencontre Grenoble",
-       "rencontre gratuit Grenoble",
-          "rencontre femme gratuit Grenoble",
-             "rencontre femme Grenoble",
     "rencontres Grenoble",
     "site de rencontre Grenoble",
     "rencontres bienveillantes Grenoble",
@@ -57,6 +54,14 @@ const SEO = {
     "vérification profil",
     "respect et sécurité",
     "rencontre respectueuse",
+    "anti harcèlement",
+    "sans swipe",
+    "sans swipe infini",
+    "sans algorithme opaque",
+    "anti addiction",
+    "plateforme RGPD",
+    "respect CNIL",
+    "protection des données",
     "dating Grenoble",
     "dating Isère",
     "rencontre adultes consentants",
@@ -82,9 +87,9 @@ const SEO = {
     "rencontre après 50 ans Grenoble",
   ].join(", "),
   breadcrumb: [
-    { name: "Accueil", url: "https://www.keefon.com" },
+    { name: "Accueil", url: "https://www.keefon.com/" },
     { name: "Rencontres", url: "https://www.keefon.com/rencontres" },
-    { name: "Grenoble", url: "https://www.keefon.com/rencontres/grenoble" },
+    { name: "Grenoble", url: "https://www.keefon.com/rencontres/Grenoble" },
   ],
 };
 
@@ -118,7 +123,7 @@ function FreeTopBar() {
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+            Aucune carte bancaire demandée. Profite-en dès maintenant.
           </span>
         </p>
 
@@ -203,7 +208,7 @@ function ProfileTeaserBand() {
     },
     {
       pseudo: "Rio",
-      ageVille: "27 ans Villard-De-Lans",
+      ageVille: "27 ans — Villard-de-Lans",
       badges: ["Essentiel"],
       phrase:
         "Je passe beaucoup de temps dehors, en rando ou en ski. Je voulais un espace simple pour rencontrer des gens qui comprennent ce rythme-là.",
@@ -213,7 +218,7 @@ function ProfileTeaserBand() {
     },
     {
       pseudo: "Simon",
-      ageVille: "36 ans Bernin",
+      ageVille: "36 ans — Bernin",
       badges: ["Free"],
       phrase:
         "Après plusieurs années sur des applis très bruyantes, j’avais besoin de quelque chose de plus calme et lisible.",
@@ -222,7 +227,7 @@ function ProfileTeaserBand() {
     },
     {
       pseudo: "Sonia",
-      ageVille: "52 ans Uriage",
+      ageVille: "52 ans — Uriage",
       badges: ["Essentiel"],
       phrase:
         "Je ne cherche pas à collectionner les matchs. Je préfère quelques échanges sincères avec des personnes respectueuses.",
@@ -236,11 +241,11 @@ function ProfileTeaserBand() {
       <div className="container mx-auto max-w-5xl px-4">
         {/* Mention discrète (bulle jaune pâle) */}
         <div
-          className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] sm:text-[13px] leading-relaxed"
+          className="relative mt-3 inline-block w-fit px-0 py-0 text-[12px] leading-relaxed sm:text-[13px]"
           style={{ color: "#FEFF93" }}
         >
-          Profils fictifs inspirés de vraies personnes. Chaque membre décide
-          ce qu'il partage et reste protégé par les lois françaises.
+          Profils fictifs inspirés de vraies personnes. Chaque membre décide ce
+          qu&apos;il partage et reste protégé par les lois françaises.
         </div>
 
         <div className="mt-5 flex gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-2 md:overflow-visible lg:grid-cols-4">
@@ -256,6 +261,7 @@ function ProfileTeaserBand() {
                   fill
                   className="object-cover"
                   sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
+                  quality={90}
                   priority={Boolean((p as any).priority)}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
@@ -356,7 +362,7 @@ export default function GrenobleRencontresPage() {
               <div className="mb-2 flex items-center justify-center">
                 <span
                   aria-hidden="true"
-                  className="leading-none text-5xl font-extrabold tracking-tight sm:text-6xl"
+                  className="text-5xl font-extrabold leading-none tracking-tight sm:text-6xl"
                   style={{
                     color: "#93ef09ff",
                     textShadow:
@@ -379,16 +385,16 @@ export default function GrenobleRencontresPage() {
               </h1>
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Keefon s'adresse aux personnes qui vivent à Grenoble,
-                Saint-Martin-d'Hères, Échirolles et dans les communes autour, et
-                qui préfèrent des rencontres plus calmes, sans course aux matchs
-                ni swipe infini.
+                Keefon s&apos;adresse aux personnes qui vivent à Grenoble,
+                Saint-Martin-d&apos;Hères, Échirolles et dans les communes
+                autour, et qui préfèrent des rencontres plus calmes, sans course
+                aux matchs ni swipe infini.
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
                 Keefon est pensée et hébergée en France, avec une attention
-                particulière portée à la protection de la vie privée (RGPD, CNIL,
-                droits de l'individu).
+                particulière portée à la protection de la vie privée (RGPD,
+                CNIL, droits de l&apos;individu).
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -399,23 +405,17 @@ export default function GrenobleRencontresPage() {
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Créer mon profil gratuitement
+                 Je découvre Keefon 
                 </a>
                 <p className="text-xs text-slate-700">
                   Inscription rapide. Tu restes libre de ce que tu partages.
                 </p>
-                <Link
-  href="/login"
-  aria-label="Déjà inscrit ? Se connecter"
-  title="Se connecter"
-  className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
-  style={{
-    background: COLORS.bannerGrad,
-    border: "1px solid #F9E13A",
-  }}
->
-  Déjà inscrit ? Se connecter
-</Link>
+                <p className="mt-2 text-xs text-slate-800 text-center">
+                  Déjà membre ?{" "}
+                  <a href="/login" className="font-semibold underline">
+                    Se connecter
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -440,7 +440,7 @@ export default function GrenobleRencontresPage() {
                 </h3>
                 <p className="text-sm leading-relaxed">
                   Tu ajoutes une photo, ce que tu recherches, et quelques infos
-                  simples pour te présenter. Pas besoin d'un roman pour
+                  simples pour te présenter. Pas besoin d&apos;un roman pour
                   commencer.
                 </p>
               </article>
@@ -451,7 +451,7 @@ export default function GrenobleRencontresPage() {
                 <p className="text-sm leading-relaxed">
                   Centre-ville, quartiers proches des campus, vallée du
                   Grésivaudan ou communes voisines : tu situes ta zone sans
-                  avoir besoin d'être ultra précis.
+                  avoir besoin d&apos;être ultra précis.
                 </p>
               </article>
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -479,9 +479,10 @@ export default function GrenobleRencontresPage() {
                 Pas de swipe mécanique
               </p>
               <p className="text-sm leading-relaxed">
-                L'objectif n'est pas de te faire scroller toute la soirée entre
-                deux trams ou deux montées en téléphérique. Tu ouvres quelques
-                conversations claires et tu vois si ça colle, sans bruit autour.
+                L&apos;objectif n&apos;est pas de te faire scroller toute la
+                soirée entre deux trams ou deux montées en téléphérique. Tu
+                ouvres quelques conversations claires et tu vois si ça colle,
+                sans bruit autour.
               </p>
 
               <p className="mt-4 mb-2 text-sm font-semibold text-chatOuter sm:text-base">
@@ -489,7 +490,7 @@ export default function GrenobleRencontresPage() {
               </p>
               <p className="text-sm leading-relaxed">
                 Les Échos et Keefon+ créent des opportunités supplémentaires
-                pour les profils Free. L'abonnement Essentiel reste
+                pour les profils Free. L&apos;abonnement Essentiel reste
                 volontairement raisonnable, pour aller un peu plus loin si tu en
                 as envie, sans pression financière.
               </p>
@@ -508,7 +509,7 @@ export default function GrenobleRencontresPage() {
               différents : étudiants, personnes en reconversion, passionnés de
               sport outdoor, familles. Keefon te permet de garder un cadre
               humain, où tu peux croiser des personnes qui partagent ton rythme
-              de vie plutôt qu'une liste infinie de profils anonymes.
+              de vie plutôt qu&apos;une liste infinie de profils anonymes.
             </p>
             <div className="mt-6 grid gap-6 md:grid-cols-2">
               <article className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
@@ -537,32 +538,30 @@ export default function GrenobleRencontresPage() {
           </div>
         </section>
 
-
         {/* Idées de sorties locales (Grenoble) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-900 shadow-sm backdrop-blur-[2px]">
-              <h2 className="mb-1 text-xs font-semibold text-chatOuter">
+              <h3 className="mb-1 text-xs font-semibold text-chatOuter">
                 Quelques idées de sorties autour de Grenoble
-              </h2>
+              </h3>
               <ul className="list-disc space-y-1 pl-4">
                 <li>
-                  Visite du chateaux de Vizille, le petit train de la Mure.
+                  Visite du château de Vizille, ou balade avec le petit train de
+                  La Mure.
                 </li>
                 <li>
-                  Téléphérique de la Bastille, vue sur la ville puis
-                  petite marche sur les sentiers autour du fort.
+                  Téléphérique de la Bastille, vue sur la ville puis petite
+                  marche sur les sentiers autour du fort.
+                </li>
+                <li>Visite des Cuves de Sassenage.</li>
+                <li>
+                  Sortie rando à la demi-journée dans le Vercors, la Chartreuse
+                  ou Belledonne quand la météo s&apos;y prête.
                 </li>
                 <li>
-                  Visite des cuves de Sassenage.
-                </li>
-                <li>
-                  Sortie rando à la demi-journée dans le Vercors, la
-                  Chartreuse ou Belledonne quand la météo s’y prête.
-                </li>
-                <li>
-                  Verre ou concert dans un bar du centre.
-                  Sortie canyonng l'été, le ski hiver.'
+                  Verre ou concert dans un bar du centre. Sortie canyoning
+                  l&apos;été, ski l&apos;hiver.
                 </li>
               </ul>
               <p className="mt-2">
@@ -573,73 +572,147 @@ export default function GrenobleRencontresPage() {
           </div>
         </section>
 
+        
+        {/* Bloc local Grenoble : quartiers, loisirs, mini-FAQ (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Grenoble : quartiers, rythme et occasions de rencontre
+              </h2>
 
-        {/* Liens internes SEO (France + autres villes) */}
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Entre la vallée, les campus et l’accès direct à la montagne,
+                Grenoble a un rythme particulier : on peut se voir en ville… puis
+                sortir très vite prendre l’air. Le plus simple, c’est de rester
+                sur des zones faciles (tram, centre, lieux publics) pour éviter
+                les trajets compliqués et garder une rencontre légère.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des quartiers pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Hyper-centre / Victor Hugo</strong> : terrasses, rues
+                  piétonnes, points de rendez-vous évidents.
+                </li>
+                <li>
+                  <strong>Championnet &amp; Caserne de Bonne</strong> : cafés,
+                  ambiance détendue, parfait pour un premier verre.
+                </li>
+                <li>
+                  <strong>Europole / Gare</strong> : pratique si l’un de vous
+                  bouge beaucoup (TER, tram).
+                </li>
+                <li>
+                  <strong>Île Verte / Parc Paul Mistral</strong> : balade simple,
+                  grand espace public, idéal pour discuter au calme.
+                </li>
+                <li>
+                  <strong>Métropole</strong> (Saint-Martin-d’Hères, Échirolles,
+                  Meylan, Fontaine…) : ok si vous choisissez un lieu “pivot”
+                  accessible en tram/voiture.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui créent du lien (sans pression)
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Grenoble se prête bien aux rencontres par activités : rando courte
+                (Chartreuse / Vercors), escalade, vélo, ski en saison, mais aussi
+                danse, clubs de sport, assos, ateliers (photo, cuisine, langue)
+                ou sorties culturelles. Ce sont des contextes où la discussion
+                vient naturellement, sans “jeu” ni surconsommation.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Grenoble ?
+                  </summary>
+                  <p className="mt-1">
+                    Un café autour de Victor Hugo / Championnet, ou une balade
+                    courte au Jardin de Ville / Parc Paul Mistral : public, facile
+                    à rejoindre, et simple à écourter si besoin.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en périphérie ?
+                  </summary>
+                  <p className="mt-1">
+                    Choisissez un point “pivot” accessible (tram, gare, centre)
+                    plutôt que de compliquer les trajets. L’objectif : pouvoir se
+                    voir souvent, pas une expédition.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment rester dans un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    Toujours en public, à une heure raisonnable, et avec un plan
+                    simple. Tu gardes la main sur le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée d’activité “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Une expo, un marché, un petit tour à la Bastille (téléphérique
+                    + vue) ou une balade courte le long de l’Isère : ça donne un
+                    sujet et évite le face-à-face trop formel.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
               <p className="mb-2">
-                Tu peux aussi explorer la vue d’ensemble&nbsp;:
-                {" "}
+                Tu peux aussi explorer la vue d’ensemble&nbsp;:{" "}
                 <Link
-                  href="/rencontres/france"
+                  href="/rencontres/France"
                   className="font-semibold underline-offset-2 hover:underline"
                 >
                   rencontres en France
                 </Link>
                 .
               </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
-                  </Link>
-                </li>
-              </ul>
+
+
             </div>
           </div>
         </section>
 
-        {/* Footer (mentions légales / CGU) */}
+        {/* Footer (mentions légales / CGU / confidentialité / cookies) */}
         <footer className="pt-4 pb-10">
           <div className="mx-auto max-w-5xl px-4">
-            <p className="mt-2 text-[11px] text-center text-slate-900">
+            <p className="mt-2 text-center text-[11px] text-slate-900">
               <Link href="/cgu" className="hover:underline">
-                Conditions Générales d’Utilisation
+                Conditions Générales d&apos;Utilisation
               </Link>
               {" · "}
               <Link href="/mentions-legales" className="hover:underline">
                 Mentions légales
+              </Link>
+              {" · "}
+              <Link href="/confidentialite" className="hover:underline">
+                Politique de confidentialité
+              </Link>
+              {" · "}
+              <Link href="/cookies" className="hover:underline">
+                Cookies
               </Link>
             </p>
           </div>

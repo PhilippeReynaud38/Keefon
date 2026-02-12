@@ -19,125 +19,28 @@ const SEO = {
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-France.jpg",
   keywords: [
-    // Intent + features
-    "rencontre",
-      "meilleur site de rencontre",
-     "rencontre gratuit",
-    "site de rencontre",
-              "rencontre femme gratuit",
-             "rencontre femme",
-    "site de rencontre gratuit",
-    "rencontres bienveillantes",
+    "rencontre france",
+    "rencontres france",
+    "site de rencontre france",
     "site de rencontre français",
     "appli de rencontre française",
+    "rencontre gratuit",
+    "chat gratuit",
+    "messagerie gratuite",
     "rencontre sérieuse",
-    "rencontres sérieuses",
+    "rencontres bienveillantes",
     "rencontre locale",
     "rencontres locales",
-    "chat gratuit",
-    "chat rencontre gratuit",
-    "messagerie gratuite",
-    "discussion rencontre",
-    "profils certifiés",
-    "profil certifié",
-    "vérification profil",
-    "dating France",
-    "site de dating France",
-    "rencontre adultes consentants",
-    "slow dating",
-    "dating bienveillant",
-    "célibataire",
-    "rencontre célibataire",
-    "amour",
-    "âme soeur",
-
-
-    // Longue traîne
-    "site de rencontre sans swipe",
-    "site de rencontre bienveillant France",
-    "application de rencontre française sérieuse",
-    "chat rencontre gratuit France",
-    "rencontre proche de chez moi",
+    "rencontre près de chez moi",
     "rencontre par ville",
-    "rencontre par région",
-    "rencontre après 30 ans",
-    "rencontre après 40 ans",
-    "rencontre après 50 ans",
-"célibataire en France",
-    // Régions
-    "Île-de-France",
-    "Auvergne-Rhône-Alpes",
-    "Occitanie",
-    "Provence-Alpes-Côte d’Azur",
-    "Nouvelle-Aquitaine",
-    "Hauts-de-France",
-    "Grand Est",
-    "Bretagne",
-    "Normandie",
-    "Pays de la Loire",
-    "Bourgogne-Franche-Comté",
-    "Centre-Val de Loire",
-    "Corse",
-
-    // Grandes villes
-    "Paris",
-    "Lyon",
-    "Marseille",
-    "Toulouse",
-    "Nice",
-    "Nantes",
-    "Strasbourg",
-    "Montpellier",
-    "Bordeaux",
-    "Lille",
-    "Rennes",
-    "Reims",
-    "Toulon",
-    "Grenoble",
-    "Dijon",
-    "Angers",
-    "Nîmes",
-    "Villeurbanne",
-    "Clermont-Ferrand",
-    "Saint-Étienne",
-    "Le Havre",
-    "Aix-en-Provence",
-    "Brest",
-    "Tours",
-    "Amiens",
-    "Limoges",
-    "Metz",
-    "Besançon",
-    "Perpignan",
-    "Orléans",
-    "Mulhouse",
-    "Rouen",
-    "Boulogne-Billancourt",
-    "Nancy",
-    "Argenteuil",
-    "Saint-Denis",
-
-    // Combinaisons courtes utiles
-    "rencontre Paris",
-    "rencontre Lyon",
-    "rencontre Marseille",
-    "rencontre Toulouse",
-    "rencontre Montpellier",
-    "rencontre Bordeaux",
-    "rencontre Nantes",
-    "rencontre Lille",
-    "rencontre Nice",
-    "rencontre Rennes",
-    "rencontre Strasbourg",
-    "rencontre Toulon",
-    "rencontre Grenoble",
-    "rencontre Dijon",
-    "rencontre Angers",
-    "rencontre Nîmes",
-    "rencontre Clermont-Ferrand",
-    "rencontre Reims",
-    "rencontre Metz",
-    "rencontre Rouen",
+    "slow dating",
+    "rencontre sans swipe",
+    "dating france",
+    "rencontre adultes consentants",
+    "premier rendez-vous public",
+    "rencontre en ligne",
+    "faire des rencontres en france",
+    "rencontrer des gens",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -706,7 +609,108 @@ export default function FranceRencontresPage() {
           </div>
         </section>
 
-        {/* Footer légal discret */}
+        
+        {/* France : diversité & occasions de rencontres (texte unique) */}
+        <section className="py-10">
+          <div className="container mx-auto max-w-5xl px-4">
+            <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
+              La France, un terrain de rencontres naturel
+            </h2>
+
+            <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
+              La France est un pays incroyablement divers : des grandes métropoles
+              aux petites villes, des côtes aux montagnes, chaque région a ses
+              codes, ses ambiances et surtout ses occasions de créer du lien.
+              Et oui… on aime bien manger : marchés, terrasses, brasseries,
+              cuisine du monde, spécialités locales — c’est souvent le cadre
+              le plus simple pour discuter et se découvrir.
+            </p>
+
+            <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
+              Surtout, une quantité énorme de loisirs y sont accessibles : clubs
+              de sport, danse, randonnées, associations, ateliers créatifs,
+              sorties culturelles… Ce sont des “prétextes” parfaits pour
+              rencontrer naturellement, sans pression et sans devoir jouer un
+              rôle.
+            </p>
+
+            <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
+              Keefon s’inscrit dans cette logique : faciliter les échanges et te
+              permettre de proposer des rendez-vous simples (et publics) autour
+              d’une activité réelle. Le but n’est pas de collectionner les
+              conversations, mais d’aller vers des rencontres qui ont du sens.
+            </p>
+
+            <h3 className="mt-8 text-lg font-semibold text-chatOuter sm:text-xl">
+              FAQ — Rencontres en France
+            </h3>
+
+            <div className="mt-4 space-y-3">
+              <details className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-3 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-chatOuter sm:text-base">
+                  Comment faire des rencontres en France sans perdre du temps&nbsp;?
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed">
+                  Le plus efficace, c’est de rester clair : ce que tu cherches,
+                  ton rythme, et une proposition simple pour se voir (dans un
+                  lieu public). Moins d’ambiguïté = moins de temps perdu.
+                </p>
+              </details>
+
+              <details className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-3 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-chatOuter sm:text-base">
+                  Quels loisirs créent le plus facilement des occasions de rencontre&nbsp;?
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed">
+                  Sport (collectif ou salle), danse, clubs/assos, ateliers,
+                  sorties culturelles et randos : tout ce qui permet d’échanger
+                  naturellement, plusieurs fois, sans pression.
+                </p>
+              </details>
+
+              <details className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-3 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-chatOuter sm:text-base">
+                  Comment organiser un premier rendez-vous “safe”&nbsp;?
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed">
+                  Toujours en public, à une heure raisonnable, et dans un lieu
+                  facile à quitter. Préviens un proche si tu veux, et garde la
+                  main sur le rythme (pas d’obligation).
+                </p>
+              </details>
+
+              <details className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-3 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-chatOuter sm:text-base">
+                  Keefon est-il fait uniquement pour les grandes villes&nbsp;?
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed">
+                  Non. L’idée, c’est de favoriser des rencontres possibles “dans
+                  la vraie vie”, que tu sois en métropole, en périphérie ou dans
+                  une ville plus petite. L’important : une zone cohérente pour
+                  se voir.
+                </p>
+              </details>
+
+              <details className="rounded-2xl border border-sky-200 bg-white/40 px-4 py-3 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-chatOuter sm:text-base">
+                  Comment éviter les échanges “fantômes”&nbsp;?
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed">
+                  Pose un cadre simple : quelques messages utiles, puis une
+                  proposition concrète. Si la personne n’avance jamais, tu
+                  passes à autre chose — c’est la meilleure protection.
+                </p>
+              </details>
+            </div>
+
+            <p className="mt-6 text-[11px] leading-relaxed text-slate-700">
+              Astuce : tu retrouveras en bas de page des liens vers les principales
+              villes pour démarrer rapidement.
+            </p>
+          </div>
+        </section>
+
+{/* Footer légal discret */}
         <footer className="pt-4 pb-10">
 {/* Liens villes (en bas, discret, SEO OK) */}
 <nav

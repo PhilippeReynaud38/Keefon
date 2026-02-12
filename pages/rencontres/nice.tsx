@@ -30,56 +30,38 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Nice et sur la Côte d’Azur | Keefon",
+  title: "Rencontres à Nice (06) et alentours | Keefon",
   description:
-    "Keefon Nice est une page dédiée aux rencontres bienveillantes à Nice, Cannes, Antibes et sur toute la Côte d’Azur : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Rencontre à Nice et autour (Cagnes-sur-Mer, Saint-Laurent-du-Var, Villefranche, Antibes…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/nice",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Nice.jpg",
   keywords: [
-    // Intent + features
-    "rencontre Nice",
-      "rencontre gratuit Nice",
-    "rencontres Nice",
-    "site de rencontre Nice",
-     "meilleur rencontres Nice",
-    "rencontres bienveillantes Nice",
-    "rencontre locale Nice",
-    "rencontre proche de chez moi Nice",
-    "rencontre Alpes-Maritimes",
-    "rencontres Côte d’Azur",
-    "rencontres PACA",
-    "chat gratuit Nice",
-    "chat rencontre gratuit Nice",
-    "messagerie gratuite Nice",
-    "profils certifiés",
-    "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
-    "rencontre respectueuse",
-    "dating Nice",
-    "dating Côte d’Azur",
-    "rencontre adultes consentants",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Nice",
-    "Cannes",
-    "Antibes",
-    "Juan-les-Pins",
-    "Menton",
-    "Cagnes-sur-Mer",
-    "Villefranche-sur-Mer",
-    "Saint-Laurent-du-Var",
-    "Grasse",
-    "Alpes-Maritimes",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Nice",
-    "rencontre sérieuse Cannes",
-    "rencontre après 30 ans Nice",
-    "rencontre après 40 ans Côte d’Azur",
-    "rencontre après 50 ans Côte d’Azur",
+    "rencontre nice",
+    "rencontres nice",
+    "site de rencontre nice",
+    "rencontre nice 06",
+    "rencontre alpes-maritimes",
+    "rencontres paca",
+    "dating nice",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit nice",
+    "messagerie gratuite nice",
+    "rencontre sérieuse nice",
+    "rencontre nice vieux-nice",
+    "rencontre promenade des anglais",
+    "rencontre place masséna",
+    "rencontre port de nice",
+    "rencontre cagnes-sur-mer",
+    "rencontre saint-laurent-du-var",
+    "rencontre villefranche-sur-mer",
+    "rencontre antibes",
+    "rencontre cannes",
+    "rencontre menton",
+    "rencontre après 30 ans nice",
+    "rencontre après 40 ans nice",
+    "rencontre après 50 ans nice",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -390,12 +372,11 @@ export default function NiceRencontresPage() {
                 Rencontres bienveillantes à Nice et sur la Côte d’Azur
               </h1>
 
-              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Une plateforme française pour celles et ceux qui vivent à Nice,
-                Cannes, Antibes ou dans les villes autour et qui veulent des
-                rencontres plus humaines, sans swipe toxique, au rythme du
-                soleil et de la mer.
-              </p>
+              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">Une plateforme française pour celles et ceux qui vivent à
+                Nice et sur la Côte d’Azur (Cagnes-sur-Mer, Saint-Laurent,
+                Villefranche, Antibes…) et qui veulent des rencontres plus
+                humaines, sans swipe toxique — avec l’idée de se voir facilement
+                (Vieux-Nice, Masséna, Port, Promenade des Anglais…).</p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
                 Keefon est créée et hébergée en France, dans le cadre des lois
@@ -603,7 +584,106 @@ export default function NiceRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Nice : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Nice : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                À Nice, le cadre aide déjà : mer, lumière, quartiers vivants.
+                Le piège, c’est de se disperser entre centre, littoral et villes
+                voisines. Le plus simple : un rendez-vous public très clair,
+                dans une zone facile, puis on voit si l’envie de se revoir est là.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Vieux-Nice</strong> : ruelles, terrasses, ambiance vivante
+                  pour un premier verre (public, simple).
+                </li>
+                <li>
+                  <strong>Place Masséna</strong> : point de rendez-vous évident,
+                  central, facile à retrouver.
+                </li>
+                <li>
+                  <strong>Promenade des Anglais</strong> : balade facile en bord de mer,
+                  très fréquentée, sans pression.
+                </li>
+                <li>
+                  <strong>Port / Garibaldi</strong> : cafés, cadre plus posé, parfait
+                  pour discuter tranquillement.
+                </li>
+                <li>
+                  <strong>Autour</strong> (Saint-Laurent, Cagnes, Villefranche, Antibes…)
+                  : choisissez un point “pivot” simple pour éviter les trajets pénibles.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent naturellement
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Les meilleures rencontres viennent souvent d’un prétexte réel :
+                sport (course, salle, sports de mer), danse, clubs, associations,
+                ateliers (photo, cuisine), sorties culturelles. À Nice, une marche
+                courte (Colline du Château) ou une expo donne tout de suite un cadre
+                simple et évite les échanges “qui tournent en rond”.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Nice ?
+                  </summary>
+                  <p className="mt-1">
+                    Masséna ou Promenade : c’est public, central, et facile à écourter
+                    si besoin.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit hors centre (Cagnes / Antibes / etc.) ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point “pivot” accessible (centre, gare, tram). Le but :
+                    se voir sans friction, et pouvoir se revoir facilement.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment rester dans un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    Rendez-vous en public, heure raisonnable, plan simple. Tu gardes la
+                    main sur ton rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Balade courte bord de mer + café : tu as un cadre, un sujet, et ça
+                    enlève la pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -615,45 +695,7 @@ export default function NiceRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-              </ul>
+                .       </p>
             </div>
           </div>
         </section>

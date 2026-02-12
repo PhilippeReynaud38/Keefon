@@ -40,38 +40,14 @@ const SEO = {
     "rencontre Lyon",
         "rencontre gratuit Lyon",
     "rencontres Lyon",
-    "rencontres métropole de Lyon",
     "site de rencontre Lyon",
-    "site de rencontre métropole Lyonnaise",
     "rencontres bienveillantes Lyon",
-    "rencontre locale Lyon",
-    "rencontres proche de chez moi Lyon",
     "chat gratuit Lyon",
     "chat rencontre gratuit Lyon",
     "messagerie gratuite Lyon",
-    "profils certifiés Lyon",
-    "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
     "rencontre respectueuse",
     "dating Lyon",
-    "dating métropole de Lyon",
-    "rencontre adultes consentants Lyon",
-    "slow dating Lyon",
-    "dating bienveillant Lyon",
 
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Villeurbanne",
-    "Vénissieux",
-    "Bron",
-    "Oullins",
-    "Tassin-la-Demi-Lune",
-    "Écully",
-    "Caluire-et-Cuire",
-    "Meyzieu",
-    "Décines-Charpieu",
-    "Saint-Priest",
-    "Rillieux-la-Pape",
 
     // Combinaisons courtes utiles
     "rencontre sérieuse Lyon",
@@ -254,6 +230,7 @@ function ProfileTeaserBand() {
                   className="object-cover"
                   sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
                   priority={Boolean((p as any).priority)}
+                  quality={90}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -607,7 +584,107 @@ export default function LyonRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Lyon : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Lyon : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                À Lyon, il y a beaucoup de monde et beaucoup d’options… donc le
+                risque, c’est la dispersion. La stratégie la plus saine : rester
+                clair, proposer un rendez-vous public simple, et choisir une zone
+                facile (métro, tram, centre) pour éviter les trajets qui tuent
+                l’élan.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des quartiers faciles pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Presqu’île (Bellecour / Cordeliers)</strong> : central,
+                  évident, parfait pour un café rapide.
+                </li>
+                <li>
+                  <strong>Vieux-Lyon</strong> : balade simple, cadre agréable,
+                  rendez-vous “safe” en public.
+                </li>
+                <li>
+                  <strong>Croix-Rousse</strong> : ambiance plus posée, cafés,
+                  petites places.
+                </li>
+                <li>
+                  <strong>Part-Dieu</strong> : pratique si l’un de vous bouge
+                  beaucoup (TER, métro, tram).
+                </li>
+                <li>
+                  <strong>Berges &amp; Parc de la Tête d’Or</strong> : option
+                  balade facile et très fréquentée.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui créent du lien (sans pression)
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Sport, danse, escalade, running sur les berges, ateliers (cuisine,
+                photo), assos, sorties culturelles… À Lyon, ce sont des
+                déclencheurs parfaits : on discute “en faisant”, sans pression,
+                et on voit vite si le courant passe.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Lyon ?
+                  </summary>
+                  <p className="mt-1">
+                    Un café Presqu’île, ou une balade courte Vieux-Lyon / berges
+                    : public, clair, facile à écourter si besoin.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en métropole (Villeurbanne, Oullins, etc.) ?
+                  </summary>
+                  <p className="mt-1">
+                    Choisissez un point “pivot” métro/tram (centre, Part-Dieu,
+                    Bellecour). Le but : se voir sans friction et pouvoir se
+                    revoir facilement.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment éviter la surconsommation de profils ?
+                  </summary>
+                  <p className="mt-1">
+                    Reste sur peu de conversations, mais de meilleure qualité.
+                    Et propose un plan simple dès que c’est fluide.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée d’activité “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Parc de la Tête d’Or + café, ou expo : ça donne un sujet et
+                    évite le face-à-face trop formel.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -619,45 +696,7 @@ export default function LyonRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/grenoble"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Grenoble
-                  </Link>
-                </li>
-              </ul>
+                .   </p>
             </div>
           </div>
         </section>

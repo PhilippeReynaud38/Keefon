@@ -29,42 +29,40 @@ import Link from "next/link";
 
 /* ===========================  SEO (Toulouse / ville rose)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Toulouse et dans l’aire Toulousaine | Keefon",
+  title: "Rencontres à Toulouse (31) et alentours | Keefon",
   description:
-    "Keefon Toulouse rassemble celles et ceux qui vivent dans la ville rose et autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
+    "Rencontre à Toulouse et autour (Blagnac, Colomiers, Balma, Ramonville…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/toulouse",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Toulouse.jpg",
   keywords: [
-    // Intent + fonctionnalités (variante par rapport aux autres pages)
-    "rencontre Toulouse",
-       "rencontre gratuite Toulouse",
-    "rencontres Toulouse",
-       "rencontres gratuites Toulouse",
-    "site de rencontre Toulouse",
-    "rencontres aire toulousaine",
-    "rencontres Haute-Garonne",
-    "rencontre locale Toulouse",
-    "rencontre proche de chez moi Toulouse",
-    "chat rencontre Toulouse",
-    "chat gratuit Toulouse",
-    "rencontres bienveillantes Toulouse",
-    "rencontres respectueuses",
-
-    "rencontre après 30 ans Toulouse",
-    "rencontre après 40 ans Toulouse",
-    "rencontre après 50 ans Toulouse",
-
-    // Villes / zone
-    "Toulouse",
-    "Blagnac",
-    "Colomiers",
-    "Ramonville",
-    "Balma",
-    "Cugnaux",
-    "Tournefeuille",
-    "L’Union",
-    "Muret",
+    "rencontre toulouse",
+    "rencontres toulouse",
+    "site de rencontre toulouse",
+    "rencontre toulouse 31",
+    "rencontre haute-garonne",
+    "rencontres occitanie",
+    "dating toulouse",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit toulouse",
+    "messagerie gratuite toulouse",
+    "rencontre sérieuse toulouse",
+    "rencontre place du capitole",
+    "rencontre saint-cyprien",
+    "rencontre carmes",
+    "rencontre compans-caffarelli",
+    "rencontre prairie des filtres",
+    "rencontre quais de garonne",
+    "rencontre blagnac",
+    "rencontre colomiers",
+    "rencontre balma",
+    "rencontre ramonville-saint-agne",
+    "rencontre labège",
+    "rencontre tournefeuille",
+    "rencontre après 30 ans toulouse",
+    "rencontre après 40 ans toulouse",
+    "rencontre après 50 ans toulouse",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -433,7 +431,7 @@ export default function ToulouseRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Toulouse / aire Toulousaine
+                  2. Tu indiques ta zone (Toulouse & alentours) / aire Toulousaine
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -582,7 +580,106 @@ export default function ToulouseRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Toulouse : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Toulouse : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                À Toulouse, tu peux rester très simple : centre clair, quartiers
+                identifiables, et beaucoup de lieux publics faciles. L’idée :
+                quelques échanges utiles, puis un rendez-vous court et public
+                (café, balade), avant de complexifier.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Capitole</strong> : point de repère évident, central,
+                  parfait pour un café.
+                </li>
+                <li>
+                  <strong>Carmes</strong> : ambiance plus posée, bars/cafés,
+                  rendez-vous “tranquille”.
+                </li>
+                <li>
+                  <strong>Saint-Cyprien</strong> : option simple, proche Garonne,
+                  balade facile.
+                </li>
+                <li>
+                  <strong>Prairie des Filtres / quais</strong> : balade très publique,
+                  idéale pour discuter au calme.
+                </li>
+                <li>
+                  <strong>Autour</strong> (Blagnac, Colomiers, Balma, Ramonville…)
+                  : choisissez un point pivot accessible pour rester fluide.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent naturellement
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Sport, danse, clubs, associations, ateliers (cuisine, photo),
+                sorties culturelles… Les activités sont souvent le meilleur moyen
+                de se rencontrer sans pression et d’éviter les échanges qui n’aboutissent
+                jamais. À Toulouse, une marche bords de Garonne ou une expo, c’est
+                déjà un rendez-vous simple.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Toulouse ?
+                  </summary>
+                  <p className="mt-1">
+                    Capitole ou Carmes : central, public, facile à retrouver.
+                    Sinon, balade courte Prairie des Filtres.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en périphérie ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point pivot (centre / métro / tram). L’objectif :
+                    se voir facilement, et pouvoir se revoir sans friction.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment garder un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    En public, heure raisonnable, plan simple. Tu gardes la main sur
+                    le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Balade bords de Garonne + café : un cadre, un sujet, et moins
+                    de pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -594,45 +691,7 @@ export default function ToulouseRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/montpellier"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Montpellier
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
-                  </Link>
-                </li>
-              </ul>
+                .           </p>
             </div>
           </div>
         </section>

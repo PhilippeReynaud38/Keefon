@@ -31,51 +31,38 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Strasbourg et autour | Keefon",
+  title: "Rencontres à Strasbourg (67) et alentours | Keefon",
   description:
-    "Keefon Strasbourg est une page dédiée aux rencontres bienveillantes à Strasbourg et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Rencontre à Strasbourg et autour (Schiltigheim, Illkirch, Bischheim, Ostwald…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/strasbourg",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-strasbourg.jpg",
   keywords: [
-    // Intent + features
-    "rencontre Strasbourg",
-      "rencontre gratuite Strasbourg",
-    "rencontres Strasbourg",
-    "site de rencontre Strasbourg",
-    "rencontres bienveillantes Strasbourg",
-    "rencontre locale Strasbourg",
-    "rencontre proche de chez moi Strasbourg",
-    "rencontre Bas-Rhin",
-    "rencontres Bas-Rhin",
-    "rencontres Alsace",
-    "rencontres Grand Est",
-    "chat gratuit Strasbourg",
-    "chat rencontre gratuit Strasbourg",
-    "messagerie gratuite Strasbourg",
-
-    "rencontre respectueuse",
-
-    "dating Strasbourg",
-    "dating Alsace",
-    "rencontre adultes consentants",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Strasbourg",
-    "Illkirch-Graffenstaden",
-    "Schiltigheim",
-    "Bischheim",
-    "Lingolsheim",
-    "Kehl",
-    "Eurométropole de Strasbourg",
-    "Bas-Rhin",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Strasbourg",
-    "rencontre après 30 ans Strasbourg",
-    "rencontre après 40 ans Strasbourg",
-    "rencontre après 50 ans Alsace",
+    "rencontre strasbourg",
+    "rencontres strasbourg",
+    "site de rencontre strasbourg",
+    "rencontre strasbourg 67",
+    "rencontre bas-rhin",
+    "rencontres grand est",
+    "dating strasbourg",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit strasbourg",
+    "messagerie gratuite strasbourg",
+    "rencontre sérieuse strasbourg",
+    "rencontre strasbourg centre-ville",
+    "rencontre petite france",
+    "rencontre place kléber",
+    "rencontre cathédrale strasbourg",
+    "rencontre parc de l'orangerie",
+    "rencontre esplanade strasbourg",
+    "rencontre schiltigheim",
+    "rencontre illkirch-graffenstaden",
+    "rencontre bischheim",
+    "rencontre ostwald",
+    "rencontre après 30 ans strasbourg",
+    "rencontre après 40 ans strasbourg",
+    "rencontre après 50 ans strasbourg",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -383,12 +370,11 @@ export default function StrasbourgRencontresPage() {
                 Rencontres bienveillantes à Strasbourg et autour
               </h1>
 
-              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                Une plateforme française pour celles et ceux qui vivent à
-                Strasbourg et dans les villes autour (Illkirch, Schiltigheim,
-                plaine du Rhin…) et qui veulent des rencontres plus humaines,
-                sans swipe toxique.
-              </p>
+              <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">Une plateforme française pour celles et ceux qui vivent à
+                Strasbourg et dans l’Eurométropole (Schiltigheim, Illkirch,
+                Bischheim, Ostwald…) et qui veulent des rencontres plus
+                humaines, sans swipe toxique — avec l’idée de se voir facilement
+                (Petite France, Kléber, Cathédrale, Orangerie…).</p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
                 Keefon est créée et hébergée en France, dans le cadre des lois
@@ -444,7 +430,7 @@ export default function StrasbourgRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Strasbourg / Alsace
+                  2. Tu indiques ta zone (Strasbourg & alentours) / Alsace
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -595,7 +581,105 @@ export default function StrasbourgRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Strasbourg : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Strasbourg : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Strasbourg est agréable pour se rencontrer : centre compact,
+                quartiers identifiables, déplacements simples (tram). Le plus
+                efficace : un rendez-vous public court, dans une zone évidente,
+                puis une activité légère si vous avez envie de continuer.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Grande Île / Cathédrale</strong> : repères évidents,
+                  centre, cafés et balade facile.
+                </li>
+                <li>
+                  <strong>Petite France</strong> : cadre sympa, marche courte,
+                  idéal pour un rendez-vous “léger”.
+                </li>
+                <li>
+                  <strong>Place Kléber</strong> : central, très simple à retrouver,
+                  parfait pour un café.
+                </li>
+                <li>
+                  <strong>Orangerie</strong> : option très publique pour discuter
+                  au calme.
+                </li>
+                <li>
+                  <strong>Eurométropole</strong> (Schiltigheim, Illkirch…)
+                  : choisissez un point pivot tram/centre.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent naturellement
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Clubs de sport, danse, associations, ateliers, sorties culturelles,
+                balades (quais, parcs)… À Strasbourg, les activités sont un bon
+                prétexte pour rencontrer sans pression et éviter les échanges qui
+                tournent en rond.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Strasbourg ?
+                  </summary>
+                  <p className="mt-1">
+                    Kléber ou Cathédrale : public, central, facile à écourter.
+                    Ou une balade courte Petite France.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit dans l’Eurométropole ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point pivot tram/centre. L’objectif : se voir
+                    facilement et pouvoir se revoir sans friction.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment garder un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    Rendez-vous en public, heure raisonnable, plan simple. Tu gardes
+                    la main sur ton rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Balade quai + café, ou Orangerie : un cadre simple, un sujet,
+                    et moins de pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -607,39 +691,7 @@ export default function StrasbourgRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/strasbourg"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Strasbourg
-                  </Link>
-                </li>
-                <li>
-                </li>
-              </ul>
+                .        </p>
             </div>
           </div>
         </section>

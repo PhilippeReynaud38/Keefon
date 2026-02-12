@@ -29,53 +29,40 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Marseille et autour | Keefon",
+  title: "Rencontres à Marseille (13) et alentours | Keefon",
   description:
-    "Keefon Marseille est une page dédiée aux rencontres bienveillantes à Marseille et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Rencontre à Marseille et autour (Aix, Aubagne, La Ciotat, Cassis…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/marseille",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Marseille.jpg",
   keywords: [
-    // Intent + features
-    "rencontre Marseille",
-        "rencontre gratuit Marseille",
-    "rencontres Marseille",
-    "site de rencontre Marseille",
-    "rencontres bienveillantes Marseille",
-    "rencontre locale Marseille",
-    "rencontre proche de chez moi Marseille",
-    "rencontre Bouches-du-Rhône",
-    "rencontres PACA",
-    "chat gratuit Marseille",
-    "chat rencontre gratuit Marseille",
-    "messagerie gratuite Marseille",
-    "profils certifiés",
-    "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
-    "rencontre respectueuse",
-    "protection des données",
-    "dating Marseille",
-    "dating PACA",
-    "rencontre adultes consentants",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Marseille",
-    "Aubagne",
-    "Aix-en-Provence",
-    "La Ciotat",
-    "Cassis",
-    "Martigues",
-    "Vitrolles",
-    "Plan-de-Cuques",
-    "Allauch",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Marseille",
-    "rencontre après 30 ans Marseille",
-    "rencontre après 40 ans Marseille",
-    "rencontre après 50 ans Marseille",
+    "rencontre marseille",
+    "rencontres marseille",
+    "site de rencontre marseille",
+    "rencontre 13",
+    "rencontre bouches-du-rhône",
+    "rencontres paca",
+    "dating marseille",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit marseille",
+    "messagerie gratuite marseille",
+    "rencontre sérieuse marseille",
+    "rencontre marseille vieux-port",
+    "rencontre marseille panier",
+    "rencontre marseille mucem",
+    "rencontre marseille prado",
+    "rencontre marseille corniche",
+    "rencontre aix-en-provence",
+    "rencontre aubagne",
+    "rencontre la ciotat",
+    "rencontre cassis",
+    "rencontre martigues",
+    "rencontre vitrolles",
+    "rencontre allauch",
+    "rencontre après 30 ans marseille",
+    "rencontre après 40 ans marseille",
+    "rencontre après 50 ans marseille",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -383,9 +370,10 @@ export default function MarseilleRencontresPage() {
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
                 Une plateforme française pour celles et ceux qui vivent à
-                Marseille et dans les villes autour (Aubagne, Aix, côte
-                méditerranéenne…) et qui veulent des rencontres plus humaines,
-                sans swipe toxique.
+                Marseille et dans la métropole (Aubagne, Aix, La Ciotat,
+                Cassis…) et qui veulent des rencontres plus humaines,
+                sans swipe toxique — avec l’idée de se voir facilement (Vieux-Port,
+                Prado, Panier…).
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
@@ -499,9 +487,9 @@ export default function MarseilleRencontresPage() {
                   Vieux-Port, quartiers, collines…
                 </h3>
                 <p className="text-sm leading-relaxed">
-                  Que tu vives près du port, dans les quartiers nord, sud ou en
-                  périphérie, tu peux croiser des personnes qui partagent la
-                  même ville et la même énergie que toi.
+                  Que tu sois côté Vieux-Port, Prado, quartiers nord/sud ou en
+                  périphérie, tu peux rencontrer des personnes qui partagent la
+                  même ville — et surtout un rythme compatible pour se voir en vrai.
                 </p>
               </article>
 
@@ -567,8 +555,8 @@ export default function MarseilleRencontresPage() {
                 </li>
                 <li>
                   Découverte d&apos;une petite adresse de quartier (restaurant,
-                  snack, bar tranquille) dans le centre ou près du port, sans
-                  obligation de “grand rendez-vous”.
+                  snack, bar tranquille) vers le Panier, le Cours Julien ou
+                  autour du Vieux-Port, sans obligation de “grand rendez-vous”.
                 </li>
                 <li>
                   Marche dans le quartier du Panier ou autour du Mucem, en
@@ -590,7 +578,106 @@ export default function MarseilleRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Marseille : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Marseille : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Marseille est grande et très vivante : pour que la rencontre soit
+                simple, il faut choisir un cadre évident et rester sur des zones
+                faciles (métro, tram, lieux publics). Moins de complexité = plus
+                de chances de se voir vraiment, sans s’épuiser.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Vieux-Port</strong> : point de repère évident, cafés,
+                  très fréquenté (idéal pour un premier rendez-vous public).
+                </li>
+                <li>
+                  <strong>Le Panier / Joliette</strong> : balade simple, cadre
+                  sympa, option “centre”.
+                </li>
+                <li>
+                  <strong>Cours Julien / La Plaine</strong> : vivant, parfait
+                  pour un verre et une discussion détendue.
+                </li>
+                <li>
+                  <strong>Prado / Corniche</strong> : balade mer, très public,
+                  cadre agréable.
+                </li>
+                <li>
+                  <strong>Autour</strong> (Aubagne, Aix, La Ciotat…) : choisissez
+                  un lieu pivot accessible pour éviter les trajets interminables.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent (sans pression)
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Marche sur la Corniche, expo (Mucem), sport, danse, clubs,
+                associations, activités mer (paddle, voile) ou rando courte
+                (Calanques, sur des spots fréquentés) : ce sont des prétextes
+                parfaits pour se rencontrer naturellement, sans “jeu” ni
+                surconsommation.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Marseille ?
+                  </summary>
+                  <p className="mt-1">
+                    Vieux-Port, Cours Julien ou Corniche : public, clair, facile
+                    à retrouver, et simple à écourter si besoin.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit loin (Aix / Aubagne / La Ciotat) ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point “pivot” accessible (centre, gare, métro).
+                    L’objectif, c’est de pouvoir se revoir sans friction.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment rester dans un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    Rendez-vous en public, à une heure raisonnable, avec un plan
+                    simple. Tu gardes la main sur le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une activité “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Petite balade (Corniche / Port) ou expo (Mucem) : ça donne un
+                    sujet et évite le face-à-face trop formel.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -602,45 +689,8 @@ export default function MarseilleRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/nice"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nice
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-              </ul>
+                .  </p>
+
             </div>
           </div>
         </section>

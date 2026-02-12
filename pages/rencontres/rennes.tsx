@@ -27,43 +27,42 @@
 import Head from "next/head";
 import Link from "next/link";
 
+import Image from "next/image";
 /* ===========================  SEO (Rennes / Bretagne)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Rennes et en Bretagne | Keefon",
+  title: "Rencontres à Rennes (35) et alentours | Keefon",
   description:
-    "Keefon Rennes rassemble celles et ceux qui vivent à Rennes et dans les villes autour, et qui cherchent des rencontres plus humaines, sans swipe infini ni algorithmes obscurs. Pendant la période d’ouverture, le chat reste gratuit.",
+    "Rencontre à Rennes et autour (Cesson-Sévigné, Saint-Grégoire, Chantepie, Bruz…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/rennes",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Rennes.jpg",
   keywords: [
-    // Intent + fonctionnalités
-    "rencontre Rennes",
-     "rencontre gratuite Rennes",
-    "rencontres Rennes",
-    "site de rencontre Rennes",
-    "rencontres Ille-et-Vilaine",
-    "rencontres Bretagne",
-    "rencontre locale Rennes",
-    "rencontre proche de chez moi Rennes",
-    "chat rencontre Rennes",
-    "chat gratuit Rennes",
-    "rencontres bienveillantes Rennes",
-    "rencontres respectueuses",
-    "rencontre après 30 ans Rennes",
-    "rencontre après 40 ans Rennes",
-    "rencontre après 50 ans Rennes",
-
-    // Villes / zone
-    "Rennes",
-    "Cesson-Sévigné",
-    "Saint-Jacques-de-la-Lande",
-    "Bruz",
-    "Chantepie",
-    "Pacé",
-    "Vern-sur-Seiche",
-    "Betton",
-    "Ille-et-Vilaine",
-    "Bretagne",
+    "rencontre rennes",
+    "rencontres rennes",
+    "site de rencontre rennes",
+    "rencontre rennes 35",
+    "rencontre ille-et-vilaine",
+    "rencontres bretagne",
+    "dating rennes",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit rennes",
+    "messagerie gratuite rennes",
+    "rencontre sérieuse rennes",
+    "rencontre rennes centre-ville",
+    "rencontre place de la république rennes",
+    "rencontre sainte-anne rennes",
+    "rencontre parc du thabor",
+    "rencontre bords de vilaine",
+    "rencontre cesson-sévigné",
+    "rencontre saint-grégoire",
+    "rencontre chantepie",
+    "rencontre bruz",
+    "rencontre pacé",
+    "rencontre betton",
+    "rencontre après 30 ans rennes",
+    "rencontre après 40 ans rennes",
+    "rencontre après 50 ans rennes",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -241,11 +240,14 @@ function ProfileTeaserBand() {
               className="profile-card-preview group relative min-w-[260px] max-w-xs overflow-hidden rounded-3xl shadow-md"
             >
               <div className="relative h-72 w-full">
-                <img
+                <Image
                   src={p.avatarSrc}
                   alt={p.avatarAlt}
-                  className="h-full w-full object-cover"
-                  loading={p.priority ? "eager" : "lazy"}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width:1024px)25vw,(min-width:768px)33vw,80vw"
+                  priority={Boolean(p.priority)}
+                  quality={90}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4">
@@ -434,7 +436,7 @@ export default function RennesRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Rennes / Ille-et-Vilaine
+                  2. Tu indiques ta zone (Rennes & alentours) / Ille-et-Vilaine
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -576,7 +578,104 @@ export default function RennesRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Rennes : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Rennes : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Rennes est une ville où on peut se voir facilement : centre
+                compact, métro, lieux publics clairs. Le plus efficace : un
+                rendez-vous simple (café, balade), puis une activité légère si
+                vous avez envie de continuer — sans se compliquer.
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Centre / Sainte-Anne</strong> : bars, terrasses,
+                  points de repère évidents.
+                </li>
+                <li>
+                  <strong>Thabor</strong> : option “safe” et très publique pour
+                  discuter au calme.
+                </li>
+                <li>
+                  <strong>République</strong> : central, pratique, facile à retrouver.
+                </li>
+                <li>
+                  <strong>Les Lices</strong> : marché/terrasses, bon “prétexte” pour
+                  discuter naturellement.
+                </li>
+                <li>
+                  <strong>Autour</strong> (Cesson-Sévigné, Saint-Jacques…)
+                  : choisissez un point pivot métro/centre.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent naturellement
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Sport, danse, clubs, associations, ateliers, sorties culturelles…
+                Ce sont des contextes où la discussion vient naturellement et où
+                on évite le “match qui ne mène à rien”. L’objectif : moins de
+                bruit, plus de concret.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Rennes ?
+                  </summary>
+                  <p className="mt-1">
+                    République ou Sainte-Anne : central, public, facile à retrouver.
+                    Sinon, balade courte au Thabor.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en périphérie ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point pivot (métro/centre). Le but : se voir sans
+                    friction, et pouvoir se revoir facilement.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment garder un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    En public, heure raisonnable, plan simple. Tu gardes la main sur
+                    le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Marché (Lices) + café, ou balade Thabor : un cadre, un sujet,
+                    et moins de pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -588,45 +687,7 @@ export default function RennesRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/nantes"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Nantes
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/paris"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Paris
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/strasbourg"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Strasbourg
-                  </Link>
-                </li>
-              </ul>
+                .         </p>
             </div>
           </div>
         </section>

@@ -31,54 +31,39 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Montpellier et autour | Keefon",
+  title: "Rencontres à Montpellier (34) et alentours | Keefon",
   description:
-    "Keefon Montpellier est une page dédiée aux rencontres bienveillantes à Montpellier et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Rencontre à Montpellier et autour (Castelnau-le-Lez, Lattes, Palavas, Carnon…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/montpellier",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Montpellier.jpg",
   keywords: [
-    // Intent + features
-    "rencontre Montpellier",
-        "rencontre gratuit Montpellier",
-    "rencontres Montpellier",
-    "site de rencontre Montpellier",
-    "rencontres bienveillantes Montpellier",
-    "rencontre locale Montpellier",
-    "rencontre proche de chez moi Montpellier",
-    "rencontre Hérault",
-    "rencontres Hérault",
-    "rencontres Occitanie",
-    "chat gratuit Montpellier",
-    "chat rencontre gratuit Montpellier",
-    "messagerie gratuite Montpellier",
-    "profils certifiés",
-    "profil certifié",
-    "vérification profil",
-    "respect et sécurité",
-    "rencontre respectueuse",
-    "dating Montpellier",
-    "dating Occitanie",
-    "rencontre adultes consentants",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Montpellier",
-    "Castelnau-le-Lez",
-    "Lattes",
-    "Pérols",
-    "Palavas-les-Flots",
-    "Carnon",
-    "Juvignac",
-    "Saint-Jean-de-Védas",
-    "Clapiers",
-    "Hérault",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Montpellier",
-    "rencontre après 30 ans Montpellier",
-    "rencontre après 40 ans Montpellier",
-    "rencontre après 50 ans Hérault",
+    "rencontre montpellier",
+    "rencontres montpellier",
+    "site de rencontre montpellier",
+    "rencontre montpellier 34",
+    "rencontre hérault",
+    "rencontres occitanie",
+    "dating montpellier",
+    "rencontre sans swipe",
+    "rencontres bienveillantes",
+    "chat gratuit montpellier",
+    "messagerie gratuite montpellier",
+    "rencontre sérieuse montpellier",
+    "rencontre montpellier comédie",
+    "rencontre montpellier écusson",
+    "rencontre port marianne",
+    "rencontre castelnau-le-lez",
+    "rencontre lattes",
+    "rencontre pérols",
+    "rencontre palavas-les-flots",
+    "rencontre carnon",
+    "rencontre saint-jean-de-védas",
+    "rencontre juvignac",
+    "rencontre clapiers",
+    "rencontre après 30 ans montpellier",
+    "rencontre après 40 ans montpellier",
+    "rencontre après 50 ans montpellier",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -388,9 +373,10 @@ export default function MontpellierRencontresPage() {
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
                 Une plateforme française pour celles et ceux qui vivent à
-                Montpellier et dans les villes autour (Castelnau, Lattes,
-                littoral héraultais…) et qui veulent des rencontres plus
-                humaines, sans swipe toxique.
+                Montpellier et dans la métropole (Castelnau-le-Lez, Lattes,
+                Pérols, Palavas, Carnon…) et qui veulent des rencontres plus
+                humaines, sans swipe toxique — avec l’idée de se voir facilement
+                (Comédie, Écusson, Port Marianne, Lez…).
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
@@ -447,7 +433,7 @@ export default function MontpellierRencontresPage() {
                   1. Tu crées ton profil
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques que tu es sur la zone Montpellier
+                  2. Tu indiques ta zone (Montpellier & alentours)
                 </h3>
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
                   3. Tu échanges simplement
@@ -584,8 +570,8 @@ export default function MontpellierRencontresPage() {
                   sente à l&apos;aise.
                 </li>
                 <li>
-                  Si vous aimez marcher un peu, petite balade dans l&apos;un
-                  des villages ou sites de l&apos;arrière-pays, en gardant un
+                  Si vous aimez marcher un peu, petite balade dans l&apos;arrière-pays
+                  (villages, chemins, coin du Pic Saint-Loup…), en gardant un
                   cadre simple et sécurisé.
                 </li>
               </ul>
@@ -598,7 +584,105 @@ export default function MontpellierRencontresPage() {
           </div>
         </section>
 
-        {/* Liens internes SEO (France + autres villes) */}
+        
+        {/* Bloc local Montpellier : quartiers, rythme et occasions de rencontre (texte unique) */}
+        <section className="py-6">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="rounded-2xl bg-white/30 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[2px]">
+              <h2 className="text-sm font-semibold text-chatOuter sm:text-base">
+                Montpellier : quartiers, rythme et occasions de rencontre
+              </h2>
+
+              <p className="mt-2 text-[11px] leading-relaxed">
+                Montpellier bouge vite, mais la rencontre peut rester simple :
+                un point de rendez-vous évident, un cadre public, et une balade
+                courte. Le bonus : tu peux vite passer du centre aux bords du Lez,
+                ou sortir prendre l’air (sans en faire trop).
+              </p>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Des endroits pratiques pour se voir
+              </h3>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Comédie / Écusson</strong> : central, très simple à retrouver,
+                  parfait pour un café.
+                </li>
+                <li>
+                  <strong>Beaux-Arts</strong> : ambiance plus posée, bars/cafés, bon
+                  compromis.
+                </li>
+                <li>
+                  <strong>Port Marianne / Lez</strong> : balade moderne, espaces publics,
+                  agréable pour discuter.
+                </li>
+                <li>
+                  <strong>Arceaux</strong> : marché/terrasses, rendez-vous “simple &amp; vivant”.
+                </li>
+                <li>
+                  <strong>Autour</strong> (Castelnau, Lattes, Pérols, Saint-Jean-de-Védas…)
+                  : choisissez un point accessible en tram/route pour rester fluide.
+                </li>
+              </ul>
+
+              <h3 className="mt-4 text-xs font-semibold text-chatOuter">
+                Activités qui rapprochent naturellement
+              </h3>
+              <p className="mt-1 text-[11px] leading-relaxed">
+                Sport, danse, clubs, associations, ateliers, sorties culturelles…
+                Et côté nature : marche sur les bords du Lez, littoral proche,
+                ou une sortie “air” (sans pression). Ce sont des contextes où la
+                discussion vient facilement, et où on évite les échanges qui
+                n’aboutissent jamais.
+              </p>
+
+              <div className="mt-4 space-y-2 text-[11px] leading-relaxed">
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Où proposer un premier rendez-vous simple à Montpellier ?
+                  </summary>
+                  <p className="mt-1">
+                    Comédie / Écusson, ou une balade courte côté Lez : public, clair,
+                    facile à écourter.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Et si on vit en périphérie ?
+                  </summary>
+                  <p className="mt-1">
+                    Prenez un point “pivot” (centre/tram) plutôt que de vous compliquer
+                    la vie. L’objectif : pouvoir se revoir facilement.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Comment garder un cadre safe ?
+                  </summary>
+                  <p className="mt-1">
+                    En public, heure raisonnable, plan simple. Tu gardes la main sur
+                    le rythme et tes limites.
+                  </p>
+                </details>
+
+                <details className="rounded-xl bg-white/35 px-3 py-2 shadow-sm">
+                  <summary className="cursor-pointer font-semibold text-chatOuter">
+                    Une idée “facile” pour briser la glace ?
+                  </summary>
+                  <p className="mt-1">
+                    Marché + café (Arceaux) ou balade bords du Lez : cadre, sujet,
+                    et moins de pression.
+                  </p>
+                </details>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+{/* Liens internes SEO (France + autres villes) */}
         <section className="py-6">
           <div className="mx-auto max-w-5xl px-4">
             <div className="rounded-2xl bg-white/30 px-4 py-3 text-[11px] text-slate-800 shadow-sm backdrop-blur-[2px]">
@@ -610,45 +694,7 @@ export default function MontpellierRencontresPage() {
                 >
                   rencontres en France
                 </Link>
-                .
-              </p>
-              <p className="mb-1">
-                Autres grandes villes où Keefon est présent&nbsp;:
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                <li>
-                  <Link
-                    href="/rencontres/marseille"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Marseille
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/toulouse"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Toulouse
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/lyon"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Lyon
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/rencontres/bordeaux"
-                    className="underline-offset-2 hover:underline"
-                  >
-                    Rencontres à Bordeaux
-                  </Link>
-                </li>
-              </ul>
+                .    </p>
             </div>
           </div>
         </section>
