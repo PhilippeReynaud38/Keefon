@@ -30,7 +30,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres à Nice (06) et alentours | Keefon",
+  title: " vie à 2 | vie à deux | Keefon",
   description:
     "Rencontre à Nice et autour (Cagnes-sur-Mer, Saint-Laurent-du-Var, Villefranche, Antibes…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/nice",

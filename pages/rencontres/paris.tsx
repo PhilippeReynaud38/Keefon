@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Fichier : pages/rencontres/paris.tsx
  * Module : Pages publiques / SEO — Rencontres sur la zone Paris & Île-de-France
  *
@@ -22,7 +22,7 @@ const CITY = {
 };
 
 const SEO = {
-  title: `Rencontre ${CITY.name} (${CITY.dept}) | Rencontres bienveillantes à ${CITY.name} | Keefon`,
+  title: `site de rencontre paris | meilleur site de rencontre | Keefon`,
   description:
     "Rencontre à Paris sur Keefon : profils à Paris et en Île-de-France, échanges respectueux, sans swipe toxique. Une approche plus humaine pour ceux qui veulent du réel.",
   canonical: `https://www.keefon.com/rencontres/${CITY.slug}`,

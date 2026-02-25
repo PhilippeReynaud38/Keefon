@@ -33,7 +33,7 @@ import Link from "next/link";
 const SEO = {
   title: "Rencontres à Strasbourg (67) et alentours | Keefon",
   description:
-    "Rencontre à Strasbourg et autour (Schiltigheim, Illkirch, Bischheim, Ostwald…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
+    " joyeuse rencontre |  sans swipe ",
   canonical: "https://www.keefon.com/rencontres/strasbourg",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-strasbourg.jpg",

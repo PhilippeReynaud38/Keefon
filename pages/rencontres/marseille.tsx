@@ -29,7 +29,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres à Marseille (13) et alentours | Keefon",
+  title: "site de Rencontres à Marseille (13) et alentours | vivre à 2 | Keefon",
   description:
     "Rencontre à Marseille et autour (Aix, Aubagne, La Ciotat, Cassis…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/marseille",

@@ -30,7 +30,7 @@ import Link from "next/link";
 import Image from "next/image";
 /* ===========================  SEO (Rennes / Bretagne)  =========================== */
 const SEO = {
-  title: "Rencontres à Rennes (35) et alentours | Keefon",
+  title: " je cherche mon ame soeur| comment rencontrer | Keefon",
   description:
     "Rencontre à Rennes et autour (Cesson-Sévigné, Saint-Grégoire, Chantepie, Bruz…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/rennes",

@@ -29,7 +29,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Lyon et dans la métropole | Keefon",
+  title: "recherche ame soeur| mon future compagnon | Keefon",
   description:
     "Keefon Lyon est une page dédiée aux rencontres bienveillantes à Lyon et dans sa métropole : échanges respectueux, profils vérifiés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/lyon",

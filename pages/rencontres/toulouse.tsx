@@ -29,9 +29,9 @@ import Link from "next/link";
 
 /* ===========================  SEO (Toulouse / ville rose)  =========================== */
 const SEO = {
-  title: "Rencontres à Toulouse (31) et alentours | Keefon",
+  title: "super rencontre | site de rencontre pas chere | Keefon",
   description:
-    "Rencontre à Toulouse et autour (Blagnac, Colomiers, Balma, Ramonville…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
+    " super rencontre |  : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/toulouse",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Toulouse.jpg",

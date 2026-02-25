@@ -31,7 +31,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres à Nantes (44) et alentours | Keefon",
+  title: "qui m'aime | amour passion | Keefon",
   description:
     "Rencontre à Nantes et autour (Rezé, Saint-Herblain, Orvault, Vertou…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/nantes",

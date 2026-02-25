@@ -31,7 +31,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres à Montpellier (34) et alentours | Keefon",
+  title: " lien amoureux | rencontrer le bien etre | Keefon",
   description:
     "Rencontre à Montpellier et autour (Castelnau-le-Lez, Lattes, Palavas, Carnon…) : échanges respectueux, sans swipe toxique. Chat ouvert pendant la période gratuite.",
   canonical: "https://www.keefon.com/rencontres/montpellier",

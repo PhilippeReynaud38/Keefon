@@ -31,7 +31,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Saint-Étienne et autour | Keefon",
+  title: "Rencontres sincere| amoure sincere | Keefon",
   description:
     "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/saint-etienne",

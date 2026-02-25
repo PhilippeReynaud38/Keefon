@@ -29,7 +29,7 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres bienveillantes à Bordeaux et autour | Keefon",
+  title: "Rencontrer mon ame soeur à Bordeaux | trouver ma moitiié | Keefon",
   description:
     "Keefon Bordeaux est une page dédiée aux rencontres bienveillantes à Bordeaux et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/bordeaux",
