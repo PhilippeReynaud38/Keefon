@@ -29,7 +29,7 @@ import Image from "next/image";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "belle rencontre à Grenoble et dans la métropole | mon amour | Keefon",
+  title: " site de rencontre gratuit |site de rencontre 100% gratuit 2026 grenoble | Keefon",
   description:
     "Keefon Grenoble est une page dédiée aux rencontres bienveillantes à Grenoble et dans sa métropole : échanges respectueux, profils protégés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/Grenoble",
