@@ -95,14 +95,12 @@ function FreeTopBar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
         <p className="m-0 flex-1 text-left font-extrabold leading-snug text-slate-900">
           <span className="block text-[15px] sm:text-[18px]">
-            Période gratuite :{" "}
-            <span className="underline decoration-2 underline-offset-2">
-              accès 100% gratuit
-            </span>{" "}
+         Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 2000 premiers inscrit{" "}
+
             — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée. Profites-en dès maintenant.
+Aucune carte bancaire demandée, chat et échanges illimités pendant la période d'ouverture — et bien sûr, nous espérons que tu auras trouvé ta moitié bien avant, et que le bonheur t'accompagne.
           </span>
         </p>
 
@@ -142,7 +140,7 @@ function FreeReminderCard() {
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div className="text-slate-900">
               <p className="m-0 text-[15px] font-extrabold sm:text-[18px]">
-                Accès 100% gratuit — chat ouvert à tous.
+              Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 2000 premiers inscrit
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
                 Tu peux créer ton profil, échanger librement et tester Keefon
