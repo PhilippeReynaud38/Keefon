@@ -382,6 +382,9 @@ Pendant la période d’ouverture, la messagerie est gratuite et aucune carte ba
           </div>
         </header>
 
+        {/* Carte rappel période gratuite */}
+        <FreeReminderCard />
+
         {/* Exemples de profils (Grenoble / Métropole) */}
         <ProfileTeaserBand />
 
