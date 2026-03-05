@@ -429,7 +429,7 @@ Pendant la période d’ouverture, la messagerie est gratuite et aucune carte ba
               </article>
               <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
                 <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
-                  2. Tu indiques Grenoble ou ta commune de la métropole
+                  2. Tu indiques Grenoble ou ta commune du département
                 </h3>
                 <p className="text-sm leading-relaxed">
 C'est important sinon les autres ne te verront pas.

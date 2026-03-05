@@ -12,6 +12,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import * as React from "react";
 
 /* ===========================  SEO  =========================== */
 const CITY = {
@@ -22,22 +23,15 @@ const CITY = {
 };
 
 const SEO = {
-  title: `site de rencontre paris | meilleur site de rencontre | Keefon`,
+  title: `Rencontres à Paris gratuit en 2026 – site bienveillant et sans swipe | Keefon`,
   description:
-    "Rencontre à Paris sur Keefon : profils à Paris et en Île-de-France, échanges respectueux, sans swipe toxique. Une approche plus humaine pour ceux qui veulent du réel.",
+    "Rencontres à Paris – une approche plus humaine",
   canonical: `https://www.keefon.com/rencontres/${CITY.slug}`,
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-paris.jpg",
-  keywords: [
-    "rencontre paris",
-    "rencontres paris",
-    "sortir paris",
-    "rencontre ile de france",
+  keywords: [ 
     "site de rencontre paris",
-    "dating paris",
-    "rencontres bienveillantes",
-    "rencontre sans swipe",
-    "keefon",
+    "dating paris", 
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -58,8 +52,9 @@ function FreeTopBar() {
   if (!FREE_MODE) return null;
   return (
     <div
+      id="free-topbar"
       role="status"
-      aria-label="Période gratuite en cours : accès gratuit et chat ouvert"
+      aria-label="Période gratuite en cours : accès gratuit et chat ouvert à tous"
       className="fixed inset-x-0 top-0 z-[1000] w-full"
       style={{
         background: COLORS.bannerGrad,
@@ -69,18 +64,18 @@ function FreeTopBar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:py-5">
         <p className="m-0 flex-1 text-left font-extrabold leading-snug text-slate-900">
           <span className="block text-[15px] sm:text-[18px]">
-            Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 2000 premiers inscrit{" "}
-            
-            — chat ouvert
+           Offre lancement Keefon : gratuité du site jusqu'à fin 2026 pour les 2000 premiers inscrit{" "}
+
+            — chat ouvert à tous
           </span>
           <span className="mt-0.5 block text-[13px] sm:text-[15px] font-semibold opacity-90">
-            Aucune carte bancaire demandée, chat et échanges illimités pendant la période d'ouverture — et bien sûr, nous espérons que tu auras trouvé ta moitié bien avant, et que le bonheur t'accompagne.
+         Aucune carte bancaire demandée, chat et échanges illimités pendant la période d'ouverture — et bien sûr, nous espérons que tu auras trouvé ta moitié bien avant, et que le bonheur t'accompagne.
           </span>
         </p>
 
         <a
           href="/signup"
-          aria-label="Créer un compte gratuitement"
+          aria-label="Créer un compte gratuitement pendant la période gratuite"
           title="Créer un compte gratuitement"
           className="shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-5 sm:py-2.5 sm:text-[14px]"
           style={{ background: COLORS.paleGreen }}
@@ -94,7 +89,27 @@ function FreeTopBar() {
 
 function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
-  return <div className="h-[72px] w-full sm:h-[84px]" />;
+
+  const [h, setH] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = document.getElementById("free-topbar");
+    if (!el) return;
+
+    const update = () => setH(Math.ceil(el.getBoundingClientRect().height));
+    update();
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return <div aria-hidden="true" className="w-full" style={{ height: h }} />;
 }
 
 /* ===========================  Carte rappel  =========================== */
@@ -418,15 +433,16 @@ export default function ParisRencontresPage() {
                   textShadow: "0 2px 6px rgba(0,0,0,0.25)",
                 }}
               >
-                Rencontres bienveillantes à {CITY.name} et en {CITY.region}
+               Rencontres à Paris – une approche plus humaine
               </h1>
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
-                À {CITY.name}, tu peux croiser des milliers de profils… et pourtant te sentir seul.
-                Keefon est fait pour les gens qui veulent{" "}
-                <span className="font-semibold">moins de bruit</span>,{" "}
-                <span className="font-semibold">plus d’intention</span> et des échanges
-                qui se traduisent en rencontres réelles (sans “shopping humain”).
+               Paris est une ville intense où tout va vite. Pourtant, pour rencontrer quelqu’un, beaucoup cherchent simplement de la simplicité et des échanges réels.
+
+Keefon propose une autre manière de rencontrer à Paris et en Île-de-France : pas de swipe infini ni d’algorithme opaque. Tu découvres des profils proches de toi et tu échanges à ton rythme.
+
+Pendant la période d’accès gratuit, tu peux créer ton profil et discuter librement sans carte bancaire. Keefon privilégie des rencontres authentiques plutôt que le “shopping humain”.
+          
               </p>
 
               <p className="mt-2 text-center text-xs leading-relaxed text-slate-800 sm:text-[13px]">
@@ -445,23 +461,52 @@ export default function ParisRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              À Paris, le vrai problème c’est le bruit — pas le manque de monde
+              Pourquoi Keefon change l’expérience des rencontres à Paris
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Entre le rythme, les trajets, et les applis qui poussent à swiper, tu peux vite perdre du temps.
-              Ici, on simplifie : une expérience plus calme, plus lisible, plus humaine.
-            </p>
 
-            <div className="mt-6 grid gap-6 md:grid-cols-3">
-              <SoftCard title="Moins d’addiction, plus d’intention">
-                Pas de scroll infini. Tu viens pour échanger et rencontrer, pas pour te faire happer par l’écran.
-              </SoftCard>
-              <SoftCard title="Compatible “métro / RER / agenda chargé”">
-                On pense “réalité parisienne” : trajets, dispo limitées, fatigue. L’idée : aller au plus simple.
-              </SoftCard>
-              <SoftCard title="Respect & modération">
-                Tu dois pouvoir dire non, poser des limites, et signaler ce qui ne va pas. Sans discussion.
-              </SoftCard>
+    <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+      <ul className="space-y-3 text-sm leading-relaxed">
+        <li>
+          <span className="font-semibold text-chatOuter">Pas de swipe :</span>{" "}
+          tu ne consommes pas des visages, tu rencontres des personnes.
+        </li>
+
+        <li>
+          <span className="font-semibold text-chatOuter">
+            Pas d’algorithme opaque :
+          </span>{" "}
+          tu vois les profils, pas ce que la machine veut te montrer.
+        </li>
+
+        <li>
+          <span className="font-semibold text-chatOuter">
+            Profils certifiés :
+          </span>{" "}
+          un système simple pour limiter les faux comptes et renforcer la
+          confiance.
+        </li>
+
+        <li>
+          <span className="font-semibold text-chatOuter">
+            Anti-harcèlement :
+          </span>{" "}
+          signalements rapides, modération humaine, tolérance zéro.
+        </li>
+
+        <li>
+          <span className="font-semibold text-chatOuter">
+            Respect des données :
+          </span>{" "}
+          RGPD, CNIL, aucune revente, aucune publicité intrusive.
+        </li>
+
+        <li>
+          <span className="font-semibold text-chatOuter">
+            Gratuité pendant l’ouverture :
+          </span>{" "}
+          échanges illimités, sans carte bancaire.
+        </li>
+      </ul>
             </div>
           </div>
         </section>
@@ -470,18 +515,37 @@ export default function ParisRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche à {CITY.name} ?
+              ✨ Comment fonctionne Keefon ?
             </h2>
             <div className="mt-6 grid gap-6 md:grid-cols-3">
-              <SoftCard title="1) Tu crées ton profil">
-                Simple, clair, sans te forcer à raconter ta vie. Tu gardes la main sur ce que tu partages.
-              </SoftCard>
-              <SoftCard title={`2) Tu indiques ta zone (${CITY.name} / IDF)`}>
-                Paris intra-muros, petite couronne, ou plus loin : le but c’est que ça reste logique pour se voir.
-              </SoftCard>
-              <SoftCard title="3) Tu échanges, puis tu proposes un rendez-vous public">
-                L’étape la plus saine : une rencontre courte dans un lieu public (café, parc fréquenté, expo).
-              </SoftCard>
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  1. Tu crées ton profil en quelques minutes
+                </h3>
+                <p className="text-sm leading-relaxed">
+                  Tu ajoutes une photo, ce que tu recherches, et quelques infos
+                  simples pour te présenter. Pas besoin d&apos;un roman pour
+                  commencer.
+                </p>
+              </article>
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  2. Tu indiques Paris ou ta commune du département
+                </h3>
+                <p className="text-sm leading-relaxed">
+C'est important sinon les autres ne te verront pas.
+                </p>
+              </article>
+              <article className="rounded-2xl border border-sky-200 bg-white/35 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
+                <h3 className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
+                  3. Tu échanges à ton rythme
+                </h3>
+                <p className="text-sm leading-relaxed">
+                  Tu discutes via la messagerie, tu vois si le feeling passe,
+                  puis tu décides si tu veux aller plus loin dans le réel
+                  (balade, rando, verre ou café en ville…).
+                </p>
+              </article>
             </div>
           </div>
         </section>
@@ -556,9 +620,7 @@ export default function ParisRencontresPage() {
               Petite couronne : le bon plan, c’est de réduire les trajets
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
-              Si tu es en 92 / 93 / 94, ne te piège pas à “tout faire à Paris”.
-              Un premier rendez-vous peut très bien se faire près d’une station, dans un centre-ville local,
-              ou dans un parc fréquenté proche de chez vous.
+La communauté parisienne de Keefon reflète la diversité de la région : habitants du 11e, du 15e, du 18e, mais aussi de la petite couronne (92/93/94), des personnes qui vivent au rythme du métro, du RER, des trajets quotidiens. L’idée n’est pas de filtrer par quartier, mais de favoriser des rencontres réalistes, cohérentes avec la vie parisienne.
             </p>
 
             <div className="mt-6 grid gap-6 md:grid-cols-2">
