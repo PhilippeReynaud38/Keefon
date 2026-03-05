@@ -23,6 +23,7 @@
  * - Ne PAS promettre de fonctionnalités qui n'existent pas encore.
  */
 
+import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -62,6 +63,7 @@ function FreeTopBar() {
   if (!FREE_MODE) return null;
   return (
     <div
+      id="free-topbar"
       role="status"
       aria-label="Période gratuite en cours : accès gratuit et chat ouvert à tous"
       className="fixed inset-x-0 top-0 z-[1000] w-full"
@@ -98,7 +100,27 @@ function FreeTopBar() {
 
 function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
-  return <div className="h-[96px] w-full sm:h-[84px]" />;
+
+  const [h, setH] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = document.getElementById("free-topbar");
+    if (!el) return;
+
+    const update = () => setH(Math.ceil(el.getBoundingClientRect().height));
+    update();
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return <div aria-hidden="true" className="w-full" style={{ height: h }} />;
 }
 
 /* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
