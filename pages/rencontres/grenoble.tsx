@@ -98,7 +98,7 @@ function FreeTopBar() {
 
 function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
-  return <div className="h-[72px] w-full sm:h-[84px]" />;
+  return <div className="h-[96px] w-full sm:h-[84px]" />;
 }
 
 /* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
@@ -326,9 +326,6 @@ export default function GrenobleRencontresPage() {
                   className="inline-block text-center text-[11px] sm:text-xs font-semibold rounded-full px-3 py-1"
                   style={{ backgroundColor: "#93ef09ff" }}
                 >
-    <span className="block">  </span>
-                      <span className="block">  </span>
-                  <span className="block">  </span>
                   <span className="block">Se prononce « qui-phone » 📞</span>
                   <span className="block">Coup de cœur mutuel. ❤️</span>
                 </p>
@@ -384,6 +381,9 @@ Pendant la période d’ouverture, la messagerie est gratuite et aucune carte ba
             </div>
           </div>
         </header>
+
+        {/* Carte rappel période gratuite */}
+        <FreeReminderCard />
 
         {/* Exemples de profils (Grenoble / Métropole) */}
         <ProfileTeaserBand />
