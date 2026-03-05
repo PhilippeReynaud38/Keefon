@@ -326,6 +326,9 @@ export default function GrenobleRencontresPage() {
                   className="inline-block text-center text-[11px] sm:text-xs font-semibold rounded-full px-3 py-1"
                   style={{ backgroundColor: "#93ef09ff" }}
                 >
+    <span className="block">  </span>
+                      <span className="block">  </span>
+                  <span className="block">  </span>
                   <span className="block">Se prononce « qui-phone » 📞</span>
                   <span className="block">Coup de cœur mutuel. ❤️</span>
                 </p>
