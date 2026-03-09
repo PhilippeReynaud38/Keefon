@@ -12,28 +12,17 @@ import Image from "next/image";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Site de rencontres bienveillantes en France | Keefon",
+  title: "Site de rencontres bienveillantes en France | c'eet un site de rencontres gratuit",
   description:
     "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/france",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-France.jpg",
   keywords: [
-    "rencontre france",
-    "rencontres france",
-    "site de rencontre france",
-    "site de rencontre français",
-    "appli de rencontre française",
+    "site de rencontre",
     "rencontre gratuit",
-    "chat gratuit",
-    "messagerie gratuite", 
     "rencontres bienveillantes", 
-    "slow dating",
     "rencontre sans swipe",
-    "dating france", 
-    "rencontre en ligne",
-    "faire des rencontres en france",
-    "rencontrer des gens",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },
@@ -124,11 +113,7 @@ function FreeReminderCard() {
                 <span className="font-black">2000 premiers inscrit</span>.
               </p>
               <p className="m-0 mt-1 text-[13px] sm:text-[14px]">
-                Tu peux créer ton profil, échanger librement et tester Keefon
-                sans carte bancaire. Si tu fais partie des 2000 premiers, tu
-                gardes la gratuité jusqu&apos;à fin 2026 — et bien sûr, nous
-                espérons que tu auras trouvé ta moitié bien avant, et que le
-                bonheur t&apos;accompagne.
+Keefon France est un espace bienveillant pour rencontrer des célibataires partout en France, sans pression et sans artifice. Pendant la période de lancement, l’inscription est gratuite jusqu’à fin 2026 pour les 2000 premiers inscrits, avec un chat illimité et sans carte bancaire. Rejoins une communauté française qui privilégie la sincérité et les échanges authentiques.
               </p>
             </div>
             <a
@@ -210,7 +195,7 @@ function ProfileTeaserBand() {
     <section className="section section-profiles-preview py-6">
       <div className="container mx-auto max-w-5xl px-4">
         <h2 className="text-sm sm:text-base font-semibold uppercase tracking-[0.18em] text-menuBtn">
-          Quelques exemples de profils sur Keefon
+          rencontres France, célibataires français, rencontres sérieuses :
         </h2>
 
         {/* Mention discrète (jaune pâle, sans fond) */}
@@ -389,13 +374,11 @@ export default function FranceRencontresPage() {
                   textShadow: "0 2px 6px rgba(0,0,0,.25)",
                 }}
               >
-                Rencontres bienveillantes, partout en France
+              Rencontres bienveillantes, gratuites jusqu’en fin 2026.
               </h1>
 
               <p className="mt-3 text-sm leading-relaxed sm:text-base text-center">
-                Keefon est un espace de rencontres français pour celles et ceux
-                qui veulent du vrai, du respect et du temps de qualité — sans
-                swipe infini, sans surjeu, sans cirque.
+Keefon France est un espace bienveillant pour rencontrer des célibataires partout en France. Inscription gratuite jusqu’à fin 2026 pour les 2000 premiers inscrits, sans carte bancaire et avec chat illimité. Rejoins une communauté authentique et française.
               </p>
 
               <p className="mt-2 text-xs leading-relaxed text-slate-800 sm:text-[13px] text-center">
@@ -461,7 +444,7 @@ export default function FranceRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Comment ça marche&nbsp;?
+              Comment ça marche ?
             </h2>
 
             <p className="mt-3 text-sm leading-relaxed text-slate-900 sm:text-base">
@@ -510,7 +493,7 @@ export default function FranceRencontresPage() {
         <section className="py-10">
           <div className="container mx-auto max-w-5xl px-4">
             <h2 className="text-xl font-semibold text-menuBtn sm:text-2xl">
-              Pourquoi Keefon est différent&nbsp;?
+              Un site de rencontre différent ?
             </h2>
             <div className="mt-6 max-w-3xl rounded-2xl border border-sky-200 bg-white/40 px-4 py-4 text-slate-900 shadow-sm backdrop-blur-[1px]">
               <p className="mb-2 text-sm font-semibold text-chatOuter sm:text-base">
