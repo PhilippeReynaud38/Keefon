@@ -423,7 +423,7 @@ export default function LilleRencontresPage() {
                   textShadow: "0 2px 6px rgba(0,0,0,0.25)",
                 }}
               >
-                Rencontres bienveillantes à {CITY.name} et dans la {CITY.metro}
+                Rencontres bienveillantes à {CITY.name} et dans la {CITY.metro},  c'est un site de rencontre gratuit
               </h1>
 
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-900 sm:text-base">
