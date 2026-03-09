@@ -30,9 +30,9 @@ import Image from "next/image";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: " Rencontre à Grenoble | Site gratuit et bienveillant | Keefon",
+  title: " Site de rencontres bienveillantes et gratuit à Grenoble",
   description:
-    "Rencontres locales à Grenoble, sans swipe ni algorithme opaque. Profils protégés, échanges gratuits pendant la période d’ouverture. Keefon : bienveillance et simplicité.",
+    "Site de rencontres locales et gratuit à Grenoble, sans swipe ni algorithme opaque. Profils protégés, échanges gratuits pendant la période d’ouverture. Keefon : bienveillance et simplicité.",
     
   canonical: "https://www.keefon.com/rencontres/Grenoble",
   siteName: "Keefon",

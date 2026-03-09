@@ -14,7 +14,7 @@ import Image from "next/image";
 const SEO = {
   title: "Site de rencontres bienveillantes en France | c'eet un site de rencontres gratuit",
   description:
-    "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Keefon est une plateforme française de rencontres bienveillantes pour celles et ceux qui veulent des échanges vrais, respectueux et sans swipe toxique. Chat gratuit toutes l'année 2026.",
   canonical: "https://www.keefon.com/rencontres/france",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-France.jpg",

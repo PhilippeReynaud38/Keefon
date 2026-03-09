@@ -31,50 +31,16 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontres sincere| amoure sincere | Keefon",
+  title: "Site de rencontres bienveillantes et gratuit à Saint-Etienne",
   description:
-    "Keefon Saint-Étienne est une page dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Keefon Saint-Étienne est un site dédiée aux rencontres bienveillantes à Saint-Étienne et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/saint-etienne",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Saint-Etienne.jpg",
   keywords: [
     // Intent + features
-    "rencontre Saint-Étienne",
-     "meilleur rencontre Saint-Étienne",
-      "rencontre gratuite Saint-Étienne",
-    "rencontres Saint-Étienne",
     "site de rencontre Saint-Étienne",
     "rencontres bienveillantes Saint-Étienne",
-    "rencontre locale Saint-Étienne",
-    "rencontre proche de chez moi Saint-Étienne",
-    "rencontre Loire",
-    "rencontres Loire",
-    "rencontres Auvergne-Rhône-Alpes",
-    "chat gratuit Saint-Étienne",
-    "chat rencontre gratuit Saint-Étienne",
-    "messagerie gratuite Saint-Étienne",
-    "rencontre respectueuse",
-    "dating Saint-Étienne",
-    "dating Loire",
-    "rencontre adultes consentants",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Saint-Étienne",
-    "Saint-Chamond",
-    "Firminy",
-    "Andrézieux-Bouthéon",
-    "La Talaudière",
-    "Roche-la-Molière",
-    "Montbrison",
-    "Plaine du Forez",
-    "Pilat",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Saint-Étienne",
-    "rencontre après 30 ans Saint-Étienne",
-    "rencontre après 40 ans Loire",
-    "rencontre après 50 ans Loire",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },

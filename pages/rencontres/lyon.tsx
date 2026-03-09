@@ -29,31 +29,18 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "recherche ame soeur| mon future compagnon | Keefon",
+  title: "recherche ame soeur| Site de rencontres bienveillantes et gratuit à Lyon",
   description:
-    "Keefon Lyon est une page dédiée aux rencontres bienveillantes à Lyon et dans sa métropole : échanges respectueux, profils vérifiés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
+    "Keefon LyoN est un site dédiée aux rencontres bienveillantes à Lyon et dans sa métropole : échanges respectueux, profils vérifiés, sans swipe infini. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/lyon",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-Lyon.jpg",
   keywords: [
     // Intent + features (garde le même esprit que France, ciblé Lyon / métropole)
-    "rencontre Lyon",
-        "rencontre gratuit Lyon",
-    "rencontres Lyon",
+    "rencontre gratuit Lyon",
     "site de rencontre Lyon",
     "rencontres bienveillantes Lyon",
-    "chat gratuit Lyon",
-    "chat rencontre gratuit Lyon",
-    "messagerie gratuite Lyon",
-    "rencontre respectueuse",
-    "dating Lyon",
 
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Lyon",
-    "rencontre après 30 ans Lyon",
-    "rencontre après 40 ans Lyon",
-    "rencontre après 50 ans Lyon",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },

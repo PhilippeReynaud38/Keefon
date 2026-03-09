@@ -28,23 +28,16 @@ const CITY = {
 };
 
 const SEO = {
-  title: `Rencontre ${CITY.name} (${CITY.dept}) | Rencontres bienveillantes à ${CITY.name} | Keefon`,
+  title: `Rencontre ${CITY.name} (${CITY.dept}) | Site de rencontres bienveillantes et gratuit à ${CITY.name}`,
   description:
-    "Rencontre à Lille sur Keefon : profils à Lille et dans la métropole lilloise (MEL), échanges respectueux, sans swipe infini. Une approche plus humaine pour celles et ceux qui veulent du réel.",
+    "Rencontre à Lille bienveillantes et gratuit  échanges respectueux, sans swipe infini. Une approche plus humaine pour celles et ceux qui veulent du réel.",
   canonical: `https://www.keefon.com/rencontres/${CITY.slug}`,
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-lille.jpg",
   keywords: [
-    "rencontre lille",
-    "rencontres lille",
     "site de rencontre lille",
-    "rencontre metropole lilloise",
-    "rencontre roubaix",
-    "rencontre tourcoing",
-    "dating lille",
     "rencontre sans swipe",
     "rencontres bienveillantes",
-    "keefon",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com" },

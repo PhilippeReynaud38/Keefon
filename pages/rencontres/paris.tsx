@@ -23,7 +23,7 @@ const CITY = {
 };
 
 const SEO = {
-  title: `Rencontres à Paris gratuit en 2026 – site bienveillant et sans swipe | Keefon`,
+  title: `Site de rencontres bienveillantes et gratuit à Paris`,
   description:
     "Rencontres à Paris – une approche plus humaine",
   canonical: `https://www.keefon.com/rencontres/${CITY.slug}`,

@@ -29,52 +29,17 @@ import Link from "next/link";
 
 /* ===========================  SEO (mots-clés & libellés)  =========================== */
 const SEO = {
-  title: "Rencontrer mon ame soeur à Bordeaux | trouver ma moitiié | Keefon",
+  title: "Rencontrer mon âme soeur à Bordeaux | Site de rencontres bienveillantes et gratuit à Bordeaux ",
   description:
-    "Keefon Bordeaux est une page dédiée aux rencontres bienveillantes à Bordeaux et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
+    "Keefon Bordeaux est un site dédié aux rencontres bienveillantes à Bordeaux et dans les villes autour : échanges vrais, respectueux, sans swipe toxique. Chat gratuit pendant la période d’ouverture.",
   canonical: "https://www.keefon.com/rencontres/bordeaux",
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-bordeaux.jpg",
   keywords: [
     // Intent + features
-    "rencontre Bordeaux",
         "rencontre gratuit Bordeaux",
-            "meilleur site rencontre Bordeaux",
-
-    "rencontres Bordeaux",
     "site de rencontre Bordeaux",
     "rencontres bienveillantes Bordeaux",
-    "rencontre locale Bordeaux",
-    "rencontre proche de chez moi Bordeaux",
-    "rencontre Gironde",
-    "rencontres Nouvelle-Aquitaine",
-    "chat gratuit Bordeaux",
-    "chat rencontre gratuit Bordeaux",
-    "messagerie gratuite Bordeaux",
-    "protection des données",
-    "dating Bordeaux",
-    "dating Gironde",
-    "rencontre adultes consentants",
-    "slow dating",
-    "dating bienveillant",
-
-    // Villes / zone (SEO, pas promesse de filtres)
-    "Bordeaux",
-    "Mérignac",
-    "Pessac",
-    "Talence",
-    "Bègles",
-    "Cenon",
-    "Lormont",
-    "Bruges",
-    "Le Bouscat",
-    "Villenave-d'Ornon",
-
-    // Combinaisons courtes utiles
-    "rencontre sérieuse Bordeaux",
-    "rencontre après 30 ans Bordeaux",
-    "rencontre après 40 ans Bordeaux",
-    "rencontre après 50 ans Bordeaux",
   ].join(", "),
   breadcrumb: [
     { name: "Accueil", url: "https://www.keefon.com/" },
