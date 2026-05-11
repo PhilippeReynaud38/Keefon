@@ -657,6 +657,16 @@ export default function ProposerCreationMusiquePage() {
                 />
               </label>
 
+              <div className="rightsNotice">
+                <strong>Droits des créateurs</strong>
+
+                <p>
+                  Keefon ne revendique aucun droit de propriété sur les
+                  créations proposées. Vous gardez vos droits, vos plateformes
+                  et vos statistiques.
+                </p>
+              </div>
+
               <div className="checks">
                 <label>
                   <input name="rights_confirmed" type="checkbox" required />
@@ -806,6 +816,25 @@ export default function ProposerCreationMusiquePage() {
 
           .infoBox p {
             margin: 10px 0;
+          }
+
+          .rightsNotice {
+            margin: 22px 0 24px;
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(245, 199, 109, 0.1);
+            border: 1px solid rgba(245, 199, 109, 0.32);
+          }
+
+          .rightsNotice strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #f5c76d;
+          }
+
+          .rightsNotice p {
+            margin: 0;
+            line-height: 1.6;
           }
 
           .authBox,

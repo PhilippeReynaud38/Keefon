@@ -639,14 +639,13 @@ export default function KeefonMusicPage() {
           <h2>Diffusez vos créations sur Keefon</h2>
 
           <p>
-            Déposez vos propres liens : YouTube, Suno, SoundCloud, Bandcamp,
-            Spotify, TikTok ou autre plateforme.
+        Vous pouvez proposer une chanson correspondant à nos catégories, un morceau audio, une ambiance sonore, un clip ou un projet plus narratif. Le clip vidéo n’est pas obligatoire.
+
+Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
           </p>
 
           <p>
-            Keefon affiche une fiche de présentation, sans héberger vos gros
-            fichiers. Vous gardez vos droits, vos plateformes, vos statistiques
-            et vous pouvez retirer votre fiche vous-même.
+           Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
           </p>
 
           <a href="/musique/proposer" className="primary">
