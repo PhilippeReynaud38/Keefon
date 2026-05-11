@@ -30,7 +30,7 @@ const CITY = {
 const SEO = {
   title: `Rencontre ${CITY.name} (${CITY.dept}) | Site de rencontres bienveillantes et gratuit à ${CITY.name}`,
   description:
-    "Rencontre à Lille bienveillantes et gratuit  échanges respectueux, sans swipe infini. Une approche plus humaine pour celles et ceux qui veulent du réel.",
+    "Rencontre à Lille bienveillantes et gratuit, Keefon est un site de rencontres pour les personnes intentionnées, sans swipe infini. Une approche plus humaine pour celles et ceux qui veulent du réel.",
   canonical: `https://www.keefon.com/rencontres/${CITY.slug}`,
   siteName: "Keefon",
   ogImage: "https://www.keefon.com/og/rencontres-lille.jpg",

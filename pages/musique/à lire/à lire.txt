@@ -1,0 +1,17 @@
+
+--- LA PAGE  :  pages/musique/proposer.tsx   ==>
+
+
+   Elle va faire :
+
+connexion par email si le créateur n’est pas connecté ;
+création automatique d’un profil créateur minimal ;
+chargement des rubriques depuis zz_music_categories_modifiables ;
+dépôt d’une création dans zz_music_creations_deposees ;
+statut automatique : pending ;
+aucune vidéo stockée sur Keefon ;
+uniquement lien externe + fiche.
+
+
+
+________________________________________________________________________________________
