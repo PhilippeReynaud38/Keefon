@@ -294,12 +294,14 @@ export default function ProposerCreationMusiquePage() {
     setPageMessage("");
     setErrorMessage("");
 
-    if (!profile) {
+    const currentProfile = profile;
+
+    if (!currentProfile) {
       setErrorMessage("Tu dois avoir un espace créateur pour proposer une création.");
       return;
     }
 
-    if (profile.creator_status === "blocked") {
+    if (currentProfile.creator_status === "blocked") {
       setErrorMessage("Ce compte ne peut pas proposer de création.");
       return;
     }
@@ -337,7 +339,7 @@ export default function ProposerCreationMusiquePage() {
     setIsSending(true);
 
     const { error } = await supabase.from("zz_music_creations_deposees").insert({
-      creator_id: profile.id,
+      creator_id: currentProfile.id,
       title,
       public_author_name: publicAuthorName,
       description,
@@ -591,11 +593,11 @@ export default function ProposerCreationMusiquePage() {
                 </label>
 
                 <label>
-                  Nom public du déposant *
+                  Nom public de l’auteur *
                   <input
                     name="public_author_name"
                     type="text"
-                    defaultValue={profile.public_name}
+                    defaultValue={profile?.public_name || ""}
                     required
                   />
                 </label>
