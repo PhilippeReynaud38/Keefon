@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -55,6 +55,32 @@ type MusicAlbum = {
   hearts_count: number;
   tracks: MusicCreation[];
 };
+
+declare global {
+  interface Window {
+    YT?: any;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
+function getYouTubeVideoId(url: string | null | undefined) {
+  if (!url) return null;
+
+  const patterns = [
+    /youtu\.be\/([^?&#/]+)/,
+    /[?&]v=([^?&#/]+)/,
+    /youtube\.com\/embed\/([^?&#/]+)/,
+    /youtube\.com\/shorts\/([^?&#/]+)/,
+    /youtube\.com\/live\/([^?&#/]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+
+  return null;
+}
 
 function platformLabel(platform: string) {
   switch (platform) {
@@ -136,6 +162,13 @@ export default function KeefonMusicPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const youtubePlayerRef = useRef<any>(null);
+  const [isYouTubeApiReady, setIsYouTubeApiReady] = useState(false);
+
+  const activeYouTubeVideoId = selectedCreation
+    ? getYouTubeVideoId(selectedCreation.embed_url || selectedCreation.external_url)
+    : null;
 
   const fallbackRubriques = [
     {
@@ -281,6 +314,87 @@ export default function KeefonMusicPage() {
     loadPublicMusicData();
   }, []);
 
+  useEffect(() => {
+    if (!activeYouTubeVideoId) return;
+    if (typeof window === "undefined") return;
+
+    if (window.YT?.Player) {
+      setIsYouTubeApiReady(true);
+      return;
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      setIsYouTubeApiReady(true);
+    };
+
+    const existingScript = document.querySelector(
+      'script[src="https://www.youtube.com/iframe_api"]'
+    );
+
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = "https://www.youtube.com/iframe_api";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [activeYouTubeVideoId]);
+
+  useEffect(() => {
+    if (!activeYouTubeVideoId) return;
+    if (!isYouTubeApiReady) return;
+    if (typeof window === "undefined") return;
+    if (!window.YT?.Player) return;
+
+    const mountElement = document.getElementById("keefon-youtube-player");
+    if (!mountElement) return;
+
+    if (youtubePlayerRef.current?.destroy) {
+      youtubePlayerRef.current.destroy();
+      youtubePlayerRef.current = null;
+    }
+
+    youtubePlayerRef.current = new window.YT.Player("keefon-youtube-player", {
+      videoId: activeYouTubeVideoId,
+      playerVars: {
+        playsinline: 1,
+        rel: 0,
+        modestbranding: 1,
+      },
+      events: {
+        onReady: (event: any) => {
+          event.target?.playVideo?.();
+        },
+
+        onStateChange: (event: any) => {
+          if (event.data !== window.YT.PlayerState.ENDED) return;
+          if (!selectedAlbum || !selectedCreation) return;
+
+          const currentIndex = selectedAlbum.tracks.findIndex(
+            (track) => track.id === selectedCreation.id
+          );
+
+          const nextTrack = selectedAlbum.tracks[currentIndex + 1];
+
+          if (nextTrack) {
+            setSelectedCreation(nextTrack);
+          }
+        },
+      },
+    });
+
+    return () => {
+      if (youtubePlayerRef.current?.destroy) {
+        youtubePlayerRef.current.destroy();
+        youtubePlayerRef.current = null;
+      }
+    };
+  }, [
+    activeYouTubeVideoId,
+    isYouTubeApiReady,
+    selectedAlbum,
+    selectedCreation,
+  ]);
+
   async function loadPublicMusicData() {
     setIsLoading(true);
     setErrorMessage("");
@@ -349,6 +463,11 @@ export default function KeefonMusicPage() {
   }
 
   function closePlayerModal() {
+    if (youtubePlayerRef.current?.destroy) {
+      youtubePlayerRef.current.destroy();
+      youtubePlayerRef.current = null;
+    }
+
     setSelectedAlbum(null);
     setSelectedCreation(null);
   }
@@ -474,7 +593,9 @@ export default function KeefonMusicPage() {
           {!isLoading && creations.length === 0 && (
             <div className="emptyBox">
               <h3>Aucune création publiée pour le moment</h3>
-              <p>Les créations envoyées apparaîtront ici après validation admin.</p>
+              <p>
+                Les créations envoyées apparaîtront ici après validation admin.
+              </p>
             </div>
           )}
 
@@ -572,7 +693,11 @@ export default function KeefonMusicPage() {
                     {selectedAlbum.public_author_name}
                   </p>
 
-                  {selectedCreation.embed_url ? (
+                  {activeYouTubeVideoId ? (
+                    <div className="player">
+                      <div id="keefon-youtube-player" />
+                    </div>
+                  ) : selectedCreation.embed_url ? (
                     <div className="player">
                       <iframe
                         src={selectedCreation.embed_url}
@@ -649,7 +774,11 @@ export default function KeefonMusicPage() {
                     Auteur : {selectedCreation.public_author_name}
                   </p>
 
-                  {selectedCreation.embed_url ? (
+                  {activeYouTubeVideoId ? (
+                    <div className="player">
+                      <div id="keefon-youtube-player" />
+                    </div>
+                  ) : selectedCreation.embed_url ? (
                     <div className="player">
                       <iframe
                         src={selectedCreation.embed_url}
@@ -718,7 +847,9 @@ export default function KeefonMusicPage() {
                   <h2>{selectedAlbumInfo.album_title}</h2>
 
                   <p>Auteur : {selectedAlbumInfo.public_author_name}</p>
-                  <p>Rubrique : {getCategoryName(selectedAlbumInfo.category_id)}</p>
+                  <p>
+                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id)}
+                  </p>
                   <p>Type : Album</p>
                   <p>Plateforme : {platformLabel(selectedAlbumInfo.platform)}</p>
                   <p>Nombre de pistes : {selectedAlbumInfo.tracks.length}</p>
@@ -777,8 +908,14 @@ export default function KeefonMusicPage() {
                   <h2>{selectedCreationInfo.title}</h2>
 
                   <p>Auteur : {selectedCreationInfo.public_author_name}</p>
-                  <p>Rubrique : {getCategoryName(selectedCreationInfo.category_id)}</p>
-                  <p>Type : {creationTypeLabel(selectedCreationInfo.creation_type)}</p>
+                  <p>
+                    Rubrique :{" "}
+                    {getCategoryName(selectedCreationInfo.category_id)}
+                  </p>
+                  <p>
+                    Type :{" "}
+                    {creationTypeLabel(selectedCreationInfo.creation_type)}
+                  </p>
                   <p>
                     Plateforme : {platformLabel(selectedCreationInfo.platform)}
                   </p>
@@ -1185,7 +1322,8 @@ export default function KeefonMusicPage() {
             background: black;
           }
 
-          .player iframe {
+          .player iframe,
+          .player > div {
             width: 100%;
             height: 100%;
             border: 0;
