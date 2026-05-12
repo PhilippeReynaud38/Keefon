@@ -314,6 +314,50 @@ export default function KeefonMusicPage() {
     loadPublicMusicData();
   }, []);
 
+  // ==============================
+  // MODIFICATION — PWA KEEFON MUSIC
+  // ==============================
+  // Cette sécurité force la page /musique à utiliser le manifeste Music,
+  // même si un manifeste global Keefon est déjà déclaré ailleurs
+  // dans le projet (_app, _document ou layout commun).
+  // But : permettre à Keefon Music d’avoir son propre raccourci/appli
+  // sans casser le manifeste général de Keefon Rencontre.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const musicManifestHref = "/manifest-music.webmanifest";
+    const existingManifest = document.querySelector<HTMLLinkElement>(
+      'link[rel="manifest"]'
+    );
+
+    if (existingManifest) {
+      const previousManifestHref = existingManifest.getAttribute("href");
+
+      existingManifest.setAttribute("href", musicManifestHref);
+      existingManifest.setAttribute("data-keefon-music-manifest", "true");
+
+      return () => {
+        if (previousManifestHref) {
+          existingManifest.setAttribute("href", previousManifestHref);
+        } else {
+          existingManifest.removeAttribute("href");
+        }
+
+        existingManifest.removeAttribute("data-keefon-music-manifest");
+      };
+    }
+
+    const manifestLink = document.createElement("link");
+    manifestLink.rel = "manifest";
+    manifestLink.href = musicManifestHref;
+    manifestLink.setAttribute("data-keefon-music-manifest", "true");
+    document.head.appendChild(manifestLink);
+
+    return () => {
+      manifestLink.remove();
+    };
+  }, []);
+
   useEffect(() => {
     if (!activeYouTubeVideoId) return;
     if (typeof window === "undefined") return;
@@ -487,16 +531,18 @@ export default function KeefonMusicPage() {
         />
 
         {/* ==============================
-            PWA — KEEFON MUSIC
-            À GARDER SUR LA PAGE /musique UNIQUEMENT.
-            Ce manifest permet d’installer Keefon Music comme un raccourci / une appli séparée
-            de Keefon Rencontre. Les fichiers à placer sont :
-            - public/manifest-music.webmanifest
-            - public/icons/keefon-music-192.png
-            - public/icons/keefon-music-512.png
-            - public/icons/keefon-music-maskable-512.png
-        ============================== */}
-        <link rel="manifest" href="/manifest-music.webmanifest" />
+            MODIFICATION — PWA KEEFON MUSIC
+            Manifeste spécifique à la page /musique.
+            Il donne au raccourci installé le nom, l’icône et la page
+            de démarrage Keefon Music.
+            Important : le fichier /manifest.json général reste réservé
+            à Keefon / Keefon Rencontre.
+        =============================== */}
+        <link
+          rel="manifest"
+          href="/manifest-music.webmanifest"
+          key="keefon-music-manifest"
+        />
         <meta name="theme-color" content="#050505" />
         <meta name="application-name" content="Keefon Music" />
         <meta name="apple-mobile-web-app-title" content="Keefon Music" />
