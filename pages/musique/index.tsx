@@ -102,17 +102,17 @@ function platformLabel(platform: string) {
 }
 
 function creationTypeLabel(type: string) {
-  const normalizedType = normalizeRubriqueSlug(type);
-
-  switch (normalizedType) {
-    case "chansons-a-texte":
-      return "Chansons à texte";
-    case "albums":
-      return "Albums";
-    case "promos-keefon":
-      return "Promos Keefon";
-    case "voyages-sonores":
-      return "Voyages sonores";
+  switch (type) {
+    case "song":
+      return "Chanson à texte";
+    case "clip":
+      return "Clip";
+    case "visual_album":
+      return "Album";
+    case "soundscape":
+      return "Voyage sonore";
+    case "ai_experiment":
+      return "Album";
     default:
       return "Création musicale";
   }
@@ -334,7 +334,9 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allAlbums.filter((album) => {
-      const categorySlug = getCategorySlug(album.category_id) || "albums";
+      // Une carte issue d’un album_slug est toujours considérée comme un album,
+      // même si une ancienne rubrique Supabase traîne encore sur une des pistes.
+      const categorySlug = "albums";
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -562,6 +564,19 @@ export default function KeefonMusicPage() {
     setSelectedCreationInfo(null);
   }
 
+  function closeSearchAndShowResults() {
+    setIsSearchOpen(false);
+
+    if (typeof window === "undefined") return;
+
+    window.setTimeout(() => {
+      document.getElementById("creations")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 80);
+  }
+
   return (
     <>
       <Head>
@@ -639,7 +654,7 @@ export default function KeefonMusicPage() {
               <button
                 type="button"
                 className="primary"
-                onClick={() => setIsSearchOpen(false)}
+                onClick={closeSearchAndShowResults}
               >
                 Voir les résultats
               </button>
@@ -768,7 +783,7 @@ export default function KeefonMusicPage() {
 
               {selectedAlbum ? (
                 <>
-                  <p className="label">Album</p>
+                  <p className="label">Album narratif</p>
 
                   <h2>{selectedAlbum.album_title}</h2>
 
@@ -931,9 +946,7 @@ export default function KeefonMusicPage() {
                   <h2>{selectedAlbumInfo.album_title}</h2>
 
                   <p>Auteur : {selectedAlbumInfo.public_author_name}</p>
-                  <p>
-                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id, "Albums")}
-                  </p>
+                  <p>Rubrique : Albums</p>
                   <p>Type : Album</p>
                   <p>Plateforme : {platformLabel(selectedAlbumInfo.platform)}</p>
                   <p>Nombre de pistes : {selectedAlbumInfo.tracks.length}</p>
@@ -1156,10 +1169,10 @@ export default function KeefonMusicPage() {
             margin-bottom: 10px;
           }
 
-          /* Rubriques : grille propre sur mobile, capsules sur desktop. */
+          /* Rubriques : capsules propres sur desktop, rail compact sur mobile. */
           .badges {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
           }
 
@@ -1167,11 +1180,9 @@ export default function KeefonMusicPage() {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            min-width: 0;
-            min-height: 42px;
-            padding: 0 12px;
-            border-radius: 16px;
+            min-height: 38px;
+            padding: 0 15px;
+            border-radius: 999px;
             border: 1px solid rgba(255, 255, 255, 0.18);
             background: linear-gradient(
                 180deg,
@@ -1182,10 +1193,15 @@ export default function KeefonMusicPage() {
             color: white;
             cursor: pointer;
             font-weight: 900;
-            font-size: 0.9rem;
-            line-height: 1.1;
-            text-align: center;
+            line-height: 1;
+            white-space: nowrap;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: 0.18s ease;
+          }
+
+          .badge:hover {
+            border-color: rgba(245, 199, 109, 0.42);
+            background: rgba(255, 255, 255, 0.08);
           }
 
           .badge.active {
@@ -1195,21 +1211,11 @@ export default function KeefonMusicPage() {
             box-shadow: 0 8px 22px rgba(245, 199, 109, 0.16);
           }
 
-          /* Avec 5 boutons : le dernier prend toute la largeur sur mobile. */
-          .badges .badge:nth-child(5):last-child {
-            grid-column: 1 / -1;
-          }
-
           .searchActions {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 18px;
-          }
-
-          .searchActions .primary,
-          .searchActions .secondary {
-            width: 100%;
           }
 
           .hero {
@@ -1554,21 +1560,55 @@ export default function KeefonMusicPage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          /* Mobile : cartes compactes, visibles et jamais écrasées par le panneau recherche.
-             Les boutons Lire / i restent empilés uniquement dans les cartes. */
+          /* Mobile : panneau compact + cartes remontées avant le grand titre.
+             Objectif : les créations restent visibles même quand la recherche est ouverte. */
           @media (max-width: 560px) {
             .page {
+              display: flex;
+              flex-direction: column;
               min-height: 100svh;
               padding: 18px 14px 56px;
             }
 
+            .header {
+              order: 1;
+              margin-bottom: 12px;
+            }
+
             .searchPanel {
+              order: 2;
               padding: 14px;
               border-radius: 20px;
+              margin-bottom: 14px;
+            }
+
+            .resultsSection {
+              order: 3;
+              display: block !important;
+              width: 100%;
+              min-width: 0;
+              overflow: visible;
+              visibility: visible;
+              opacity: 1;
+              margin-bottom: 18px;
             }
 
             .hero {
-              margin-bottom: 14px;
+              order: 4;
+              margin-top: 2px;
+              margin-bottom: 16px;
+            }
+
+            .creatorBox {
+              order: 5;
+            }
+
+            .conceptBox {
+              order: 6;
+            }
+
+            .footer {
+              order: 7;
             }
 
             .hero h1 {
@@ -1576,10 +1616,63 @@ export default function KeefonMusicPage() {
               line-height: 1.02;
             }
 
-            .resultsSection,
-            .catalogList {
+            .searchPanel label {
+              margin-bottom: 12px;
+            }
+
+            .searchPanel input {
+              min-height: 48px;
+              padding: 11px 14px;
+            }
+
+            .miniLabel {
+              margin-bottom: 8px;
+            }
+
+            .badges {
+              display: flex;
+              flex-wrap: nowrap;
+              gap: 8px;
+              overflow-x: auto;
+              overflow-y: hidden;
+              padding: 2px 2px 8px;
+              margin: 0 -2px;
+              scrollbar-width: none;
+              -webkit-overflow-scrolling: touch;
+            }
+
+            .badges::-webkit-scrollbar {
+              display: none;
+            }
+
+            .badge {
+              flex: 0 0 auto;
+              min-height: 34px;
+              padding: 0 12px;
+              font-size: 0.78rem;
+              border-radius: 999px;
+            }
+
+            .searchActions {
               display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              margin-top: 12px;
+            }
+
+            .searchActions .primary,
+            .searchActions .secondary {
+              width: 100%;
+              min-height: 38px;
+              padding: 0 10px;
+              font-size: 0.78rem;
+              border-radius: 999px;
+            }
+
+            .catalogList {
+              display: grid !important;
               grid-template-columns: 1fr;
+              gap: 10px;
               width: 100%;
               min-width: 0;
               overflow: visible;
@@ -1593,7 +1686,7 @@ export default function KeefonMusicPage() {
 
             .albumCard,
             .creationCard {
-              display: grid;
+              display: grid !important;
               grid-template-columns: 58px minmax(0, 1fr) 30px;
               gap: 8px;
               align-items: center;
@@ -1702,35 +1795,6 @@ export default function KeefonMusicPage() {
 
             .searchPanel {
               padding: 22px;
-            }
-
-            .badges {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-            }
-
-            .badge {
-              width: auto;
-              min-height: 38px;
-              padding: 0 16px;
-              border-radius: 999px;
-              font-size: 0.9rem;
-            }
-
-            .badges .badge:nth-child(5):last-child {
-              grid-column: auto;
-            }
-
-            .searchActions {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-            }
-
-            .searchActions .primary,
-            .searchActions .secondary {
-              width: auto;
             }
           }
         `}</style>
