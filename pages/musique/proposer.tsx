@@ -2,10 +2,18 @@ import Head from "next/head";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { createClient, Session } from "@supabase/supabase-js";
 
+// ============================================================
+// Configuration Supabase
+// ============================================================
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// ============================================================
+// Types utilisés par la page
+// ============================================================
 
 type AuthMode = "login" | "signup";
 
@@ -25,6 +33,10 @@ type MusicCategory = {
   description: string | null;
   sort_order: number;
 };
+
+// ============================================================
+// Outils : détection de plateforme et génération d'embed
+// ============================================================
 
 function detectPlatform(url: string) {
   const lowerUrl = url.toLowerCase();
@@ -77,6 +89,10 @@ function buildEmbedUrl(url: string) {
   return "";
 }
 
+// ============================================================
+// Outil : vérification minimale du mot de passe
+// ============================================================
+
 function isPasswordStrong(password: string) {
   const hasMinimumLength = password.length >= 8;
   const hasUppercase = /[A-Z]/.test(password);
@@ -86,14 +102,26 @@ function isPasswordStrong(password: string) {
 }
 
 export default function ProposerCreationMusiquePage() {
+  // ============================================================
+  // États : session, profil créateur et catégories
+  // ============================================================
+
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<MusicProfile | null>(null);
   const [categories, setCategories] = useState<MusicCategory[]>([]);
+
+  // ============================================================
+  // États : formulaire de connexion / inscription
+  // ============================================================
 
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  // ============================================================
+  // États : messages et chargements
+  // ============================================================
 
   const [pageMessage, setPageMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -103,9 +131,14 @@ export default function ProposerCreationMusiquePage() {
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
+  // Le formulaire de dépôt est disponible seulement avec un profil créateur valide.
   const canSubmit = useMemo(() => {
     return Boolean(session && profile && profile.creator_status !== "blocked");
   }, [session, profile]);
+
+  // ============================================================
+  // Chargement initial + écoute de l'état de connexion Supabase
+  // ============================================================
 
   useEffect(() => {
     loadInitialData();
@@ -189,6 +222,10 @@ export default function ProposerCreationMusiquePage() {
     setProfile((data as MusicProfile) || null);
   }
 
+  // ============================================================
+  // Connexion / inscription créateur
+  // ============================================================
+
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -255,6 +292,10 @@ export default function ProposerCreationMusiquePage() {
     setPageMessage("Compte créé. Tu peux maintenant créer ton espace créateur.");
   }
 
+  // ============================================================
+  // Création / déconnexion de l'espace créateur
+  // ============================================================
+
   async function handleCreateCreatorSpace() {
     setIsCreatingProfile(true);
     setErrorMessage("");
@@ -287,6 +328,10 @@ export default function ProposerCreationMusiquePage() {
     setPageMessage("");
     setErrorMessage("");
   }
+
+  // ============================================================
+  // Envoi d'une création en attente de validation admin
+  // ============================================================
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -381,6 +426,9 @@ export default function ProposerCreationMusiquePage() {
       </Head>
 
       <main className="page">
+        {/* ============================================================
+            En-tête : logo + navigation simple
+        ============================================================ */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -388,7 +436,7 @@ export default function ProposerCreationMusiquePage() {
 
           <nav>
             <a href="/musique">Retour musique</a>
-<a href="/musique/mes-creations">Mes créations</a>
+            <a href="/musique/mes-creations">Mes créations</a>
             {session && (
               <button type="button" onClick={handleLogout}>
                 Déconnexion
@@ -397,6 +445,9 @@ export default function ProposerCreationMusiquePage() {
           </nav>
         </header>
 
+        {/* ============================================================
+            Bloc principal : présentation + connexion + formulaire
+        ============================================================ */}
         <section className="box">
           <p className="label">Créateurs</p>
 
@@ -414,6 +465,7 @@ export default function ProposerCreationMusiquePage() {
             une fiche, une description et un lien vers la source.
           </p>
 
+          {/* Explication du fonctionnement du dépôt */}
           <div className="infoBox">
             <h2>Comment fonctionne le dépôt ?</h2>
 
@@ -439,10 +491,12 @@ export default function ProposerCreationMusiquePage() {
             </p>
           </div>
 
+          {/* Messages utilisateur */}
           {isLoading && <p className="notice">Chargement...</p>}
           {errorMessage && <p className="error">{errorMessage}</p>}
           {pageMessage && <p className="success">{pageMessage}</p>}
 
+          {/* Connexion / création de compte */}
           {!session && !isLoading && (
             <div className="authBox">
               <div className="authTabs">
@@ -530,6 +584,7 @@ export default function ProposerCreationMusiquePage() {
             </div>
           )}
 
+          {/* Création du profil créateur après connexion */}
           {session && !isLoading && !profile && (
             <div className="connectedBox">
               <h2>Créer mon espace créateur</h2>
@@ -557,6 +612,7 @@ export default function ProposerCreationMusiquePage() {
             </div>
           )}
 
+          {/* Résumé du compte connecté */}
           {session && profile && (
             <div className="connectedBox">
               <p>
@@ -577,6 +633,7 @@ export default function ProposerCreationMusiquePage() {
             </p>
           )}
 
+          {/* Formulaire de proposition de création */}
           {canSubmit && (
             <form onSubmit={handleSubmit} className="proposalForm">
               <h2>Fiche de création</h2>
@@ -710,15 +767,43 @@ export default function ProposerCreationMusiquePage() {
         </section>
 
         <style jsx global>{`
+          /* ============================================================
+             Correctif global mobile : évite les bandes blanches
+             causées par les blocs/paddings qui dépassent la largeur.
+          ============================================================ */
           html {
             scroll-behavior: smooth;
+          }
+
+          html,
+          body,
+          #__next {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            background: #05070a;
+            overflow-x: hidden;
+          }
+
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
           }
         `}</style>
 
         <style jsx>{`
+          /* ============================================================
+             Page : fond musical + protection contre le débordement mobile
+          ============================================================ */
           .page {
             min-height: 100vh;
+            min-height: 100svh;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
             color: white;
+            background-color: #05070a;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -727,9 +812,13 @@ export default function ProposerCreationMusiquePage() {
             padding: 32px 24px 80px;
           }
 
+          /* ============================================================
+             Structure principale : header + grande carte centrale
+          ============================================================ */
           .header,
           .box {
-            width: min(100%, 1050px);
+            width: 100%;
+            max-width: 1050px;
             margin-left: auto;
             margin-right: auto;
           }
@@ -759,6 +848,7 @@ export default function ProposerCreationMusiquePage() {
 
           nav a,
           nav button {
+            max-width: 100%;
             color: white;
             text-decoration: none;
             background: rgba(255, 255, 255, 0.08);
@@ -775,6 +865,9 @@ export default function ProposerCreationMusiquePage() {
             padding: 42px;
           }
 
+          /* ============================================================
+             Titres et textes
+          ============================================================ */
           .label {
             color: #f5c76d;
             text-transform: uppercase;
@@ -800,6 +893,18 @@ export default function ProposerCreationMusiquePage() {
             line-height: 1.7;
           }
 
+          p,
+          h1,
+          h2,
+          label,
+          span,
+          strong {
+            overflow-wrap: anywhere;
+          }
+
+          /* ============================================================
+             Blocs d'information
+          ============================================================ */
           .infoBox {
             margin-top: 26px;
             padding: 22px 24px;
@@ -837,10 +942,14 @@ export default function ProposerCreationMusiquePage() {
             line-height: 1.6;
           }
 
+          /* ============================================================
+             Cartes internes : authentification, formulaire, compte connecté
+          ============================================================ */
           .authBox,
           .loginForm,
           .proposalForm,
           .connectedBox {
+            max-width: 100%;
             margin-top: 28px;
             padding: 24px;
             border-radius: 22px;
@@ -874,10 +983,17 @@ export default function ProposerCreationMusiquePage() {
             color: #111;
           }
 
+          /* ============================================================
+             Formulaires
+          ============================================================ */
           .formGrid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 16px;
+          }
+
+          .formGrid > label {
+            min-width: 0;
           }
 
           label {
@@ -890,6 +1006,8 @@ export default function ProposerCreationMusiquePage() {
           select,
           textarea {
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -909,6 +1027,7 @@ export default function ProposerCreationMusiquePage() {
 
           .passwordField {
             position: relative;
+            min-width: 0;
           }
 
           .passwordField input {
@@ -951,13 +1070,18 @@ export default function ProposerCreationMusiquePage() {
           .checks input {
             width: auto;
             margin-top: 6px;
+            flex: 0 0 auto;
           }
 
+          /* ============================================================
+             Boutons et messages
+          ============================================================ */
           .primary {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-height: 46px;
+            max-width: 100%;
             padding: 0 22px;
             border-radius: 999px;
             border: 0;
@@ -993,24 +1117,96 @@ export default function ProposerCreationMusiquePage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
+          /* ============================================================
+             Responsive tablette / mobile
+          ============================================================ */
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              padding: 24px 18px 60px;
+              background-position: center top;
+              padding: 24px 12px 60px;
             }
 
             .header {
+              width: 100%;
               align-items: flex-start;
               flex-direction: column;
-              margin-bottom: 45px;
+              gap: 14px;
+              margin-bottom: 34px;
+            }
+
+            nav {
+              width: 100%;
+              gap: 8px;
+            }
+
+            nav a,
+            nav button {
+              padding: 8px 10px;
+              font-size: 0.84rem;
             }
 
             .box {
-              padding: 28px;
+              padding: 22px 14px;
+              border-radius: 22px;
+            }
+
+            h1 {
+              font-size: clamp(2rem, 12vw, 3.25rem);
+              line-height: 1;
+            }
+
+            h2 {
+              font-size: 1.35rem;
+            }
+
+            .infoBox,
+            .rightsNotice,
+            .authBox,
+            .loginForm,
+            .proposalForm,
+            .connectedBox {
+              padding: 16px 14px;
+              border-radius: 18px;
             }
 
             .formGrid {
               grid-template-columns: 1fr;
+              gap: 0;
+            }
+
+            input,
+            select,
+            textarea {
+              font-size: 16px;
+              padding: 12px 12px;
+            }
+
+            .primary {
+              width: 100%;
+              min-height: 44px;
+              text-align: center;
+            }
+          }
+
+          /* Très petits mobiles : on serre encore un peu sans casser la lisibilité. */
+          @media (max-width: 380px) {
+            .page {
+              padding: 20px 10px 52px;
+            }
+
+            .box {
+              padding: 20px 12px;
+            }
+
+            .authTabs {
+              gap: 8px;
+            }
+
+            .tab {
+              min-height: 38px;
+              padding: 0 12px;
+              font-size: 0.86rem;
             }
           }
         `}</style>

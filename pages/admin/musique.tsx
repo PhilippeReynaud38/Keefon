@@ -129,9 +129,19 @@ function FakeNotFoundPage() {
         </section>
 
         <style jsx>{`
+          /* ============================================================
+             Page 404 masquée : même fond que Keefon Music
+             + protection anti-débordement mobile.
+          ============================================================ */
           .page {
             min-height: 100vh;
+            min-height: 100svh;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
             color: white;
+            background-color: #05070a;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -147,7 +157,9 @@ function FakeNotFoundPage() {
           }
 
           .fakeBox {
-            width: min(100%, 620px);
+            width: 100%;
+            max-width: 620px;
+            box-sizing: border-box;
             padding: 42px;
             border-radius: 28px;
             background: rgba(0, 0, 0, 0.52);
@@ -173,11 +185,18 @@ function FakeNotFoundPage() {
             opacity: 0.82;
           }
 
+          h1,
+          p,
+          a {
+            overflow-wrap: anywhere;
+          }
+
           .primary {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-height: 46px;
+            max-width: 100%;
             padding: 0 22px;
             margin-top: 18px;
             border-radius: 999px;
@@ -185,17 +204,18 @@ function FakeNotFoundPage() {
             background: #f5c76d;
             color: #111;
             font-weight: 900;
+            text-align: center;
             text-decoration: none;
           }
 
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              padding: 24px 18px 60px;
+              padding: 24px 14px 60px;
             }
 
             .fakeBox {
-              padding: 30px;
+              padding: 28px 20px;
             }
           }
         `}</style>
@@ -462,9 +482,18 @@ export default function AdminMusiquePage() {
           <p>Chargement...</p>
 
           <style jsx>{`
+            /* ============================================================
+               Écran de chargement admin musique
+               + protection anti-débordement mobile.
+            ============================================================ */
             .page {
               min-height: 100vh;
+              min-height: 100svh;
+              width: 100%;
+              max-width: 100%;
+              overflow-x: hidden;
               color: white;
+              background-color: #05070a;
               background-image: url("/musique/bg-musique.png");
               background-size: cover;
               background-position: center top;
@@ -477,10 +506,19 @@ export default function AdminMusiquePage() {
             }
 
             p {
+              max-width: 100%;
               padding: 18px 24px;
               border-radius: 999px;
               background: rgba(0, 0, 0, 0.52);
               border: 1px solid rgba(255, 255, 255, 0.16);
+              overflow-wrap: anywhere;
+            }
+
+            @media (max-width: 800px) {
+              .page {
+                background-attachment: scroll;
+                padding: 24px 14px;
+              }
             }
           `}</style>
         </main>
@@ -503,6 +541,7 @@ export default function AdminMusiquePage() {
       </Head>
 
       <main className="page">
+        {/* En-tête admin : accès rapides et déconnexion */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -519,6 +558,7 @@ export default function AdminMusiquePage() {
           </nav>
         </header>
 
+        {/* Bloc principal : modération et classement des créations */}
         <section className="box">
           <p className="label">Administration</p>
 
@@ -542,6 +582,7 @@ export default function AdminMusiquePage() {
             </p>
           </div>
 
+          {/* Filtres admin : statut + rubrique */}
           <div className="filters">
             <label>
               Statut
@@ -586,6 +627,7 @@ export default function AdminMusiquePage() {
             <span>{creations.length} création(s) au total</span>
           </div>
 
+          {/* Liste des créations déposées */}
           <div className="creationsList">
             {filteredCreations.map((creation) => (
               <article key={creation.id} className="creationCard">
@@ -674,6 +716,7 @@ export default function AdminMusiquePage() {
                   </span>
                 </div>
 
+                {/* Actions de modération : publication, mise en avant, refus, retrait */}
                 <div className="actions">
                   <a
                     href={creation.external_url}
@@ -759,15 +802,44 @@ export default function AdminMusiquePage() {
         </section>
 
         <style jsx global>{`
+          /* ============================================================
+             Correctif global mobile : évite les bandes blanches
+             causées par un élément qui dépasse la largeur de l'écran.
+          ============================================================ */
           html {
             scroll-behavior: smooth;
+          }
+
+          html,
+          body,
+          #__next {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            background: #05070a;
+            overflow-x: hidden;
+          }
+
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
           }
         `}</style>
 
         <style jsx>{`
+          /* ============================================================
+             Page admin : fond musical + protection anti-débordement
+          ============================================================ */
           .page {
             min-height: 100vh;
+            min-height: 100svh;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
             color: white;
+            background-color: #05070a;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -776,9 +848,13 @@ export default function AdminMusiquePage() {
             padding: 32px 24px 80px;
           }
 
+          /* ============================================================
+             Structure principale : header + grande carte admin
+          ============================================================ */
           .header,
           .box {
-            width: min(100%, 1150px);
+            width: 100%;
+            max-width: 1150px;
             margin-left: auto;
             margin-right: auto;
           }
@@ -808,6 +884,7 @@ export default function AdminMusiquePage() {
 
           nav a,
           nav button {
+            max-width: 100%;
             color: white;
             text-decoration: none;
             background: rgba(255, 255, 255, 0.08);
@@ -818,12 +895,16 @@ export default function AdminMusiquePage() {
           }
 
           .box {
+            max-width: 100%;
             background: rgba(0, 0, 0, 0.46);
             border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 28px;
             padding: 42px;
           }
 
+          /* ============================================================
+             Titres et textes
+          ============================================================ */
           .label,
           .creationType {
             color: #f5c76d;
@@ -850,11 +931,26 @@ export default function AdminMusiquePage() {
             line-height: 1.7;
           }
 
+          p,
+          h1,
+          h2,
+          label,
+          span,
+          strong,
+          a,
+          button {
+            overflow-wrap: anywhere;
+          }
+
+          /* ============================================================
+             Cartes, filtres et blocs d'information
+          ============================================================ */
           .connectedBox,
           .filters,
           .emptyBox,
           .creationCard,
           .summary {
+            max-width: 100%;
             margin-top: 28px;
             padding: 24px;
             border-radius: 22px;
@@ -884,6 +980,7 @@ export default function AdminMusiquePage() {
 
           select {
             width: 100%;
+            max-width: 100%;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -897,6 +994,9 @@ export default function AdminMusiquePage() {
             color: black;
           }
 
+          /* ============================================================
+             Boutons admin
+          ============================================================ */
           .primary,
           .secondary,
           .danger {
@@ -904,10 +1004,13 @@ export default function AdminMusiquePage() {
             align-items: center;
             justify-content: center;
             min-height: 46px;
+            max-width: 100%;
             padding: 0 22px;
             border-radius: 999px;
+            text-align: center;
             text-decoration: none;
             font-weight: 900;
+            white-space: normal;
             cursor: pointer;
           }
 
@@ -957,13 +1060,18 @@ export default function AdminMusiquePage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
+          /* ============================================================
+             Liste des créations à modérer
+          ============================================================ */
           .creationsList {
+            max-width: 100%;
             margin-top: 32px;
             display: grid;
             gap: 18px;
           }
 
           .creationHeader {
+            max-width: 100%;
             display: flex;
             justify-content: space-between;
             gap: 18px;
@@ -984,11 +1092,13 @@ export default function AdminMusiquePage() {
             align-items: center;
             justify-content: center;
             min-height: 34px;
+            max-width: 100%;
             padding: 0 12px;
             border-radius: 999px;
             font-size: 0.78rem;
             font-weight: 900;
-            white-space: nowrap;
+            text-align: center;
+            white-space: normal;
           }
 
           .featured {
@@ -1022,6 +1132,7 @@ export default function AdminMusiquePage() {
           }
 
           .authorNote {
+            max-width: 100%;
             margin-top: 18px;
             padding: 16px;
             border-radius: 16px;
@@ -1030,6 +1141,7 @@ export default function AdminMusiquePage() {
           }
 
           .metaGrid {
+            max-width: 100%;
             display: grid;
             grid-template-columns: 1.2fr 1fr 0.6fr;
             gap: 16px;
@@ -1042,6 +1154,7 @@ export default function AdminMusiquePage() {
           }
 
           .checks {
+            max-width: 100%;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
@@ -1050,6 +1163,7 @@ export default function AdminMusiquePage() {
           }
 
           .checks span {
+            max-width: 100%;
             padding: 8px 12px;
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.06);
@@ -1057,10 +1171,15 @@ export default function AdminMusiquePage() {
           }
 
           .actions {
+            max-width: 100%;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-top: 22px;
+          }
+
+          .actions > * {
+            flex-shrink: 1;
           }
 
           @media (max-width: 900px) {
@@ -1073,7 +1192,7 @@ export default function AdminMusiquePage() {
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              padding: 24px 18px 60px;
+              padding: 24px 14px 60px;
             }
 
             .header {
@@ -1082,8 +1201,29 @@ export default function AdminMusiquePage() {
               margin-bottom: 45px;
             }
 
+            nav {
+              width: 100%;
+              gap: 8px;
+            }
+
+            nav a,
+            nav button {
+              padding: 8px 12px;
+              font-size: 0.88rem;
+            }
+
             .box {
-              padding: 28px;
+              border-radius: 24px;
+              padding: 24px 18px;
+            }
+
+            .connectedBox,
+            .filters,
+            .emptyBox,
+            .creationCard,
+            .summary {
+              padding: 18px;
+              border-radius: 20px;
             }
 
             .creationHeader {
@@ -1092,6 +1232,18 @@ export default function AdminMusiquePage() {
 
             .statusGroup {
               justify-content: flex-start;
+            }
+
+            .actions {
+              gap: 8px;
+            }
+
+            .primary,
+            .secondary,
+            .danger {
+              min-height: 40px;
+              padding: 0 14px;
+              font-size: 0.88rem;
             }
           }
         `}</style>

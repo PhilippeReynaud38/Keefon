@@ -367,6 +367,7 @@ export default function MesCreationsMusiquePage() {
       </Head>
 
       <main className="page">
+        {/* HEADER — navigation simple de l’espace créateur */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -384,6 +385,7 @@ export default function MesCreationsMusiquePage() {
           </nav>
         </header>
 
+        {/* CONTENU PRINCIPAL — bloc central protégé contre les débordements mobile */}
         <section className="box">
           <p className="label">Espace créateur</p>
 
@@ -414,6 +416,7 @@ export default function MesCreationsMusiquePage() {
           {errorMessage && <p className="error">{errorMessage}</p>}
           {pageMessage && <p className="success">{pageMessage}</p>}
 
+          {/* AUTHENTIFICATION — connexion ou création de compte créateur */}
           {!session && !isLoading && (
             <div className="authBox">
               <div className="authTabs">
@@ -501,6 +504,7 @@ export default function MesCreationsMusiquePage() {
             </div>
           )}
 
+          {/* ESPACE CRÉATEUR — création du profil lié au compte connecté */}
           {canCreateSpace && (
             <div className="connectedBox">
               <h2>Créer mon espace créateur</h2>
@@ -556,6 +560,7 @@ export default function MesCreationsMusiquePage() {
             </div>
           )}
 
+          {/* LISTE DES CRÉATIONS — suivi des statuts et retrait volontaire */}
           {session && profile && creations.length > 0 && (
             <div className="creationsList">
               {creations.map((creation) => {
@@ -636,13 +641,49 @@ export default function MesCreationsMusiquePage() {
         </section>
 
         <style jsx global>{`
-          html {
-            scroll-behavior: smooth;
+          /*
+            BASE MOBILE SAFE
+            Le problème des bandes blanches vient souvent d’un élément qui dépasse
+            la largeur de l’écran. On verrouille donc la page et on force les
+            paddings à être inclus dans la largeur réelle des blocs.
+          */
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
           }
 
+          html {
+            width: 100%;
+            min-height: 100%;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: #05070d;
+          }
+
+          body,
+          #__next {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            overflow-x: hidden;
+            background: #05070d;
+          }
+
+          img,
+          video,
+          iframe {
+            max-width: 100%;
+          }
+
+          /* PAGE — fond plein écran, sans largeur en 100vw pour éviter le débordement */
           .page {
+            width: 100%;
             min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
             color: white;
+            background-color: #05070d;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -651,9 +692,11 @@ export default function MesCreationsMusiquePage() {
             padding: 32px 24px 80px;
           }
 
+          /* CONTENEURS — largeur 100% + max-width, plus sûr que width:min(...) sur mobile */
           .header,
           .box {
-            width: min(100%, 1050px);
+            width: 100%;
+            max-width: 1050px;
             margin-left: auto;
             margin-right: auto;
           }
@@ -664,6 +707,7 @@ export default function MesCreationsMusiquePage() {
             align-items: center;
             gap: 24px;
             margin-bottom: 70px;
+            min-width: 0;
           }
 
           .brand {
@@ -672,6 +716,8 @@ export default function MesCreationsMusiquePage() {
             text-transform: uppercase;
             letter-spacing: 0.08em;
             font-weight: 900;
+            max-width: 100%;
+            overflow-wrap: anywhere;
           }
 
           nav {
@@ -679,6 +725,8 @@ export default function MesCreationsMusiquePage() {
             gap: 16px;
             align-items: center;
             flex-wrap: wrap;
+            max-width: 100%;
+            min-width: 0;
           }
 
           nav a,
@@ -690,6 +738,7 @@ export default function MesCreationsMusiquePage() {
             border-radius: 999px;
             padding: 9px 15px;
             cursor: pointer;
+            max-width: 100%;
           }
 
           .box {
@@ -697,6 +746,8 @@ export default function MesCreationsMusiquePage() {
             border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 28px;
             padding: 42px;
+            min-width: 0;
+            overflow: hidden;
           }
 
           .label,
@@ -721,16 +772,26 @@ export default function MesCreationsMusiquePage() {
             margin: 0 0 16px;
           }
 
+          p,
+          a,
+          strong {
+            overflow-wrap: anywhere;
+          }
+
           p {
             line-height: 1.7;
           }
 
+          /* CARTES INTERNES — elles ne doivent jamais dépasser du bloc central */
           .infoBox,
           .authBox,
           .loginForm,
           .connectedBox,
           .emptyBox,
           .creationCard {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
             margin-top: 28px;
             padding: 24px;
             border-radius: 22px;
@@ -756,6 +817,7 @@ export default function MesCreationsMusiquePage() {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            max-width: 100%;
           }
 
           .tab {
@@ -780,8 +842,11 @@ export default function MesCreationsMusiquePage() {
             font-weight: 800;
           }
 
+          /* FORMULAIRE — box-sizing évite le classique input 100% + padding qui déborde */
           input {
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -793,6 +858,9 @@ export default function MesCreationsMusiquePage() {
 
           .passwordField {
             position: relative;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
           }
 
           .passwordField input {
@@ -827,12 +895,14 @@ export default function MesCreationsMusiquePage() {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            max-width: 100%;
             min-height: 46px;
             padding: 0 22px;
             border-radius: 999px;
             text-decoration: none;
             font-weight: 900;
             cursor: pointer;
+            text-align: center;
           }
 
           .primary {
@@ -880,7 +950,10 @@ export default function MesCreationsMusiquePage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
+          /* LISTE — grille simple et sécurisée sur petite largeur */
           .creationsList {
+            width: 100%;
+            min-width: 0;
             margin-top: 32px;
             display: grid;
             gap: 18px;
@@ -891,6 +964,11 @@ export default function MesCreationsMusiquePage() {
             justify-content: space-between;
             gap: 18px;
             align-items: flex-start;
+            min-width: 0;
+          }
+
+          .creationHeader > div {
+            min-width: 0;
           }
 
           .status {
@@ -942,27 +1020,88 @@ export default function MesCreationsMusiquePage() {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            max-width: 100%;
+            min-width: 0;
             margin-top: 20px;
           }
 
+          /* MOBILE — réduction des marges/paddings pour éviter les bandes blanches */
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              padding: 24px 18px 60px;
+              background-position: center top;
+              padding: 22px 14px 56px;
             }
 
             .header {
               align-items: flex-start;
               flex-direction: column;
-              margin-bottom: 45px;
+              gap: 16px;
+              margin-bottom: 36px;
+            }
+
+            nav {
+              gap: 10px;
+            }
+
+            nav a,
+            nav button {
+              padding: 8px 12px;
+              font-size: 0.9rem;
             }
 
             .box {
-              padding: 28px;
+              padding: 24px 16px;
+              border-radius: 22px;
+            }
+
+            .infoBox,
+            .authBox,
+            .loginForm,
+            .connectedBox,
+            .emptyBox,
+            .creationCard {
+              padding: 18px 14px;
+              border-radius: 18px;
+            }
+
+            .authTabs,
+            .actions {
+              flex-direction: column;
+              align-items: stretch;
+            }
+
+            .tab,
+            .primary,
+            .secondary,
+            .danger {
+              width: 100%;
             }
 
             .creationHeader {
               flex-direction: column;
+              gap: 12px;
+            }
+
+            .status {
+              white-space: normal;
+              text-align: center;
+            }
+          }
+
+          @media (max-width: 420px) {
+            .page {
+              padding-left: 10px;
+              padding-right: 10px;
+            }
+
+            .box {
+              padding-left: 12px;
+              padding-right: 12px;
+            }
+
+            h1 {
+              font-size: clamp(2.2rem, 14vw, 3.2rem);
             }
           }
         `}</style>
