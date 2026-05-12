@@ -637,18 +637,11 @@ export default function KeefonMusicPage() {
               </div>
             </div>
 
+            {/* Action secondaire : les résultats se mettent déjà à jour automatiquement. */}
             <div className="searchActions">
               <a href="/musique/proposer" className="secondary">
                 Diffuser une création
               </a>
-
-              <button
-                type="button"
-                className="primary"
-                onClick={() => setIsSearchOpen(false)}
-              >
-                Voir les résultats
-              </button>
             </div>
           </section>
         )}
@@ -1126,29 +1119,31 @@ export default function KeefonMusicPage() {
           }
 
           .searchPanel {
-            margin-bottom: 18px;
-            padding: 16px;
-            border-radius: 22px;
-            background: rgba(0, 0, 0, 0.62);
-            border: 1px solid rgba(245, 199, 109, 0.22);
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 18px;
+            background: rgba(0, 0, 0, 0.58);
+            border: 1px solid rgba(245, 199, 109, 0.2);
           }
 
           .searchPanel label {
             display: block;
+            font-size: 0.9rem;
             font-weight: 900;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
           }
 
           .searchPanel input {
             width: 100%;
             min-width: 0;
-            margin-top: 8px;
-            padding: 13px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.22);
+            margin-top: 7px;
+            padding: 10px 12px;
+            border-radius: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(0, 0, 0, 0.42);
             color: white;
             font: inherit;
+            font-size: 0.9rem;
           }
 
           .miniLabel,
@@ -1157,41 +1152,41 @@ export default function KeefonMusicPage() {
             color: #f5c76d;
             text-transform: uppercase;
             letter-spacing: 0.16em;
-            font-size: 0.72rem;
+            font-size: 0.66rem;
             font-weight: 900;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
           }
 
-          /* Recherche > rubriques : grille propre sur mobile.
-             Important : uniquement de la mise en forme, aucune logique Supabase n'est touchée. */
+          /* Recherche > rubriques : petites capsules compactes.
+             Les résultats se filtrent automatiquement au clic, sans bouton “Voir les résultats”. */
           .badges {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 9px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
           }
 
           .badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            min-height: 42px;
-            padding: 0 12px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: auto;
+            min-height: 30px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
             background: linear-gradient(
                 180deg,
-                rgba(255, 255, 255, 0.075),
-                rgba(255, 255, 255, 0.025)
+                rgba(255, 255, 255, 0.06),
+                rgba(255, 255, 255, 0.02)
               ),
               rgba(0, 0, 0, 0.22);
             color: white;
             cursor: pointer;
             font-weight: 900;
-            font-size: 0.88rem;
-            line-height: 1.08;
+            font-size: 0.74rem;
+            line-height: 1;
             text-align: center;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
             transition:
               transform 0.16s ease,
               border-color 0.16s ease,
@@ -1208,30 +1203,21 @@ export default function KeefonMusicPage() {
             background: linear-gradient(180deg, #ffd979, #f5c76d);
             color: #111;
             border-color: #f5c76d;
-            box-shadow: 0 8px 20px rgba(245, 199, 109, 0.14);
-          }
-
-          /* Avec “Tout voir” + 4 rubriques, le dernier bouton est seul :
-             on le centre pour que la fin de grille reste équilibrée. */
-          .badges .badge:last-child:nth-child(odd) {
-            grid-column: 1 / -1;
-            justify-self: center;
-            width: min(100%, 220px);
+            box-shadow: 0 7px 16px rgba(245, 199, 109, 0.12);
           }
 
           .searchActions {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
           }
 
-          .searchActions .primary,
           .searchActions .secondary {
-            width: 100%;
-            min-height: 44px;
-            border-radius: 16px;
-            font-size: 0.92rem;
+            min-height: 32px;
+            padding: 0 12px;
+            border-radius: 999px;
+            font-size: 0.76rem;
           }
 
           .hero {
@@ -1675,41 +1661,28 @@ export default function KeefonMusicPage() {
             }
 
             .searchPanel {
-              padding: 22px;
+              padding: 18px;
             }
 
-            /* Desktop : retour aux capsules souples en ligne. */
+            /* Desktop : capsules un peu plus confortables, sans redevenir massives. */
             .badges {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
+              gap: 9px;
             }
 
             .badge {
-              width: auto;
-              min-height: 38px;
-              padding: 0 16px;
-              border-radius: 999px;
-              font-size: 0.9rem;
-            }
-
-            .badges .badge:last-child:nth-child(odd) {
-              grid-column: auto;
-              justify-self: auto;
-              width: auto;
+              min-height: 34px;
+              padding: 0 14px;
+              font-size: 0.84rem;
             }
 
             .searchActions {
-              display: flex;
-              flex-wrap: wrap;
               gap: 10px;
             }
 
-            .searchActions .primary,
             .searchActions .secondary {
-              width: auto;
-              min-height: 38px;
-              border-radius: 999px;
+              min-height: 36px;
+              padding: 0 14px;
+              font-size: 0.84rem;
             }
           }
         `}</style>
