@@ -1,11 +1,9 @@
 import Head from "next/head";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 type MusicCategory = {
   id: string;
@@ -102,36 +100,19 @@ function platformLabel(platform: string) {
 }
 
 function creationTypeLabel(type: string) {
-  switch (type) {
+  const slug = normalizeRubriqueSlug(type);
+
+  switch (slug) {
     case "chansons-a-texte":
-    case "song":
-    case "clip":
-    case "satire":
-    case "other":
       return "Chansons à texte";
-
     case "albums":
-    case "visual_album":
-    case "album-visuel":
-    case "album-narratif":
-    case "ai_experiment":
-    case "experiences-ia":
-    case "experimentations-ia":
       return "Albums";
-
     case "promos-keefon":
-    case "createurs-invites":
       return "Promos Keefon";
-
     case "voyages-sonores":
-    case "soundscape":
-    case "paysage-sonore":
-    case "paysages-sonores":
-    case "univers-imaginaires":
       return "Voyages sonores";
-
     default:
-      return "Création musicale";
+      return "Création";
   }
 }
 
@@ -160,21 +141,145 @@ function sortTracks(a: MusicCreation, b: MusicCreation) {
   return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
 }
 
-// Sécurité : évite que la page reste bloquée indéfiniment sur
-// “Chargement des créations...” si une requête réseau/Supabase ne répond pas.
-function withTimeout<T>(
-  promise: PromiseLike<T>,
-  ms: number,
-  label: string
+
+// ==============================
+// Rubriques officielles Keefon Music
+// ==============================
+const OFFICIAL_RUBRIQUES: MusicCategory[] = [
+  {
+    id: "official-chansons-a-texte",
+    name: "Chansons à texte",
+    slug: "chansons-a-texte",
+    description:
+      "Chansons, slam ou rap narratif portés par une vraie écriture.",
+    is_active: true,
+    sort_order: 1,
+  },
+  {
+    id: "official-albums",
+    name: "Albums",
+    slug: "albums",
+    description: "Albums visuels, albums narratifs ou suites de titres.",
+    is_active: true,
+    sort_order: 2,
+  },
+  {
+    id: "official-promos-keefon",
+    name: "Promos Keefon",
+    slug: "promos-keefon",
+    description: "Créations musicales imaginées pour l’univers Keefon.",
+    is_active: true,
+    sort_order: 3,
+  },
+  {
+    id: "official-voyages-sonores",
+    name: "Voyages sonores",
+    slug: "voyages-sonores",
+    description: "Ambiances, paysages sonores et créations immersives.",
+    is_active: true,
+    sort_order: 4,
+  },
+];
+
+function normalizeRubriqueSlug(value: string | null | undefined) {
+  const cleaned = normalizeText(value)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  switch (cleaned) {
+    case "chansons-a-texte":
+    case "chanson-a-texte":
+    case "chansons":
+    case "chanson":
+    case "song":
+    case "clip":
+    case "clips":
+    case "satire":
+    case "autre":
+    case "other":
+      return "chansons-a-texte";
+
+    case "albums":
+    case "album":
+    case "album-visuel":
+    case "albums-visuels":
+    case "visual-album":
+    case "visual-albums":
+    case "album-narratif":
+    case "albums-narratifs":
+    case "experimentation-ia":
+    case "experimentations-ia":
+    case "experience-ia":
+    case "experiences-ia":
+    case "ai-experiment":
+    case "ai-experiments":
+      return "albums";
+
+    case "promos-keefon":
+    case "promo-keefon":
+    case "promotions-keefon":
+    case "promotion-keefon":
+    case "createurs-invites":
+    case "createur-invite":
+      return "promos-keefon";
+
+    case "voyages-sonores":
+    case "voyage-sonore":
+    case "paysages-sonores":
+    case "paysage-sonore":
+    case "soundscape":
+    case "soundscapes":
+    case "univers-imaginaires":
+    case "univers-imaginaire":
+      return "voyages-sonores";
+
+    default:
+      return "";
+  }
+}
+
+function rubriqueLabelFromSlug(slug: string | null | undefined) {
+  return OFFICIAL_RUBRIQUES.find((rubrique) => rubrique.slug === slug)?.name || "";
+}
+
+function buildSupabaseRestUrl(
+  tableName: string,
+  params: Record<string, string>
+) {
+  const query = new URLSearchParams(params);
+  return `${supabaseUrl}/rest/v1/${tableName}?${query.toString()}`;
+}
+
+function supabaseRestHeaders() {
+  return {
+    apikey: supabaseAnonKey,
+    Authorization: `Bearer ${supabaseAnonKey}`,
+  };
+}
+
+async function fetchJsonWithTimeout<T>(
+  url: string,
+  timeoutMs: number
 ): Promise<T> {
-  return Promise.race([
-    Promise.resolve(promise),
-    new Promise<T>((_, reject) => {
-      window.setTimeout(() => {
-        reject(new Error(`${label} : délai dépassé`));
-      }, ms);
-    }),
-  ]);
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: supabaseRestHeaders(),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      const details = await response.text().catch(() => "");
+      throw new Error(`Supabase REST ${response.status}: ${details}`);
+    }
+
+    return (await response.json()) as T;
+  } finally {
+    window.clearTimeout(timeout);
+  }
 }
 
 export default function KeefonMusicPage() {
@@ -204,45 +309,37 @@ export default function KeefonMusicPage() {
     ? getYouTubeVideoId(selectedCreation.embed_url || selectedCreation.external_url)
     : null;
 
-  // Rubriques officielles de secours si Supabase ne renvoie rien.
-  // Elles gardent les mêmes slugs que la base pour éviter les doublons.
-  const fallbackRubriques: MusicCategory[] = [
-    {
-      id: "fallback-chansons-a-texte",
-      name: "Chansons à texte",
-      slug: "chansons-a-texte",
-      description:
-        "Chansons, slam ou rap narratif portés par une vraie écriture.",
-      is_active: true,
-      sort_order: 1,
-    },
-    {
-      id: "fallback-albums",
-      name: "Albums",
-      slug: "albums",
-      description: "Albums visuels, albums narratifs ou suites de titres.",
-      is_active: true,
-      sort_order: 2,
-    },
-    {
-      id: "fallback-promos-keefon",
-      name: "Promos Keefon",
-      slug: "promos-keefon",
-      description: "Créations sonores liées à l’univers Keefon.",
-      is_active: true,
-      sort_order: 3,
-    },
-    {
-      id: "fallback-voyages-sonores",
-      name: "Voyages sonores",
-      slug: "voyages-sonores",
-      description: "Ambiances, paysages sonores et créations immersives.",
-      is_active: true,
-      sort_order: 4,
-    },
-  ];
+  const fallbackRubriques = OFFICIAL_RUBRIQUES;
 
-  const rubriques = categories.length > 0 ? categories : fallbackRubriques;
+  const rubriques = useMemo(() => {
+    const bySlug = new Map<string, MusicCategory>();
+
+    OFFICIAL_RUBRIQUES.forEach((rubrique) => {
+      bySlug.set(rubrique.slug, rubrique);
+    });
+
+    categories.forEach((category) => {
+      const cleanSlug = normalizeRubriqueSlug(category.slug || category.name);
+      const officialRubrique = OFFICIAL_RUBRIQUES.find(
+        (rubrique) => rubrique.slug === cleanSlug
+      );
+
+      if (!cleanSlug || !officialRubrique) return;
+
+      bySlug.set(cleanSlug, {
+        ...category,
+        name: officialRubrique.name,
+        slug: cleanSlug,
+        description: category.description || officialRubrique.description,
+        is_active: true,
+        sort_order: officialRubrique.sort_order,
+      });
+    });
+
+    return OFFICIAL_RUBRIQUES.map(
+      (rubrique) => bySlug.get(rubrique.slug) || rubrique
+    );
+  }, [categories]);
 
   const allAlbums = useMemo(() => {
     const albumsMap = new Map<string, MusicAlbum>();
@@ -312,7 +409,7 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allAlbums.filter((album) => {
-      const categorySlug = getCategorySlug(album.category_id);
+      const categorySlug = getAlbumCategorySlug(album);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -336,7 +433,7 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allStandaloneCreations.filter((creation) => {
-      const categorySlug = getCategorySlug(creation.category_id);
+      const categorySlug = getCreationCategorySlug(creation);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -362,7 +459,27 @@ export default function KeefonMusicPage() {
     filteredAlbums.length + filteredStandaloneCreations.length;
 
   useEffect(() => {
-    loadPublicMusicData();
+    let isMounted = true;
+
+    // Sécurité mobile : si le réseau, Supabase ou le cache PWA bloque,
+    // on sort quand même de l’état “Chargement des créations...”.
+    const safetyTimer = window.setTimeout(() => {
+      if (!isMounted) return;
+
+      setIsLoading(false);
+      setErrorMessage(
+        "Le chargement des créations est trop long. Recharge la page ou vide le cache PWA si le souci reste uniquement sur mobile."
+      );
+    }, 12000);
+
+    loadPublicMusicData().finally(() => {
+      window.clearTimeout(safetyTimer);
+    });
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(safetyTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -446,76 +563,66 @@ export default function KeefonMusicPage() {
     selectedCreation,
   ]);
 
-  // Lecture Supabase : rubriques actives + créations publiées.
-  // Important : le try/finally évite de rester bloqué sur “Chargement des créations...”.
   async function loadPublicMusicData() {
     setIsLoading(true);
     setErrorMessage("");
 
-    const categoriesRequest = supabase
-      .from("zz_music_categories_modifiables")
-      .select("id, name, slug, description, is_active, sort_order")
-      .eq("is_active", true)
-      .in("slug", [
-        "chansons-a-texte",
-        "albums",
-        "promos-keefon",
-        "voyages-sonores",
-      ])
-      .order("sort_order", { ascending: true });
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setCategories(fallbackRubriques);
+      setCreations([]);
+      setErrorMessage("Configuration Supabase manquante pour Keefon Music.");
+      setIsLoading(false);
+      return;
+    }
 
-    const creationsRequest = supabase
-      .from("zz_music_creations_deposees")
-      .select(
-        "id, title, public_author_name, description, author_note, external_url, embed_url, thumbnail_url, platform, creation_type, category_id, status, is_featured, hearts_count, album_slug, album_title, track_number, created_at, published_at"
-      )
-      .eq("status", "published")
-      .order("is_featured", { ascending: false })
-      .order("published_at", { ascending: false })
-      .order("created_at", { ascending: false });
+    const categoriesUrl = buildSupabaseRestUrl(
+      "zz_music_categories_modifiables",
+      {
+        select: "id,name,slug,description,is_active,sort_order",
+        is_active: "eq.true",
+        order: "sort_order.asc",
+      }
+    );
+
+    const creationsUrl = buildSupabaseRestUrl(
+      "zz_music_creations_deposees",
+      {
+        select:
+          "id,title,public_author_name,description,author_note,external_url,embed_url,thumbnail_url,platform,creation_type,category_id,status,is_featured,hearts_count,album_slug,album_title,track_number,created_at,published_at",
+        status: "eq.published",
+        order: "is_featured.desc,published_at.desc,created_at.desc",
+      }
+    );
 
     try {
       const [categoriesResult, creationsResult] = await Promise.allSettled([
-        withTimeout(categoriesRequest, 10000, "Chargement des rubriques"),
-        withTimeout(creationsRequest, 15000, "Chargement des créations"),
+        fetchJsonWithTimeout<MusicCategory[]>(categoriesUrl, 8000),
+        fetchJsonWithTimeout<MusicCreation[]>(creationsUrl, 10000),
       ]);
 
       if (categoriesResult.status === "fulfilled") {
-        if (categoriesResult.value.error) {
-          console.error(categoriesResult.value.error);
-          setErrorMessage("Impossible de charger les rubriques musicales.");
-          setCategories(fallbackRubriques);
-        } else {
-          setCategories((categoriesResult.value.data || []) as MusicCategory[]);
-        }
+        setCategories(categoriesResult.value || []);
       } else {
-        console.error(categoriesResult.reason);
-        setErrorMessage("Le chargement des rubriques prend trop de temps.");
+        console.error("Erreur chargement rubriques", categoriesResult.reason);
         setCategories(fallbackRubriques);
       }
 
       if (creationsResult.status === "fulfilled") {
-        if (creationsResult.value.error) {
-          console.error(creationsResult.value.error);
-          setErrorMessage("Impossible de charger les créations publiées.");
-          setCreations([]);
-        } else {
-          setCreations((creationsResult.value.data || []) as MusicCreation[]);
-        }
+        setCreations((creationsResult.value || []) as MusicCreation[]);
       } else {
-        console.error(creationsResult.reason);
-        setErrorMessage(
-          "Le chargement des créations a dépassé le délai. Recharge la page ou vérifie l’onglet Console/Réseau."
-        );
+        console.error("Erreur chargement créations", creationsResult.reason);
         setCreations([]);
+        setErrorMessage(
+          "Impossible de charger les créations publiées. Si le PC fonctionne mais pas le mobile, vide le cache du site/PWA sur le téléphone."
+        );
       }
     } catch (error) {
-      console.error(error);
+      console.error("Erreur générale Keefon Music", error);
+      setCategories(fallbackRubriques);
+      setCreations([]);
       setErrorMessage(
         "Une erreur a bloqué le chargement des créations. Regarde la console navigateur pour le détail."
       );
-      setCategories(fallbackRubriques);
-      setCreations([]);
     } finally {
       setIsLoading(false);
     }
@@ -525,14 +632,36 @@ export default function KeefonMusicPage() {
     if (!categoryId) return "Création musicale";
 
     const category = categories.find((item) => item.id === categoryId);
-    return category?.name || "Création musicale";
+    const cleanSlug = normalizeRubriqueSlug(category?.slug || category?.name);
+
+    return (
+      rubriqueLabelFromSlug(cleanSlug) ||
+      category?.name ||
+      "Création musicale"
+    );
   }
 
   function getCategorySlug(categoryId: string | null) {
     if (!categoryId) return "";
 
     const category = categories.find((item) => item.id === categoryId);
-    return category?.slug || "";
+    return normalizeRubriqueSlug(category?.slug || category?.name) || "";
+  }
+
+  function getCreationCategorySlug(creation: MusicCreation) {
+    return (
+      getCategorySlug(creation.category_id) ||
+      normalizeRubriqueSlug(creation.creation_type)
+    );
+  }
+
+  function getAlbumCategorySlug(album: MusicAlbum) {
+    const firstTrack = album.tracks[0] || null;
+
+    return (
+      getCategorySlug(album.category_id) ||
+      normalizeRubriqueSlug(firstTrack?.creation_type)
+    );
   }
 
   function openAlbum(album: MusicAlbum) {
@@ -671,9 +800,7 @@ export default function KeefonMusicPage() {
             </div>
           )}
 
-          {isLoading && creations.length === 0 && (
-            <p className="notice">Chargement des créations...</p>
-          )}
+          {isLoading && <p className="notice">Chargement des créations...</p>}
 
           {errorMessage && <p className="error">{errorMessage}</p>}
 
@@ -770,7 +897,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
 
               {selectedAlbum ? (
                 <>
-                  <p className="label">Album narratif</p>
+                  <p className="label">Album</p>
 
                   <h2>{selectedAlbum.album_title}</h2>
 
@@ -1041,6 +1168,20 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
             scroll-behavior: smooth;
           }
 
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
+          }
+
+          html,
+          body,
+          #__next {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+          }
+
           .page {
             min-height: 100vh;
             color: white;
@@ -1058,7 +1199,8 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           .searchPanel,
           .box,
           .footer {
-            width: min(100%, 1050px);
+            width: 100%;
+            max-width: 1050px;
             margin-left: auto;
             margin-right: auto;
           }
@@ -1135,7 +1277,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           }
 
           .badge {
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
@@ -1146,8 +1288,8 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
             background: rgba(255, 255, 255, 0.05);
             color: white;
             cursor: pointer;
-            font-weight: 900;
-            font-size: 0.94rem;
+            font-weight: 850;
+            font-size: 0.92rem;
             line-height: 1.1;
             text-align: center;
           }
@@ -1161,7 +1303,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           .badges .badge:last-child:nth-child(odd) {
             grid-column: 1 / -1;
             justify-self: center;
-            max-width: 210px;
+            max-width: 220px;
           }
 
           .searchActions {
@@ -1174,6 +1316,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           .searchActions .primary,
           .searchActions .secondary {
             width: 100%;
+            border-radius: 16px;
           }
 
           .hero {
@@ -1305,9 +1448,9 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 42px;
-            padding: 0 15px;
-            border-radius: 16px;
+            min-height: 38px;
+            padding: 0 13px;
+            border-radius: 999px;
             text-decoration: none;
             font-weight: 900;
             border: 0;
@@ -1515,63 +1658,72 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           }
 
           @media (max-width: 420px) {
+            .page {
+              padding: 14px 10px 46px;
+            }
+
+            .header {
+              gap: 8px;
+            }
+
+            .searchToggle {
+              min-height: 34px;
+              padding: 0 10px;
+              font-size: 0.78rem;
+            }
+
+            .searchPanel {
+              padding: 12px;
+              border-radius: 18px;
+            }
+
             .albumCard,
             .creationCard {
-              grid-template-columns: 68px 1fr;
+              grid-template-columns: 64px minmax(0, 1fr) 30px;
+              gap: 8px;
+              padding: 8px;
+              border-radius: 16px;
             }
 
             .thumbnailWrap {
-              width: 68px;
+              width: 64px;
+              border-radius: 12px;
+            }
+
+            .itemAuthor {
+              font-size: 0.74rem;
+              margin-bottom: 3px;
+            }
+
+            .itemTitle {
+              font-size: 0.86rem;
+              line-height: 1.15;
             }
 
             .creationActions {
-              grid-column: 2 / 3;
-              justify-content: flex-start;
+              grid-column: auto;
+              flex-direction: column;
+              justify-content: center;
+              gap: 4px;
             }
 
-            .primary {
-              min-height: 36px;
-              padding: 0 12px;
+            .creationActions .primary {
+              min-height: 21px;
+              padding: 0 6px;
+              font-size: 0.62rem;
+              line-height: 1;
             }
 
-            .infoButton {
-              width: 36px;
-              min-width: 36px;
-              min-height: 36px;
+            .creationActions .infoButton {
+              width: 21px;
+              min-width: 21px;
+              min-height: 21px;
+              font-size: 0.72rem;
+              line-height: 1;
             }
           }
 
           @media (min-width: 780px) {
-            .badges {
-              display: flex;
-              flex-wrap: wrap;
-            }
-
-            .badge {
-              width: auto;
-              min-height: 38px;
-              padding: 0 16px;
-              border-radius: 999px;
-            }
-
-            .badges .badge:last-child:nth-child(odd) {
-              grid-column: auto;
-              justify-self: auto;
-              max-width: none;
-            }
-
-            .searchActions {
-              display: flex;
-              flex-wrap: wrap;
-            }
-
-            .searchActions .primary,
-            .searchActions .secondary {
-              width: auto;
-              min-height: 38px;
-              border-radius: 999px;
-            }
-
             .page {
               background-attachment: fixed;
               padding: 32px 24px 80px;
@@ -1616,6 +1768,39 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
 
             .searchPanel {
               padding: 22px;
+            }
+
+
+            .badges {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+            }
+
+            .badge {
+              width: auto;
+              min-height: 38px;
+              padding: 0 16px;
+              border-radius: 999px;
+            }
+
+            .badges .badge:last-child:nth-child(odd) {
+              grid-column: auto;
+              justify-self: auto;
+              max-width: none;
+            }
+
+            .searchActions {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+            }
+
+            .searchActions .primary,
+            .searchActions .secondary {
+              width: auto;
+              min-height: 38px;
+              border-radius: 999px;
             }
           }
         `}</style>
