@@ -724,7 +724,27 @@ order by created_at desc;
 
 
 
+===================================================================================================================>   A FAIRE ======>>>>>      
 
+
+Petit détail en plus que j’ai repéré
+
+Sur ta capture, on voit encore :
+
+CALME — Album visuel
+
+Donc il y a encore un endroit où ton code affiche les anciens labels de type.
+Ça vient probablement de la fonction :
+
+function creationTypeLabel(type: string)
+
+qui retourne encore :
+
+Album visuel
+Expérimentation IA
+etc.
+
+Il faudra aussi la mettre à jour pour qu’elle colle aux nouvelles rubriques, sinon tu auras encore des restes de l’ancien système.
 
 
 
