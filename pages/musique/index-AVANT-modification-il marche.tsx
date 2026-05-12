@@ -102,23 +102,17 @@ function platformLabel(platform: string) {
 }
 
 function creationTypeLabel(type: string) {
-  const cleanType = normalizeRubriqueSlug(type) || type;
-
-  switch (cleanType) {
+  switch (type) {
     case "song":
-    case "chansons-a-texte":
-      return "Chansons à texte";
+      return "Chanson à texte";
     case "clip":
       return "Clip";
     case "visual_album":
-    case "ai_experiment":
-    case "albums":
-      return "Albums";
+      return "Album";
     case "soundscape":
-    case "voyages-sonores":
-      return "Voyages sonores";
-    case "promos-keefon":
-      return "Promos Keefon";
+      return "Voyage sonore";
+    case "ai_experiment":
+      return "Album";
     default:
       return "Création musicale";
   }
@@ -1162,76 +1156,34 @@ export default function KeefonMusicPage() {
             margin-bottom: 10px;
           }
 
-          /* Recherche > rubriques : grille propre sur mobile.
-             Important : uniquement de la mise en forme, aucune logique Supabase n'est touchée. */
           .badges {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 9px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
           }
 
           .badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: 42px;
-            padding: 0 12px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.075),
-                rgba(255, 255, 255, 0.025)
-              ),
-              rgba(0, 0, 0, 0.22);
+            min-height: 36px;
+            padding: 0 13px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
             cursor: pointer;
-            font-weight: 900;
-            font-size: 0.88rem;
-            line-height: 1.08;
-            text-align: center;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            transition:
-              transform 0.16s ease,
-              border-color 0.16s ease,
-              background 0.16s ease;
-          }
-
-          .badge:hover {
-            transform: translateY(-1px);
-            border-color: rgba(245, 199, 109, 0.48);
-            background: rgba(255, 255, 255, 0.08);
+            font-weight: 800;
           }
 
           .badge.active {
-            background: linear-gradient(180deg, #ffd979, #f5c76d);
+            background: #f5c76d;
             color: #111;
             border-color: #f5c76d;
-            box-shadow: 0 8px 20px rgba(245, 199, 109, 0.14);
-          }
-
-          /* Avec “Tout voir” + 4 rubriques, le dernier bouton est seul :
-             on le centre pour que la fin de grille reste équilibrée. */
-          .badges .badge:last-child:nth-child(odd) {
-            grid-column: 1 / -1;
-            justify-self: center;
-            width: min(100%, 220px);
           }
 
           .searchActions {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 18px;
-          }
-
-          .searchActions .primary,
-          .searchActions .secondary {
-            width: 100%;
-            min-height: 44px;
-            border-radius: 16px;
-            font-size: 0.92rem;
           }
 
           .hero {
@@ -1676,40 +1628,6 @@ export default function KeefonMusicPage() {
 
             .searchPanel {
               padding: 22px;
-            }
-
-            /* Desktop : retour aux capsules souples en ligne. */
-            .badges {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-            }
-
-            .badge {
-              width: auto;
-              min-height: 38px;
-              padding: 0 16px;
-              border-radius: 999px;
-              font-size: 0.9rem;
-            }
-
-            .badges .badge:last-child:nth-child(odd) {
-              grid-column: auto;
-              justify-self: auto;
-              width: auto;
-            }
-
-            .searchActions {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-            }
-
-            .searchActions .primary,
-            .searchActions .secondary {
-              width: auto;
-              min-height: 38px;
-              border-radius: 999px;
             }
           }
         `}</style>
