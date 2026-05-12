@@ -103,16 +103,33 @@ function platformLabel(platform: string) {
 
 function creationTypeLabel(type: string) {
   switch (type) {
+    case "chansons-a-texte":
     case "song":
-      return "Chanson à texte";
     case "clip":
-      return "Clip";
+    case "satire":
+    case "other":
+      return "Chansons à texte";
+
+    case "albums":
     case "visual_album":
-      return "Album";
-    case "soundscape":
-      return "Voyage sonore";
+    case "album-visuel":
+    case "album-narratif":
     case "ai_experiment":
-      return "Album";
+    case "experiences-ia":
+    case "experimentations-ia":
+      return "Albums";
+
+    case "promos-keefon":
+    case "createurs-invites":
+      return "Promos Keefon";
+
+    case "voyages-sonores":
+    case "soundscape":
+    case "paysage-sonore":
+    case "paysages-sonores":
+    case "univers-imaginaires":
+      return "Voyages sonores";
+
     default:
       return "Création musicale";
   }
@@ -143,96 +160,21 @@ function sortTracks(a: MusicCreation, b: MusicCreation) {
   return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
 }
 
-// ==============================
-// Rubriques officielles publiques
-// ==============================
-// Ces 4 rubriques sont celles affichées aux visiteurs.
-// Les anciens noms venant de Supabase sont normalisés plus bas pour éviter les doublons.
-const officialRubriques = [
-  {
-    id: "rubrique-chansons-a-texte",
-    name: "Chansons à texte",
-    slug: "chansons-a-texte",
-  },
-  {
-    id: "rubrique-albums",
-    name: "Albums",
-    slug: "albums",
-  },
-  {
-    id: "rubrique-promos-keefon",
-    name: "Promos Keefon",
-    slug: "promos-keefon",
-  },
-  {
-    id: "rubrique-voyages-sonores",
-    name: "Voyages sonores",
-    slug: "voyages-sonores",
-  },
-];
-
-const rubriqueAliasBySlug: Record<string, string> = {
-  // Chansons à texte : chanson, clip, satire, slam ou rap narratif.
-  chanson: "chansons-a-texte",
-  chansons: "chansons-a-texte",
-  song: "chansons-a-texte",
-  clip: "chansons-a-texte",
-  clips: "chansons-a-texte",
-  satire: "chansons-a-texte",
-  slam: "chansons-a-texte",
-  rap: "chansons-a-texte",
-  "chanson-a-texte": "chansons-a-texte",
-  "chansons-a-texte": "chansons-a-texte",
-
-  // Albums : ancien album narratif / visuel + anciennes expériences IA.
-  album: "albums",
-  albums: "albums",
-  "album-narratif": "albums",
-  "albums-narratifs": "albums",
-  "album-visuel": "albums",
-  "albums-visuels": "albums",
-  "visual-album": "albums",
-  "ai-experiment": "albums",
-  "experience-ia": "albums",
-  "experiences-ia": "albums",
-  "experimentation-ia": "albums",
-  "experimentations-ia": "albums",
-
-  // Promos Keefon : anciennes rubriques créateurs invités / promotions.
-  "promo-keefon": "promos-keefon",
-  "promos-keefon": "promos-keefon",
-  "promotion-keefon": "promos-keefon",
-  "promotions-keefon": "promos-keefon",
-  "createur-invite": "promos-keefon",
-  "createurs-invites": "promos-keefon",
-
-  // Voyages sonores : ambiances, paysages sonores, univers immersifs.
-  "voyage-sonore": "voyages-sonores",
-  "voyages-sonores": "voyages-sonores",
-  "paysage-sonore": "voyages-sonores",
-  "paysages-sonores": "voyages-sonores",
-  "soundscape": "voyages-sonores",
-  "univers-imaginaire": "voyages-sonores",
-  "univers-imaginaires": "voyages-sonores",
-};
-
-function slugifyRubrique(value: string | null | undefined) {
-  return normalizeText(value)
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function normalizeRubriqueSlug(value: string | null | undefined) {
-  const slug = slugifyRubrique(value);
-  return rubriqueAliasBySlug[slug] || slug;
-}
-
-function getOfficialRubriqueName(slug: string, fallbackName = "Création musicale") {
-  return officialRubriques.find((rubrique) => rubrique.slug === slug)?.name || fallbackName;
-}
-
-function getRubriqueSlugFromCreationType(type: string | null | undefined) {
-  return normalizeRubriqueSlug(type);
+// Sécurité : évite que la page reste bloquée indéfiniment sur
+// “Chargement des créations...” si une requête réseau/Supabase ne répond pas.
+function withTimeout<T>(
+  promise: PromiseLike<T>,
+  ms: number,
+  label: string
+): Promise<T> {
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise<T>((_, reject) => {
+      window.setTimeout(() => {
+        reject(new Error(`${label} : délai dépassé`));
+      }, ms);
+    }),
+  ]);
 }
 
 export default function KeefonMusicPage() {
@@ -262,9 +204,45 @@ export default function KeefonMusicPage() {
     ? getYouTubeVideoId(selectedCreation.embed_url || selectedCreation.external_url)
     : null;
 
-  // Rubriques visibles dans le panneau “Recherche & rubriques”.
-  // On affiche uniquement la ligne éditoriale officielle, même si Supabase contient encore d’anciens noms.
-  const rubriques = officialRubriques;
+  // Rubriques officielles de secours si Supabase ne renvoie rien.
+  // Elles gardent les mêmes slugs que la base pour éviter les doublons.
+  const fallbackRubriques: MusicCategory[] = [
+    {
+      id: "fallback-chansons-a-texte",
+      name: "Chansons à texte",
+      slug: "chansons-a-texte",
+      description:
+        "Chansons, slam ou rap narratif portés par une vraie écriture.",
+      is_active: true,
+      sort_order: 1,
+    },
+    {
+      id: "fallback-albums",
+      name: "Albums",
+      slug: "albums",
+      description: "Albums visuels, albums narratifs ou suites de titres.",
+      is_active: true,
+      sort_order: 2,
+    },
+    {
+      id: "fallback-promos-keefon",
+      name: "Promos Keefon",
+      slug: "promos-keefon",
+      description: "Créations sonores liées à l’univers Keefon.",
+      is_active: true,
+      sort_order: 3,
+    },
+    {
+      id: "fallback-voyages-sonores",
+      name: "Voyages sonores",
+      slug: "voyages-sonores",
+      description: "Ambiances, paysages sonores et créations immersives.",
+      is_active: true,
+      sort_order: 4,
+    },
+  ];
+
+  const rubriques = categories.length > 0 ? categories : fallbackRubriques;
 
   const allAlbums = useMemo(() => {
     const albumsMap = new Map<string, MusicAlbum>();
@@ -334,9 +312,7 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allAlbums.filter((album) => {
-      // Une carte issue d’un album_slug est toujours considérée comme un album,
-      // même si une ancienne rubrique Supabase traîne encore sur une des pistes.
-      const categorySlug = "albums";
+      const categorySlug = getCategorySlug(album.category_id);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -345,7 +321,7 @@ export default function KeefonMusicPage() {
           album.album_title,
           album.public_author_name,
           platformLabel(album.platform),
-          getCategoryName(album.category_id, "Albums"),
+          getCategoryName(album.category_id),
           ...album.tracks.map((track) => track.title),
           ...album.tracks.map((track) => track.description),
           ...album.tracks.map((track) => track.author_note || ""),
@@ -360,9 +336,7 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allStandaloneCreations.filter((creation) => {
-      const categorySlug =
-        getCategorySlug(creation.category_id) ||
-        getRubriqueSlugFromCreationType(creation.creation_type);
+      const categorySlug = getCategorySlug(creation.category_id);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -373,12 +347,7 @@ export default function KeefonMusicPage() {
           creation.description,
           creation.author_note,
           platformLabel(creation.platform),
-          getCategoryName(
-            creation.category_id,
-            getOfficialRubriqueName(
-              getRubriqueSlugFromCreationType(creation.creation_type)
-            )
-          ),
+          getCategoryName(creation.category_id),
         ].join(" ")
       );
 
@@ -477,64 +446,93 @@ export default function KeefonMusicPage() {
     selectedCreation,
   ]);
 
+  // Lecture Supabase : rubriques actives + créations publiées.
+  // Important : le try/finally évite de rester bloqué sur “Chargement des créations...”.
   async function loadPublicMusicData() {
     setIsLoading(true);
     setErrorMessage("");
 
-    const [categoriesResult, creationsResult] = await Promise.all([
-      supabase
-        .from("zz_music_categories_modifiables")
-        .select("id, name, slug, description, is_active, sort_order")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true }),
+    const categoriesRequest = supabase
+      .from("zz_music_categories_modifiables")
+      .select("id, name, slug, description, is_active, sort_order")
+      .eq("is_active", true)
+      .in("slug", [
+        "chansons-a-texte",
+        "albums",
+        "promos-keefon",
+        "voyages-sonores",
+      ])
+      .order("sort_order", { ascending: true });
 
-      supabase
-        .from("zz_music_creations_deposees")
-        .select(
-          "id, title, public_author_name, description, author_note, external_url, embed_url, thumbnail_url, platform, creation_type, category_id, status, is_featured, hearts_count, album_slug, album_title, track_number, created_at, published_at"
-        )
-        .eq("status", "published")
-        .order("is_featured", { ascending: false })
-        .order("album_slug", { ascending: true, nullsFirst: false })
-        .order("track_number", { ascending: true, nullsFirst: false })
-        .order("published_at", { ascending: false })
-        .order("created_at", { ascending: false }),
-    ]);
+    const creationsRequest = supabase
+      .from("zz_music_creations_deposees")
+      .select(
+        "id, title, public_author_name, description, author_note, external_url, embed_url, thumbnail_url, platform, creation_type, category_id, status, is_featured, hearts_count, album_slug, album_title, track_number, created_at, published_at"
+      )
+      .eq("status", "published")
+      .order("is_featured", { ascending: false })
+      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false });
 
-    if (categoriesResult.error) {
-      console.error(categoriesResult.error);
-      setErrorMessage("Impossible de charger les rubriques musicales.");
-    } else {
-      setCategories((categoriesResult.data || []) as MusicCategory[]);
+    try {
+      const [categoriesResult, creationsResult] = await Promise.allSettled([
+        withTimeout(categoriesRequest, 10000, "Chargement des rubriques"),
+        withTimeout(creationsRequest, 15000, "Chargement des créations"),
+      ]);
+
+      if (categoriesResult.status === "fulfilled") {
+        if (categoriesResult.value.error) {
+          console.error(categoriesResult.value.error);
+          setErrorMessage("Impossible de charger les rubriques musicales.");
+          setCategories(fallbackRubriques);
+        } else {
+          setCategories((categoriesResult.value.data || []) as MusicCategory[]);
+        }
+      } else {
+        console.error(categoriesResult.reason);
+        setErrorMessage("Le chargement des rubriques prend trop de temps.");
+        setCategories(fallbackRubriques);
+      }
+
+      if (creationsResult.status === "fulfilled") {
+        if (creationsResult.value.error) {
+          console.error(creationsResult.value.error);
+          setErrorMessage("Impossible de charger les créations publiées.");
+          setCreations([]);
+        } else {
+          setCreations((creationsResult.value.data || []) as MusicCreation[]);
+        }
+      } else {
+        console.error(creationsResult.reason);
+        setErrorMessage(
+          "Le chargement des créations a dépassé le délai. Recharge la page ou vérifie l’onglet Console/Réseau."
+        );
+        setCreations([]);
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(
+        "Une erreur a bloqué le chargement des créations. Regarde la console navigateur pour le détail."
+      );
+      setCategories(fallbackRubriques);
+      setCreations([]);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (creationsResult.error) {
-      console.error(creationsResult.error);
-      setErrorMessage("Impossible de charger les créations publiées.");
-    } else {
-      setCreations((creationsResult.data || []) as MusicCreation[]);
-    }
-
-    setIsLoading(false);
   }
 
-  function getCategoryName(
-    categoryId: string | null,
-    fallbackName = "Création musicale"
-  ) {
-    const slug = getCategorySlug(categoryId);
-    if (!slug) return fallbackName;
+  function getCategoryName(categoryId: string | null) {
+    if (!categoryId) return "Création musicale";
 
-    return getOfficialRubriqueName(slug, fallbackName);
+    const category = categories.find((item) => item.id === categoryId);
+    return category?.name || "Création musicale";
   }
 
   function getCategorySlug(categoryId: string | null) {
     if (!categoryId) return "";
 
     const category = categories.find((item) => item.id === categoryId);
-
-    // On normalise à partir du slug ET du nom pour rattraper les anciennes rubriques Supabase.
-    return normalizeRubriqueSlug(category?.slug || category?.name || "");
+    return category?.slug || "";
   }
 
   function openAlbum(album: MusicAlbum) {
@@ -564,26 +562,13 @@ export default function KeefonMusicPage() {
     setSelectedCreationInfo(null);
   }
 
-  function closeSearchAndShowResults() {
-    setIsSearchOpen(false);
-
-    if (typeof window === "undefined") return;
-
-    window.setTimeout(() => {
-      document.getElementById("creations")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 80);
-  }
-
   return (
     <>
       <Head>
         <title>Keefon Music — Des chansons comme des scènes de cinéma</title>
         <meta
           name="description"
-          content="Keefon Music présente des chansons à texte, albums, promos Keefon et voyages sonores."
+          content="Keefon Music présente des chansons narratives, clips, univers visuels et projets créatifs."
         />
       </Head>
 
@@ -654,7 +639,7 @@ export default function KeefonMusicPage() {
               <button
                 type="button"
                 className="primary"
-                onClick={closeSearchAndShowResults}
+                onClick={() => setIsSearchOpen(false)}
               >
                 Voir les résultats
               </button>
@@ -686,7 +671,9 @@ export default function KeefonMusicPage() {
             </div>
           )}
 
-          {isLoading && <p className="notice">Chargement des créations...</p>}
+          {isLoading && creations.length === 0 && (
+            <p className="notice">Chargement des créations...</p>
+          )}
 
           {errorMessage && <p className="error">{errorMessage}</p>}
 
@@ -739,13 +726,13 @@ export default function KeefonMusicPage() {
           <h2>Diffusez vos créations sur Keefon</h2>
 
           <p>
-            Vous pouvez proposer une création correspondant à nos rubriques : chanson à texte, album, promo Keefon ou voyage sonore. Le clip vidéo n’est pas obligatoire.
+        Vous pouvez proposer une chanson correspondant à nos catégories, un morceau audio, une ambiance sonore, un clip ou un projet plus narratif. Le clip vidéo n’est pas obligatoire.
 
-            Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
+Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
           </p>
 
           <p>
-            Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
+           Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
           </p>
 
           <a href="/musique/proposer" className="primary">
@@ -946,7 +933,9 @@ export default function KeefonMusicPage() {
                   <h2>{selectedAlbumInfo.album_title}</h2>
 
                   <p>Auteur : {selectedAlbumInfo.public_author_name}</p>
-                  <p>Rubrique : Albums</p>
+                  <p>
+                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id)}
+                  </p>
                   <p>Type : Album</p>
                   <p>Plateforme : {platformLabel(selectedAlbumInfo.platform)}</p>
                   <p>Nombre de pistes : {selectedAlbumInfo.tracks.length}</p>
@@ -1007,14 +996,7 @@ export default function KeefonMusicPage() {
                   <p>Auteur : {selectedCreationInfo.public_author_name}</p>
                   <p>
                     Rubrique :{" "}
-                    {getCategoryName(
-                      selectedCreationInfo.category_id,
-                      getOfficialRubriqueName(
-                        getRubriqueSlugFromCreationType(
-                          selectedCreationInfo.creation_type
-                        )
-                      )
-                    )}
+                    {getCategoryName(selectedCreationInfo.category_id)}
                   </p>
                   <p>
                     Type :{" "}
@@ -1055,33 +1037,12 @@ export default function KeefonMusicPage() {
         )}
 
         <style jsx global>{`
-          /* Base anti-débordement : évite les bandes blanches sur mobile. */
-          *,
-          *::before,
-          *::after {
-            box-sizing: border-box;
-          }
-
           html {
             scroll-behavior: smooth;
-            width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-          }
-
-          body,
-          #__next {
-            width: 100%;
-            min-height: 100%;
-            margin: 0;
-            overflow-x: hidden;
-            background: #050505;
           }
 
           .page {
-            width: 100%;
             min-height: 100vh;
-            overflow-x: hidden;
             color: white;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
@@ -1097,8 +1058,7 @@ export default function KeefonMusicPage() {
           .searchPanel,
           .box,
           .footer {
-            width: 100%;
-            max-width: 1050px;
+            width: min(100%, 1050px);
             margin-left: auto;
             margin-right: auto;
           }
@@ -1148,7 +1108,6 @@ export default function KeefonMusicPage() {
 
           .searchPanel input {
             width: 100%;
-            min-width: 0;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -1169,10 +1128,9 @@ export default function KeefonMusicPage() {
             margin-bottom: 10px;
           }
 
-          /* Rubriques : capsules propres sur desktop, rail compact sur mobile. */
           .badges {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
           }
 
@@ -1180,42 +1138,42 @@ export default function KeefonMusicPage() {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 38px;
-            padding: 0 15px;
-            border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.08),
-                rgba(255, 255, 255, 0.035)
-              ),
-              rgba(0, 0, 0, 0.22);
+            width: 100%;
+            min-height: 42px;
+            padding: 0 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
             cursor: pointer;
             font-weight: 900;
-            line-height: 1;
-            white-space: nowrap;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            transition: 0.18s ease;
-          }
-
-          .badge:hover {
-            border-color: rgba(245, 199, 109, 0.42);
-            background: rgba(255, 255, 255, 0.08);
+            font-size: 0.94rem;
+            line-height: 1.1;
+            text-align: center;
           }
 
           .badge.active {
             background: #f5c76d;
             color: #111;
             border-color: #f5c76d;
-            box-shadow: 0 8px 22px rgba(245, 199, 109, 0.16);
+          }
+
+          .badges .badge:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            justify-self: center;
+            max-width: 210px;
           }
 
           .searchActions {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 10px;
             margin-top: 18px;
+          }
+
+          .searchActions .primary,
+          .searchActions .secondary {
+            width: 100%;
           }
 
           .hero {
@@ -1302,7 +1260,6 @@ export default function KeefonMusicPage() {
 
           .thumbnail {
             width: 100%;
-            max-width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
@@ -1336,12 +1293,10 @@ export default function KeefonMusicPage() {
             font-weight: 800;
           }
 
-          /* Actions des cartes : sur desktop les boutons restent côte à côte. */
           .creationActions {
             display: flex;
             gap: 6px;
             align-items: center;
-            justify-content: flex-end;
           }
 
           .primary,
@@ -1350,9 +1305,9 @@ export default function KeefonMusicPage() {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 38px;
-            padding: 0 13px;
-            border-radius: 999px;
+            min-height: 42px;
+            padding: 0 15px;
+            border-radius: 16px;
             text-decoration: none;
             font-weight: 900;
             border: 0;
@@ -1433,8 +1388,7 @@ export default function KeefonMusicPage() {
           .modal,
           .infoModal {
             position: relative;
-            width: 100%;
-            max-width: 960px;
+            width: min(100%, 960px);
             max-height: 90vh;
             overflow: auto;
             padding: 22px;
@@ -1444,7 +1398,7 @@ export default function KeefonMusicPage() {
           }
 
           .infoModal {
-            max-width: 620px;
+            width: min(100%, 620px);
           }
 
           .closeButton {
@@ -1560,197 +1514,64 @@ export default function KeefonMusicPage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          /* Mobile : panneau compact + cartes remontées avant le grand titre.
-             Objectif : les créations restent visibles même quand la recherche est ouverte. */
-          @media (max-width: 560px) {
-            .page {
-              display: flex;
-              flex-direction: column;
-              min-height: 100svh;
-              padding: 18px 14px 56px;
-            }
-
-            .header {
-              order: 1;
-              margin-bottom: 12px;
-            }
-
-            .searchPanel {
-              order: 2;
-              padding: 14px;
-              border-radius: 20px;
-              margin-bottom: 14px;
-            }
-
-            .resultsSection {
-              order: 3;
-              display: block !important;
-              width: 100%;
-              min-width: 0;
-              overflow: visible;
-              visibility: visible;
-              opacity: 1;
-              margin-bottom: 18px;
-            }
-
-            .hero {
-              order: 4;
-              margin-top: 2px;
-              margin-bottom: 16px;
-            }
-
-            .creatorBox {
-              order: 5;
-            }
-
-            .conceptBox {
-              order: 6;
-            }
-
-            .footer {
-              order: 7;
-            }
-
-            .hero h1 {
-              font-size: clamp(1.85rem, 10.5vw, 2.75rem);
-              line-height: 1.02;
-            }
-
-            .searchPanel label {
-              margin-bottom: 12px;
-            }
-
-            .searchPanel input {
-              min-height: 48px;
-              padding: 11px 14px;
-            }
-
-            .miniLabel {
-              margin-bottom: 8px;
-            }
-
-            .badges {
-              display: flex;
-              flex-wrap: nowrap;
-              gap: 8px;
-              overflow-x: auto;
-              overflow-y: hidden;
-              padding: 2px 2px 8px;
-              margin: 0 -2px;
-              scrollbar-width: none;
-              -webkit-overflow-scrolling: touch;
-            }
-
-            .badges::-webkit-scrollbar {
-              display: none;
-            }
-
-            .badge {
-              flex: 0 0 auto;
-              min-height: 34px;
-              padding: 0 12px;
-              font-size: 0.78rem;
-              border-radius: 999px;
-            }
-
-            .searchActions {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 8px;
-              margin-top: 12px;
-            }
-
-            .searchActions .primary,
-            .searchActions .secondary {
-              width: 100%;
-              min-height: 38px;
-              padding: 0 10px;
-              font-size: 0.78rem;
-              border-radius: 999px;
-            }
-
-            .catalogList {
-              display: grid !important;
-              grid-template-columns: 1fr;
-              gap: 10px;
-              width: 100%;
-              min-width: 0;
-              overflow: visible;
-              visibility: visible;
-              opacity: 1;
-            }
-
-            .catalogList + .catalogList {
-              margin-top: 10px;
-            }
-
+          @media (max-width: 420px) {
             .albumCard,
             .creationCard {
-              display: grid !important;
-              grid-template-columns: 58px minmax(0, 1fr) 30px;
-              gap: 8px;
-              align-items: center;
-              width: 100%;
-              min-width: 0;
-              padding: 8px;
-              border-radius: 15px;
-              overflow: visible;
-              visibility: visible;
-              opacity: 1;
+              grid-template-columns: 68px 1fr;
             }
 
             .thumbnailWrap {
-              width: 58px;
-              border-radius: 12px;
-            }
-
-            .creationText {
-              min-width: 0;
-              overflow: hidden;
-            }
-
-            .itemAuthor {
-              margin-bottom: 2px;
-              font-size: 0.72rem;
-            }
-
-            .itemTitle {
-              font-size: 0.82rem;
-              line-height: 1.12;
-              overflow-wrap: anywhere;
+              width: 68px;
             }
 
             .creationActions {
-              grid-column: 3 / 4;
-              grid-row: 1 / 2;
-              align-self: center;
-              justify-self: end;
-              flex-direction: column;
-              gap: 4px;
-              width: 30px;
+              grid-column: 2 / 3;
+              justify-content: flex-start;
             }
 
-            .creationActions .primary {
-              min-height: 20px;
-              padding: 0 6px;
-              font-size: 0.56rem;
-              line-height: 1;
-              border-radius: 999px;
+            .primary {
+              min-height: 36px;
+              padding: 0 12px;
             }
 
-            .creationActions .infoButton {
-              width: 20px;
-              min-width: 20px;
-              min-height: 20px;
-              height: 20px;
-              padding: 0;
-              font-size: 0.68rem;
-              line-height: 1;
-              border-radius: 999px;
+            .infoButton {
+              width: 36px;
+              min-width: 36px;
+              min-height: 36px;
             }
           }
 
           @media (min-width: 780px) {
+            .badges {
+              display: flex;
+              flex-wrap: wrap;
+            }
+
+            .badge {
+              width: auto;
+              min-height: 38px;
+              padding: 0 16px;
+              border-radius: 999px;
+            }
+
+            .badges .badge:last-child:nth-child(odd) {
+              grid-column: auto;
+              justify-self: auto;
+              max-width: none;
+            }
+
+            .searchActions {
+              display: flex;
+              flex-wrap: wrap;
+            }
+
+            .searchActions .primary,
+            .searchActions .secondary {
+              width: auto;
+              min-height: 38px;
+              border-radius: 999px;
+            }
+
             .page {
               background-attachment: fixed;
               padding: 32px 24px 80px;
