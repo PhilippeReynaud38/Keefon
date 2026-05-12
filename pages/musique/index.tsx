@@ -102,17 +102,17 @@ function platformLabel(platform: string) {
 }
 
 function creationTypeLabel(type: string) {
-  switch (type) {
-    case "song":
-      return "Chanson à texte";
-    case "clip":
-      return "Clip";
-    case "visual_album":
-      return "Album";
-    case "soundscape":
-      return "Voyage sonore";
-    case "ai_experiment":
-      return "Album";
+  const normalizedType = normalizeRubriqueSlug(type);
+
+  switch (normalizedType) {
+    case "chansons-a-texte":
+      return "Chansons à texte";
+    case "albums":
+      return "Albums";
+    case "promos-keefon":
+      return "Promos Keefon";
+    case "voyages-sonores":
+      return "Voyages sonores";
     default:
       return "Création musicale";
   }
@@ -768,7 +768,7 @@ export default function KeefonMusicPage() {
 
               {selectedAlbum ? (
                 <>
-                  <p className="label">Album narratif</p>
+                  <p className="label">Album</p>
 
                   <h2>{selectedAlbum.album_title}</h2>
 
@@ -1156,34 +1156,60 @@ export default function KeefonMusicPage() {
             margin-bottom: 10px;
           }
 
+          /* Rubriques : grille propre sur mobile, capsules sur desktop. */
           .badges {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
           }
 
           .badge {
-            min-height: 36px;
-            padding: 0 13px;
-            border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            background: rgba(255, 255, 255, 0.05);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-width: 0;
+            min-height: 42px;
+            padding: 0 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.08),
+                rgba(255, 255, 255, 0.035)
+              ),
+              rgba(0, 0, 0, 0.22);
             color: white;
             cursor: pointer;
-            font-weight: 800;
+            font-weight: 900;
+            font-size: 0.9rem;
+            line-height: 1.1;
+            text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
           }
 
           .badge.active {
             background: #f5c76d;
             color: #111;
             border-color: #f5c76d;
+            box-shadow: 0 8px 22px rgba(245, 199, 109, 0.16);
+          }
+
+          /* Avec 5 boutons : le dernier prend toute la largeur sur mobile. */
+          .badges .badge:nth-child(5):last-child {
+            grid-column: 1 / -1;
           }
 
           .searchActions {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 10px;
             margin-top: 18px;
+          }
+
+          .searchActions .primary,
+          .searchActions .secondary {
+            width: 100%;
           }
 
           .hero {
@@ -1528,21 +1554,66 @@ export default function KeefonMusicPage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          /* Mobile : cartes compactes avec Lire au-dessus du bouton info.
-             On cible uniquement les boutons dans .creationActions pour ne pas
-             réduire les gros boutons de la page comme “Proposer une création”. */
+          /* Mobile : cartes compactes, visibles et jamais écrasées par le panneau recherche.
+             Les boutons Lire / i restent empilés uniquement dans les cartes. */
           @media (max-width: 560px) {
+            .page {
+              min-height: 100svh;
+              padding: 18px 14px 56px;
+            }
+
+            .searchPanel {
+              padding: 14px;
+              border-radius: 20px;
+            }
+
+            .hero {
+              margin-bottom: 14px;
+            }
+
+            .hero h1 {
+              font-size: clamp(1.85rem, 10.5vw, 2.75rem);
+              line-height: 1.02;
+            }
+
+            .resultsSection,
+            .catalogList {
+              display: grid;
+              grid-template-columns: 1fr;
+              width: 100%;
+              min-width: 0;
+              overflow: visible;
+              visibility: visible;
+              opacity: 1;
+            }
+
+            .catalogList + .catalogList {
+              margin-top: 10px;
+            }
+
             .albumCard,
             .creationCard {
+              display: grid;
               grid-template-columns: 58px minmax(0, 1fr) 30px;
               gap: 8px;
+              align-items: center;
+              width: 100%;
+              min-width: 0;
               padding: 8px;
               border-radius: 15px;
+              overflow: visible;
+              visibility: visible;
+              opacity: 1;
             }
 
             .thumbnailWrap {
               width: 58px;
               border-radius: 12px;
+            }
+
+            .creationText {
+              min-width: 0;
+              overflow: hidden;
             }
 
             .itemAuthor {
@@ -1553,6 +1624,7 @@ export default function KeefonMusicPage() {
             .itemTitle {
               font-size: 0.82rem;
               line-height: 1.12;
+              overflow-wrap: anywhere;
             }
 
             .creationActions {
@@ -1570,6 +1642,7 @@ export default function KeefonMusicPage() {
               padding: 0 6px;
               font-size: 0.56rem;
               line-height: 1;
+              border-radius: 999px;
             }
 
             .creationActions .infoButton {
@@ -1580,6 +1653,7 @@ export default function KeefonMusicPage() {
               padding: 0;
               font-size: 0.68rem;
               line-height: 1;
+              border-radius: 999px;
             }
           }
 
@@ -1628,6 +1702,35 @@ export default function KeefonMusicPage() {
 
             .searchPanel {
               padding: 22px;
+            }
+
+            .badges {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+            }
+
+            .badge {
+              width: auto;
+              min-height: 38px;
+              padding: 0 16px;
+              border-radius: 999px;
+              font-size: 0.9rem;
+            }
+
+            .badges .badge:nth-child(5):last-child {
+              grid-column: auto;
+            }
+
+            .searchActions {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+            }
+
+            .searchActions .primary,
+            .searchActions .secondary {
+              width: auto;
             }
           }
         `}</style>
