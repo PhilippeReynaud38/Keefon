@@ -401,38 +401,6 @@ export default function KeefonMusicPage() {
   }, []);
 
   useEffect(() => {
-    // =====================================================================
-    // MODIFICATION PWA — KEEFON MUSIC
-    // Sécurité utile si un manifeste global /manifest.json est injecté ailleurs
-    // dans le site. Sur la page /musique, on force le manifeste Music afin que
-    // Chrome affiche bien “Keefon Music” dans l’onglet Application.
-    // =====================================================================
-    if (typeof document === "undefined") return;
-
-    const musicManifestHref = "/manifest-music.webmanifest";
-    const manifestLinks = Array.from(
-      document.querySelectorAll<HTMLLinkElement>('link[rel="manifest"]')
-    );
-
-    if (manifestLinks.length === 0) {
-      const manifestLink = document.createElement("link");
-      manifestLink.rel = "manifest";
-      manifestLink.href = musicManifestHref;
-      document.head.appendChild(manifestLink);
-      return;
-    }
-
-    manifestLinks.forEach((manifestLink, index) => {
-      if (index === 0) {
-        manifestLink.href = musicManifestHref;
-        return;
-      }
-
-      manifestLink.remove();
-    });
-  }, []);
-
-  useEffect(() => {
     if (!activeYouTubeVideoId) return;
     if (typeof window === "undefined") return;
 
@@ -608,33 +576,6 @@ export default function KeefonMusicPage() {
           name="description"
           content="Keefon Music présente des chansons à texte, albums, promos Keefon et voyages sonores."
         />
-
-        {/* =====================================================================
-            MODIFICATION PWA — KEEFON MUSIC
-            Manifeste spécifique à /musique.
-            Objectif : proposer un raccourci / une appli “Keefon Music”
-            séparée visuellement de Keefon Rencontre.
-
-            Fichiers nécessaires dans /public :
-            - /manifest-music.webmanifest
-            - /icons/keefon-music-192.png
-            - /icons/keefon-music-512.png
-            - /icons/keefon-music-maskable-512.png
-        ====================================================================== */}
-        <link
-          rel="manifest"
-          href="/manifest-music.webmanifest"
-          key="keefon-music-manifest"
-        />
-        <meta name="theme-color" content="#050505" />
-        <meta name="application-name" content="Keefon Music" />
-        <meta name="apple-mobile-web-app-title" content="Keefon Music" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        <link rel="apple-touch-icon" href="/icons/keefon-music-192.png" />
       </Head>
 
       <main className="page">
@@ -829,11 +770,9 @@ export default function KeefonMusicPage() {
         <section className="rencontreBottomBox" aria-label="Découvrir Keefon Rencontre">
           <div>
             <p className="rencontreBottomKicker">Keefon Rencontre</p>
-            {/* MODIFICATION TEXTE — correction de la phrase “Qui-phone ?”. */}
             <p className="rencontreBottomText">
-              Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit
-              jusqu’à fin 2026 pour les 2000 premiers inscrits, avec messagerie,
-              chat et contacts inclus. Keefon, ça se prononce “Qui-phone ?”
+        
+Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fin 2026 pour les 2000 premiers inscrits, avec messagerie, chat et contacts inclus. Keefon ce prononce qui phone ?.
             </p>
           </div>
 
