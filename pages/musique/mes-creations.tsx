@@ -82,21 +82,82 @@ function statusClass(status: MusicCreation["status"]) {
   }
 }
 
+/*
+  RUBRIQUES OFFICIELLES KEEFON MUSIC
+  On garde peu de rubriques pour éviter les doublons et l’effet usine à gaz.
+
+  Slugs propres utilisés côté code / Supabase :
+  - chansons-a-texte
+  - albums
+  - promos-keefon
+  - voyages-sonores
+*/
+const OFFICIAL_CREATION_TYPE_LABELS: Record<string, string> = {
+  "chansons-a-texte": "Chansons à texte",
+  albums: "Albums",
+  "promos-keefon": "Promos Keefon",
+  "voyages-sonores": "Voyages sonores",
+};
+
+/*
+  NORMALISATION DES ANCIENNES VALEURS
+  Certaines anciennes rubriques peuvent encore exister dans Supabase.
+  On les affiche toutes avec les 4 nouvelles rubriques officielles pour éviter :
+  Album visuel / Album narratif / Expérimentation IA / Expériences IA, etc.
+*/
+const CREATION_TYPE_ALIASES: Record<string, keyof typeof OFFICIAL_CREATION_TYPE_LABELS> = {
+  // Chansons / textes / formats courts
+  song: "chansons-a-texte",
+  chanson: "chansons-a-texte",
+  chansons: "chansons-a-texte",
+  clip: "chansons-a-texte",
+  clips: "chansons-a-texte",
+  satire: "chansons-a-texte",
+  other: "chansons-a-texte",
+  autre: "chansons-a-texte",
+
+  // Albums / anciens libellés IA ou visuels
+  album: "albums",
+  albums: "albums",
+  "visual-album": "albums",
+  "album-visuel": "albums",
+  "album-narratif": "albums",
+  "ai-experiment": "albums",
+  "experimentation-ia": "albums",
+  "expérimentation-ia": "albums",
+  "experimentations-ia": "albums",
+  "expérimentations-ia": "albums",
+  "experiences-ia": "albums",
+  "expériences-ia": "albums",
+
+  // Chansons et contenus de promotion Keefon
+  "promos-keefon": "promos-keefon",
+  "promo-keefon": "promos-keefon",
+  "promotions-keefon": "promos-keefon",
+  "createurs-invites": "promos-keefon",
+  "créateurs-invités": "promos-keefon",
+  "créateurs invités": "promos-keefon",
+  "createurs invités": "promos-keefon",
+
+  // Créations immersives / ambiances
+  soundscape: "voyages-sonores",
+  "soundscapes": "voyages-sonores",
+  "paysage-sonore": "voyages-sonores",
+  "paysages-sonores": "voyages-sonores",
+  "voyage-sonore": "voyages-sonores",
+  "voyages-sonores": "voyages-sonores",
+  "univers-imaginaires": "voyages-sonores",
+};
+
 function creationTypeLabel(type: string) {
-  switch (type) {
-    case "song":
-      return "Chanson";
-    case "clip":
-      return "Clip";
-    case "visual_album":
-      return "Album visuel";
-    case "soundscape":
-      return "Paysage sonore";
-    case "ai_experiment":
-      return "Expérimentation IA";
-    default:
-      return "Autre";
-  }
+  const normalizedType = type
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, "-")
+    .replace(/\s+/g, "-");
+  const officialType = CREATION_TYPE_ALIASES[normalizedType] || normalizedType;
+
+  return OFFICIAL_CREATION_TYPE_LABELS[officialType] || "Chansons à texte";
 }
 
 function isPasswordStrong(password: string) {

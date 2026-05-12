@@ -94,21 +94,125 @@ function statusClass(status: MusicCreation["status"]) {
   }
 }
 
-function creationTypeLabel(type: string) {
-  switch (type) {
-    case "song":
-      return "Chanson";
-    case "clip":
-      return "Clip";
-    case "visual_album":
-      return "Album visuel";
-    case "soundscape":
-      return "Paysage sonore";
-    case "ai_experiment":
-      return "Expérimentation IA";
-    default:
-      return "Autre";
+// ============================================================
+// Rubriques officielles Keefon Music
+// ------------------------------------------------------------
+// On garde volontairement peu de rubriques pour éviter les doublons
+// et les libellés trop proches dans l'interface admin.
+// Les anciens noms venant de Supabase sont normalisés plus bas.
+// ============================================================
+type OfficialRubrique = {
+  name: string;
+  slug: string;
+};
+
+const OFFICIAL_RUBRIQUES: OfficialRubrique[] = [
+  { name: "Chansons à texte", slug: "chansons-a-texte" },
+  { name: "Albums", slug: "albums" },
+  { name: "Promos Keefon", slug: "promos-keefon" },
+  { name: "Voyages sonores", slug: "voyages-sonores" },
+];
+
+function slugifyRubrique(value: string | null | undefined) {
+  return (value || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/_/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function normalizeRubriqueSlug(value: string | null | undefined) {
+  const slug = slugifyRubrique(value);
+
+  // Chansons à texte : chansons, clips, satire et anciens choix génériques.
+  if (
+    [
+      "chansons-a-texte",
+      "chanson-a-texte",
+      "chansons",
+      "chanson",
+      "song",
+      "clips",
+      "clip",
+      "satire",
+      "autre",
+      "other",
+    ].includes(slug)
+  ) {
+    return "chansons-a-texte";
   }
+
+  // Albums : anciens albums visuels/narratifs + expérimentations IA.
+  if (
+    [
+      "albums",
+      "album",
+      "album-visuel",
+      "albums-visuels",
+      "visual-album",
+      "album-narratif",
+      "albums-narratifs",
+      "experimentation-ia",
+      "experimentations-ia",
+      "experience-ia",
+      "experiences-ia",
+      "ai-experiment",
+    ].includes(slug)
+  ) {
+    return "albums";
+  }
+
+  // Promos Keefon : anciennes rubriques "créateurs invités" ou promos.
+  if (
+    [
+      "promos-keefon",
+      "promo-keefon",
+      "promotions-keefon",
+      "promotion-keefon",
+      "createurs-invites",
+      "createur-invite",
+    ].includes(slug)
+  ) {
+    return "promos-keefon";
+  }
+
+  // Voyages sonores : paysages sonores + univers imaginaires.
+  if (
+    [
+      "voyages-sonores",
+      "voyage-sonore",
+      "paysages-sonores",
+      "paysage-sonore",
+      "soundscape",
+      "soundscapes",
+      "univers-imaginaires",
+      "univers-imaginaire",
+    ].includes(slug)
+  ) {
+    return "voyages-sonores";
+  }
+
+  return slug;
+}
+
+function officialRubriqueLabelFromSlug(slug: string) {
+  return (
+    OFFICIAL_RUBRIQUES.find((rubrique) => rubrique.slug === slug)?.name ||
+    "Rubrique inconnue"
+  );
+}
+
+function normalizeRubriqueLabel(value: string | null | undefined) {
+  const normalizedSlug = normalizeRubriqueSlug(value);
+  return officialRubriqueLabelFromSlug(normalizedSlug);
+}
+
+function creationTypeLabel(type: string) {
+  return normalizeRubriqueLabel(type);
 }
 
 function FakeNotFoundPage() {
@@ -243,21 +347,67 @@ export default function AdminMusiquePage() {
     return profile?.role === "admin" || profile?.role === "super_admin";
   }, [profile]);
 
+  // ============================================================
+  // Normalisation admin des rubriques
+  // ------------------------------------------------------------
+  // Supabase peut encore contenir d'anciens noms : Album narratif,
+  // Expériences IA, Créateurs invités, etc. Ici, on les regroupe
+  // visuellement dans les 4 rubriques officielles.
+  // ============================================================
+  const categorySlugById = useMemo(() => {
+    const result = new Map<string, string>();
+
+    categories.forEach((category) => {
+      result.set(category.id, normalizeRubriqueSlug(category.slug || category.name));
+    });
+
+    return result;
+  }, [categories]);
+
+  const visibleCategories = useMemo(() => {
+    const categoryByOfficialSlug = new Map<string, MusicCategory>();
+
+    categories.forEach((category) => {
+      const normalizedSlug = normalizeRubriqueSlug(category.slug || category.name);
+      const officialRubrique = OFFICIAL_RUBRIQUES.find(
+        (rubrique) => rubrique.slug === normalizedSlug
+      );
+
+      if (!officialRubrique || categoryByOfficialSlug.has(normalizedSlug)) {
+        return;
+      }
+
+      categoryByOfficialSlug.set(normalizedSlug, {
+        ...category,
+        name: officialRubrique.name,
+        slug: officialRubrique.slug,
+      });
+    });
+
+    return OFFICIAL_RUBRIQUES.map((rubrique) =>
+      categoryByOfficialSlug.get(rubrique.slug)
+    ).filter(Boolean) as MusicCategory[];
+  }, [categories]);
+
   const filteredCreations = useMemo(() => {
     return creations.filter((creation) => {
       const statusOk =
         statusFilter === "all" ? true : creation.status === statusFilter;
+
+      const creationRubriqueSlug = creation.category_id
+        ? categorySlugById.get(creation.category_id) || ""
+        : "";
 
       const categoryOk =
         categoryFilter === "all"
           ? true
           : categoryFilter === "none"
           ? creation.category_id === null
-          : creation.category_id === categoryFilter;
+          : creationRubriqueSlug === categoryFilter;
 
       return statusOk && categoryOk;
     });
-  }, [creations, statusFilter, categoryFilter]);
+  }, [creations, statusFilter, categoryFilter, categorySlugById]);
 
   useEffect(() => {
     loadInitialData();
@@ -374,7 +524,23 @@ export default function AdminMusiquePage() {
     if (!categoryId) return "Non classée";
 
     const category = categories.find((item) => item.id === categoryId);
-    return category?.name || "Rubrique inconnue";
+
+    if (!category) {
+      return "Rubrique inconnue";
+    }
+
+    return normalizeRubriqueLabel(category.slug || category.name);
+  }
+
+  function getCanonicalCategoryId(categoryId: string | null) {
+    if (!categoryId) return "none";
+
+    const currentSlug = categorySlugById.get(categoryId);
+    const canonicalCategory = visibleCategories.find(
+      (category) => category.slug === currentSlug
+    );
+
+    return canonicalCategory?.id || "none";
   }
 
   async function handleLogout() {
@@ -609,8 +775,8 @@ export default function AdminMusiquePage() {
                 <option value="all">Toutes les rubriques</option>
                 <option value="none">Non classées</option>
 
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
+                {visibleCategories.map((category) => (
+                  <option key={category.slug} value={category.slug}>
                     {category.name}
                   </option>
                 ))}
@@ -679,7 +845,7 @@ export default function AdminMusiquePage() {
                   <div>
                     <strong>Rubrique</strong>
                     <select
-                      value={creation.category_id || "none"}
+                      value={getCanonicalCategoryId(creation.category_id)}
                       onChange={(event) =>
                         changeCategory(creation, event.target.value)
                       }
@@ -687,7 +853,7 @@ export default function AdminMusiquePage() {
                     >
                       <option value="none">Non classée</option>
 
-                      {categories.map((category) => (
+                      {visibleCategories.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
                         </option>

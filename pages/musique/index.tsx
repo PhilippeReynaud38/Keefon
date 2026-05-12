@@ -2,17 +2,11 @@ import Head from "next/head";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// ==============================
-// Configuration Supabase
-// ==============================
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// ==============================
-// Types de données Keefon Music
-// ==============================
 type MusicCategory = {
   id: string;
   name: string;
@@ -62,9 +56,6 @@ type MusicAlbum = {
   tracks: MusicCreation[];
 };
 
-// ==============================
-// Typage de l’API YouTube iframe
-// ==============================
 declare global {
   interface Window {
     YT?: any;
@@ -72,9 +63,6 @@ declare global {
   }
 }
 
-// ==============================
-// Fonctions utilitaires
-// ==============================
 function getYouTubeVideoId(url: string | null | undefined) {
   if (!url) return null;
 
@@ -116,17 +104,17 @@ function platformLabel(platform: string) {
 function creationTypeLabel(type: string) {
   switch (type) {
     case "song":
-      return "Chanson";
+      return "Chanson à texte";
     case "clip":
       return "Clip";
     case "visual_album":
-      return "Album visuel";
+      return "Album";
     case "soundscape":
-      return "Paysage sonore";
+      return "Voyage sonore";
     case "ai_experiment":
-      return "Expérimentation IA";
+      return "Album";
     default:
-      return "Création";
+      return "Création musicale";
   }
 }
 
@@ -156,14 +144,101 @@ function sortTracks(a: MusicCreation, b: MusicCreation) {
 }
 
 // ==============================
-// Page publique Keefon Music
+// Rubriques officielles publiques
 // ==============================
+// Ces 4 rubriques sont celles affichées aux visiteurs.
+// Les anciens noms venant de Supabase sont normalisés plus bas pour éviter les doublons.
+const officialRubriques = [
+  {
+    id: "rubrique-chansons-a-texte",
+    name: "Chansons à texte",
+    slug: "chansons-a-texte",
+  },
+  {
+    id: "rubrique-albums",
+    name: "Albums",
+    slug: "albums",
+  },
+  {
+    id: "rubrique-promos-keefon",
+    name: "Promos Keefon",
+    slug: "promos-keefon",
+  },
+  {
+    id: "rubrique-voyages-sonores",
+    name: "Voyages sonores",
+    slug: "voyages-sonores",
+  },
+];
+
+const rubriqueAliasBySlug: Record<string, string> = {
+  // Chansons à texte : chanson, clip, satire, slam ou rap narratif.
+  chanson: "chansons-a-texte",
+  chansons: "chansons-a-texte",
+  song: "chansons-a-texte",
+  clip: "chansons-a-texte",
+  clips: "chansons-a-texte",
+  satire: "chansons-a-texte",
+  slam: "chansons-a-texte",
+  rap: "chansons-a-texte",
+  "chanson-a-texte": "chansons-a-texte",
+  "chansons-a-texte": "chansons-a-texte",
+
+  // Albums : ancien album narratif / visuel + anciennes expériences IA.
+  album: "albums",
+  albums: "albums",
+  "album-narratif": "albums",
+  "albums-narratifs": "albums",
+  "album-visuel": "albums",
+  "albums-visuels": "albums",
+  "visual-album": "albums",
+  "ai-experiment": "albums",
+  "experience-ia": "albums",
+  "experiences-ia": "albums",
+  "experimentation-ia": "albums",
+  "experimentations-ia": "albums",
+
+  // Promos Keefon : anciennes rubriques créateurs invités / promotions.
+  "promo-keefon": "promos-keefon",
+  "promos-keefon": "promos-keefon",
+  "promotion-keefon": "promos-keefon",
+  "promotions-keefon": "promos-keefon",
+  "createur-invite": "promos-keefon",
+  "createurs-invites": "promos-keefon",
+
+  // Voyages sonores : ambiances, paysages sonores, univers immersifs.
+  "voyage-sonore": "voyages-sonores",
+  "voyages-sonores": "voyages-sonores",
+  "paysage-sonore": "voyages-sonores",
+  "paysages-sonores": "voyages-sonores",
+  "soundscape": "voyages-sonores",
+  "univers-imaginaire": "voyages-sonores",
+  "univers-imaginaires": "voyages-sonores",
+};
+
+function slugifyRubrique(value: string | null | undefined) {
+  return normalizeText(value)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function normalizeRubriqueSlug(value: string | null | undefined) {
+  const slug = slugifyRubrique(value);
+  return rubriqueAliasBySlug[slug] || slug;
+}
+
+function getOfficialRubriqueName(slug: string, fallbackName = "Création musicale") {
+  return officialRubriques.find((rubrique) => rubrique.slug === slug)?.name || fallbackName;
+}
+
+function getRubriqueSlugFromCreationType(type: string | null | undefined) {
+  return normalizeRubriqueSlug(type);
+}
+
 export default function KeefonMusicPage() {
-  // Données chargées depuis Supabase.
   const [creations, setCreations] = useState<MusicCreation[]>([]);
   const [categories, setCategories] = useState<MusicCategory[]>([]);
 
-  // Modales de lecture et d’information.
   const [selectedAlbum, setSelectedAlbum] = useState<MusicAlbum | null>(null);
   const [selectedAlbumInfo, setSelectedAlbumInfo] =
     useState<MusicAlbum | null>(null);
@@ -173,12 +248,10 @@ export default function KeefonMusicPage() {
   const [selectedCreationInfo, setSelectedCreationInfo] =
     useState<MusicCreation | null>(null);
 
-  // Recherche et filtre par rubrique.
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategorySlug, setSelectedCategorySlug] = useState("all");
 
-  // États techniques : chargement, erreurs et lecteur YouTube.
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -189,31 +262,10 @@ export default function KeefonMusicPage() {
     ? getYouTubeVideoId(selectedCreation.embed_url || selectedCreation.external_url)
     : null;
 
-  // Rubriques de secours si Supabase ne renvoie rien.
-  const fallbackRubriques = [
-    {
-      id: "fallback-1",
-      name: "Univers imaginaires",
-      slug: "univers-imaginaires",
-    },
-    {
-      id: "fallback-2",
-      name: "Chansons à texte",
-      slug: "Chansons à texte",
-    },
-    { id: "fallback-3", name: "Clips", slug: "clips" },
-    {
-      id: "fallback-4",
-      name: "Paysages sonores",
-      slug: "paysages-sonores",
-    },
-    { id: "fallback-5", name: "Satire", slug: "satire" },
-    { id: "fallback-6", name: "Expériences IA", slug: "experiences-ia" },
-  ];
+  // Rubriques visibles dans le panneau “Recherche & rubriques”.
+  // On affiche uniquement la ligne éditoriale officielle, même si Supabase contient encore d’anciens noms.
+  const rubriques = officialRubriques;
 
-  const rubriques = categories.length > 0 ? categories : fallbackRubriques;
-
-  // Regroupe les pistes ayant un album_slug dans une carte album unique.
   const allAlbums = useMemo(() => {
     const albumsMap = new Map<string, MusicAlbum>();
 
@@ -274,17 +326,15 @@ export default function KeefonMusicPage() {
       });
   }, [creations]);
 
-  // Créations simples : elles ne sont rattachées à aucun album.
   const allStandaloneCreations = useMemo(() => {
     return creations.filter((creation) => !creation.album_slug);
   }, [creations]);
 
-  // Filtrage des albums selon la recherche et la rubrique.
   const filteredAlbums = useMemo(() => {
     const query = normalizeText(searchQuery);
 
     return allAlbums.filter((album) => {
-      const categorySlug = getCategorySlug(album.category_id);
+      const categorySlug = getCategorySlug(album.category_id) || "albums";
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -293,7 +343,7 @@ export default function KeefonMusicPage() {
           album.album_title,
           album.public_author_name,
           platformLabel(album.platform),
-          getCategoryName(album.category_id),
+          getCategoryName(album.category_id, "Albums"),
           ...album.tracks.map((track) => track.title),
           ...album.tracks.map((track) => track.description),
           ...album.tracks.map((track) => track.author_note || ""),
@@ -304,12 +354,13 @@ export default function KeefonMusicPage() {
     });
   }, [allAlbums, searchQuery, selectedCategorySlug, categories]);
 
-  // Filtrage des créations seules selon la recherche et la rubrique.
   const filteredStandaloneCreations = useMemo(() => {
     const query = normalizeText(searchQuery);
 
     return allStandaloneCreations.filter((creation) => {
-      const categorySlug = getCategorySlug(creation.category_id);
+      const categorySlug =
+        getCategorySlug(creation.category_id) ||
+        getRubriqueSlugFromCreationType(creation.creation_type);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -320,7 +371,12 @@ export default function KeefonMusicPage() {
           creation.description,
           creation.author_note,
           platformLabel(creation.platform),
-          getCategoryName(creation.category_id),
+          getCategoryName(
+            creation.category_id,
+            getOfficialRubriqueName(
+              getRubriqueSlugFromCreationType(creation.creation_type)
+            )
+          ),
         ].join(" ")
       );
 
@@ -334,12 +390,10 @@ export default function KeefonMusicPage() {
   const totalResults =
     filteredAlbums.length + filteredStandaloneCreations.length;
 
-  // Chargement initial des données publiques.
   useEffect(() => {
     loadPublicMusicData();
   }, []);
 
-  // Charge l’API YouTube uniquement quand une vidéo YouTube doit être lue.
   useEffect(() => {
     if (!activeYouTubeVideoId) return;
     if (typeof window === "undefined") return;
@@ -421,7 +475,6 @@ export default function KeefonMusicPage() {
     selectedCreation,
   ]);
 
-  // Lecture Supabase : rubriques actives + créations publiées.
   async function loadPublicMusicData() {
     setIsLoading(true);
     setErrorMessage("");
@@ -463,21 +516,25 @@ export default function KeefonMusicPage() {
     setIsLoading(false);
   }
 
-  function getCategoryName(categoryId: string | null) {
-    if (!categoryId) return "Création musicale";
+  function getCategoryName(
+    categoryId: string | null,
+    fallbackName = "Création musicale"
+  ) {
+    const slug = getCategorySlug(categoryId);
+    if (!slug) return fallbackName;
 
-    const category = categories.find((item) => item.id === categoryId);
-    return category?.name || "Création musicale";
+    return getOfficialRubriqueName(slug, fallbackName);
   }
 
   function getCategorySlug(categoryId: string | null) {
     if (!categoryId) return "";
 
     const category = categories.find((item) => item.id === categoryId);
-    return category?.slug || "";
+
+    // On normalise à partir du slug ET du nom pour rattraper les anciennes rubriques Supabase.
+    return normalizeRubriqueSlug(category?.slug || category?.name || "");
   }
 
-  // Ouverture des modales depuis les cartes.
   function openAlbum(album: MusicAlbum) {
     const firstTrack = album.tracks[0] || null;
 
@@ -511,12 +568,11 @@ export default function KeefonMusicPage() {
         <title>Keefon Music — Des chansons comme des scènes de cinéma</title>
         <meta
           name="description"
-          content="Keefon Music présente des chansons narratives, clips, univers visuels et projets créatifs."
+          content="Keefon Music présente des chansons à texte, albums, promos Keefon et voyages sonores."
         />
       </Head>
 
       <main className="page">
-        {/* En-tête : logo + bouton de recherche/rubriques */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -532,7 +588,6 @@ export default function KeefonMusicPage() {
           </button>
         </header>
 
-        {/* Panneau déroulant de recherche et filtres */}
         {isSearchOpen && (
           <section className="searchPanel">
             <label>
@@ -592,12 +647,10 @@ export default function KeefonMusicPage() {
           </section>
         )}
 
-        {/* Hero principal */}
         <section className="hero">
           <h1>Des chansons comme des scènes de cinéma</h1>
         </section>
 
-        {/* Liste publique : albums + créations seules */}
         <section id="creations" className="resultsSection">
           {hasActiveFilter && (
             <div className="filterLine">
@@ -665,20 +718,19 @@ export default function KeefonMusicPage() {
           )}
         </section>
 
-        {/* Bloc d’appel pour proposer une création */}
         <section id="proposer" className="box creatorBox">
           <p className="label">Créateurs</p>
 
           <h2>Diffusez vos créations sur Keefon</h2>
 
           <p>
-        Vous pouvez proposer une chanson correspondant à nos catégories, un morceau audio, une ambiance sonore, un clip ou un projet plus narratif. Le clip vidéo n’est pas obligatoire.
+            Vous pouvez proposer une création correspondant à nos rubriques : chanson à texte, album, promo Keefon ou voyage sonore. Le clip vidéo n’est pas obligatoire.
 
-Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
+            Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
           </p>
 
           <p>
-           Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
+            Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
           </p>
 
           <a href="/musique/proposer" className="primary">
@@ -686,7 +738,6 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </a>
         </section>
 
-        {/* Bloc concept éditorial */}
         <section id="concept" className="box conceptBox">
           <p className="label">Le concept</p>
 
@@ -699,12 +750,10 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </p>
         </section>
 
-        {/* Pied de page */}
         <footer className="footer">
           <p>Keefon Music — Projet créatif musical</p>
         </footer>
 
-        {/* Modale de lecture : album ou création seule */}
         {selectedCreation && (
           <div className="modalBackdrop" onClick={closePlayerModal}>
             <div className="modal" onClick={(event) => event.stopPropagation()}>
@@ -860,7 +909,6 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </div>
         )}
 
-        {/* Modale d’information : description, note auteur et sources */}
         {(selectedAlbumInfo || selectedCreationInfo) && (
           <div className="modalBackdrop" onClick={closeInfoModal}>
             <div
@@ -884,7 +932,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
 
                   <p>Auteur : {selectedAlbumInfo.public_author_name}</p>
                   <p>
-                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id)}
+                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id, "Albums")}
                   </p>
                   <p>Type : Album</p>
                   <p>Plateforme : {platformLabel(selectedAlbumInfo.platform)}</p>
@@ -946,7 +994,14 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
                   <p>Auteur : {selectedCreationInfo.public_author_name}</p>
                   <p>
                     Rubrique :{" "}
-                    {getCategoryName(selectedCreationInfo.category_id)}
+                    {getCategoryName(
+                      selectedCreationInfo.category_id,
+                      getOfficialRubriqueName(
+                        getRubriqueSlugFromCreationType(
+                          selectedCreationInfo.creation_type
+                        )
+                      )
+                    )}
                   </p>
                   <p>
                     Type :{" "}
@@ -986,14 +1041,34 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </div>
         )}
 
-        {/* Styles globaux de la page musique */}
         <style jsx global>{`
+          /* Base anti-débordement : évite les bandes blanches sur mobile. */
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
+          }
+
           html {
             scroll-behavior: smooth;
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+          }
+
+          body,
+          #__next {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            overflow-x: hidden;
+            background: #050505;
           }
 
           .page {
+            width: 100%;
             min-height: 100vh;
+            overflow-x: hidden;
             color: white;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
@@ -1009,7 +1084,8 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           .searchPanel,
           .box,
           .footer {
-            width: min(100%, 1050px);
+            width: 100%;
+            max-width: 1050px;
             margin-left: auto;
             margin-right: auto;
           }
@@ -1059,6 +1135,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
 
           .searchPanel input {
             width: 100%;
+            min-width: 0;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -1193,6 +1270,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
 
           .thumbnail {
             width: 100%;
+            max-width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
@@ -1323,7 +1401,8 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           .modal,
           .infoModal {
             position: relative;
-            width: min(100%, 960px);
+            width: 100%;
+            max-width: 960px;
             max-height: 90vh;
             overflow: auto;
             padding: 22px;
@@ -1333,7 +1412,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           }
 
           .infoModal {
-            width: min(100%, 620px);
+            max-width: 620px;
           }
 
           .closeButton {
@@ -1557,9 +1636,6 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
   );
 }
 
-// ==============================
-// Carte album : regroupe plusieurs pistes
-// ==============================
 function AlbumCard({
   album,
   onOpen,
@@ -1589,7 +1665,6 @@ function AlbumCard({
         <h3 className="itemTitle">{album.album_title}</h3>
       </div>
 
-      {/* Boutons de carte : le CSS mobile les empile en colonne. */}
       <div className="creationActions">
         <button type="button" className="primary" onClick={onOpen}>
           Lire
@@ -1609,9 +1684,6 @@ function AlbumCard({
   );
 }
 
-// ==============================
-// Carte création seule
-// ==============================
 function CreationCard({
   creation,
   onOpen,
@@ -1641,7 +1713,6 @@ function CreationCard({
         <h3 className="itemTitle">{creation.title}</h3>
       </div>
 
-      {/* Boutons de carte : le CSS mobile les empile en colonne. */}
       <div className="creationActions">
         <button type="button" className="primary" onClick={onOpen}>
           Lire

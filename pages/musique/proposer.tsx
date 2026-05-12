@@ -89,6 +89,101 @@ function buildEmbedUrl(url: string) {
   return "";
 }
 
+
+// ============================================================
+// Rubriques officielles Keefon Music
+// ------------------------------------------------------------
+// Objectif : éviter les doublons entre anciens noms, types techniques
+// et rubriques visibles. Même si Supabase contient encore d'anciens
+// libellés, la page propose seulement ces 4 rubriques propres.
+// ============================================================
+
+const officialRubriques = [
+  {
+    name: "Chansons à texte",
+    slug: "chansons-a-texte",
+    aliases: [
+      "chansons-a-texte",
+      "chansons a texte",
+      "chanson",
+      "chansons",
+      "song",
+      "clip",
+      "clips",
+      "satire",
+      "autre",
+      "other",
+    ],
+  },
+  {
+    name: "Albums",
+    slug: "albums",
+    aliases: [
+      "albums",
+      "album",
+      "album narratif",
+      "album visuel",
+      "visual_album",
+      "experimentation ia",
+      "experimentations ia",
+      "experiences ia",
+      "ai_experiment",
+    ],
+  },
+  {
+    name: "Promos Keefon",
+    slug: "promos-keefon",
+    aliases: [
+      "promos-keefon",
+      "promo keefon",
+      "promos keefon",
+      "promotion keefon",
+      "promotions keefon",
+      "createurs invites",
+      "créateurs invités",
+    ],
+  },
+  {
+    name: "Voyages sonores",
+    slug: "voyages-sonores",
+    aliases: [
+      "voyages-sonores",
+      "voyage sonore",
+      "voyages sonores",
+      "paysage sonore",
+      "paysages sonores",
+      "soundscape",
+      "univers imaginaires",
+    ],
+  },
+];
+
+function normalizeRubriqueText(value: string) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’']/g, " ")
+    .replace(/_/g, " ")
+    .replace(/-/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function findOfficialRubrique(category: Pick<MusicCategory, "name" | "slug">) {
+  const normalizedName = normalizeRubriqueText(category.name);
+  const normalizedSlug = normalizeRubriqueText(category.slug);
+
+  return officialRubriques.find((rubrique) => {
+    const normalizedAliases = rubrique.aliases.map(normalizeRubriqueText);
+
+    return (
+      normalizedAliases.includes(normalizedName) ||
+      normalizedAliases.includes(normalizedSlug)
+    );
+  });
+}
+
 // ============================================================
 // Outil : vérification minimale du mot de passe
 // ============================================================
@@ -135,6 +230,22 @@ export default function ProposerCreationMusiquePage() {
   const canSubmit = useMemo(() => {
     return Boolean(session && profile && profile.creator_status !== "blocked");
   }, [session, profile]);
+
+  // Rubriques affichées dans le formulaire.
+  // On part toujours des 4 rubriques officielles, puis on les relie
+  // aux éventuelles lignes Supabase existantes pour conserver category_id.
+  const availableRubriques = useMemo(() => {
+    return officialRubriques.map((rubrique) => {
+      const matchingCategory = categories.find((category) => {
+        return findOfficialRubrique(category)?.slug === rubrique.slug;
+      });
+
+      return {
+        ...rubrique,
+        categoryId: matchingCategory?.id || "",
+      };
+    });
+  }, [categories]);
 
   // ============================================================
   // Chargement initial + écoute de l'état de connexion Supabase
@@ -361,8 +472,17 @@ export default function ProposerCreationMusiquePage() {
     const description = String(formData.get("description") || "").trim();
     const authorNote = String(formData.get("author_note") || "").trim();
     const externalUrl = String(formData.get("external_url") || "").trim();
-    const creationType = String(formData.get("creation_type") || "other");
-    const categoryId = String(formData.get("category_id") || "");
+    const selectedRubriqueSlug = String(
+      formData.get("rubrique_slug") || "chansons-a-texte"
+    );
+    const selectedRubrique = availableRubriques.find(
+      (rubrique) => rubrique.slug === selectedRubriqueSlug
+    );
+
+    // On garde un champ technique cohérent avec les rubriques visibles.
+    // category_id est renseigné seulement si la rubrique existe déjà dans Supabase.
+    const creationType = selectedRubriqueSlug;
+    const categoryId = selectedRubrique?.categoryId || "";
 
     const rightsConfirmed = formData.get("rights_confirmed") === "on";
     const diffusionAgreed = formData.get("diffusion_agreed") === "on";
@@ -421,7 +541,7 @@ export default function ProposerCreationMusiquePage() {
         <title>Proposer une création — Keefon Music</title>
         <meta
           name="description"
-          content="Proposer une chanson, un clip ou une création narrative sur Keefon Music."
+          content="Proposer une création musicale narrative ou immersive sur Keefon Music."
         />
       </Head>
 
@@ -660,29 +780,23 @@ export default function ProposerCreationMusiquePage() {
                 </label>
 
                 <label>
-                  Type de création *
-                  <select name="creation_type" defaultValue="song" required>
-                    <option value="song">Chanson</option>
-                    <option value="clip">Clip</option>
-                    <option value="visual_album">Album visuel</option>
-                    <option value="soundscape">Paysage sonore</option>
-                    <option value="ai_experiment">Expérimentation IA</option>
-                    <option value="other">Autre</option>
-                  </select>
-                </label>
-
-                <label>
-                  Rubrique souhaitée
-                  <select name="category_id" defaultValue="">
-                    <option value="">Aucune / à classer par Keefon</option>
-
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
+                  Rubrique souhaitée *
+                  <select name="rubrique_slug" defaultValue="chansons-a-texte" required>
+                    {availableRubriques.map((rubrique) => (
+                      <option key={rubrique.slug} value={rubrique.slug}>
+                        {rubrique.name}
                       </option>
                     ))}
                   </select>
                 </label>
+
+                <div className="rubriqueHelp">
+                  <strong>Rubriques officielles</strong>
+                  <p>
+                    Chansons à texte, Albums, Promos Keefon et Voyages sonores.
+                    Les anciennes appellations sont volontairement regroupées pour éviter les doublons.
+                  </p>
+                </div>
               </div>
 
               <label>
@@ -992,8 +1106,35 @@ export default function ProposerCreationMusiquePage() {
             gap: 16px;
           }
 
-          .formGrid > label {
+          .formGrid > label,
+          .rubriqueHelp {
             min-width: 0;
+          }
+
+          .rubriqueHelp {
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(245, 199, 109, 0.08);
+            border: 1px solid rgba(245, 199, 109, 0.22);
+          }
+
+          .rubriqueHelp strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #f5c76d;
+          }
+
+          .rubriqueHelp p {
+            margin: 0;
+            line-height: 1.55;
+            opacity: 0.86;
+          }
+
+          @media (min-width: 801px) {
+            .rubriqueHelp {
+              align-self: end;
+            }
           }
 
           label {
