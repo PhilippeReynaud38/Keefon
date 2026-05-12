@@ -15,3 +15,719 @@ uniquement lien externe + fiche.
 
 
 ________________________________________________________________________________________
+
+
+----   Les tables   
+
+Ma proposition propre et explicite
+
+Je ferais plutôt :
+
+zz_music_profiles_createurs
+
+Pour les créateurs et admins musique.
+Dedans, on mettra une colonne :
+
+role = creator / admin / super_admin
+zz_music_categories_modifiables
+
+Pour les rubriques modifiables.
+
+zz_music_creations_deposees
+
+Pour les créations déposées.
+
+zz_music_reglages_module
+
+Pour les réglages du module musique.
+
+
+_____________________________________________________________________________________________
+
+
+
+SQL    :  
+
+
+
+-- ============================================================
+-- KEEFON MUSIC — CORRECTIF CONTRAINTE creation_type
+-- Objectif :
+-- autoriser les nouvelles rubriques propres dans creation_type
+-- tout en gardant les anciennes valeurs existantes.
+-- ============================================================
+
+begin;
+
+alter table public.zz_music_creations_deposees
+drop constraint if exists zz_music_creations_deposees_creation_type_check;
+
+alter table public.zz_music_creations_deposees
+add constraint zz_music_creations_deposees_creation_type_check
+check (
+  creation_type in (
+    -- Anciennes valeurs techniques
+    'song',
+    'clip',
+    'visual_album',
+    'soundscape',
+    'ai_experiment',
+    'other',
+
+    -- Nouvelles rubriques officielles
+    'chansons-a-texte',
+    'albums',
+    'promos-keefon',
+    'voyages-sonores'
+  )
+);
+
+commit;
+
+
+
+_________________________________________________________________________________________________
+
+
+SQL SUIVANT :  ( LES 2 VONT ENSSEMBLES ILS CRAIENT  LES RUBRIQUES )
+
+
+
+
+
+-- ============================================================
+-- KEEFON MUSIC — PATCH RUBRIQUES PROPRES
+-- Objectif :
+-- - garder seulement 4 rubriques officielles ;
+-- - migrer les anciennes rubriques vers les nouvelles ;
+-- - ne supprimer aucune chanson ;
+-- - désactiver les anciennes rubriques au lieu de les effacer.
+-- ============================================================
+
+begin;
+
+-- ------------------------------------------------------------
+-- 0. Sauvegarde de sécurité avant migration
+-- ------------------------------------------------------------
+
+create extension if not exists pgcrypto;
+
+create table if not exists public.zz_music_categories_backup_rubriques_20260512 as
+select *
+from public.zz_music_categories_modifiables;
+
+create table if not exists public.zz_music_creations_backup_rubriques_20260512 as
+select
+  id,
+  title,
+  creation_type,
+  category_id,
+  status,
+  created_at,
+  updated_at
+from public.zz_music_creations_deposees;
+
+
+-- ------------------------------------------------------------
+-- 1. Création / renommage des 4 rubriques officielles
+-- ------------------------------------------------------------
+
+do $$
+declare
+  target_id uuid;
+begin
+  -- ==========================================================
+  -- Chansons à texte
+  -- ==========================================================
+  select id into target_id
+  from public.zz_music_categories_modifiables
+  where lower(replace(coalesce(slug, ''), '_', '-')) = 'chansons-a-texte'
+  limit 1;
+
+  if target_id is null then
+    select id into target_id
+    from public.zz_music_categories_modifiables
+    where
+      name = 'Chansons à texte'
+      or lower(replace(coalesce(slug, ''), '_', '-')) in (
+        'chanson-a-texte',
+        'chansons',
+        'chanson',
+        'song',
+        'clips',
+        'clip',
+        'satire',
+        'autre',
+        'other'
+      )
+      or name in (
+        'Chanson',
+        'Chansons',
+        'Clip',
+        'Clips',
+        'Satire',
+        'Autre'
+      )
+    order by
+      case when name = 'Chansons à texte' then 0 else 1 end,
+      sort_order nulls last,
+      name
+    limit 1;
+
+    if target_id is not null then
+      update public.zz_music_categories_modifiables
+      set
+        name = 'Chansons à texte',
+        slug = 'chansons-a-texte',
+        description = 'Chansons, slam ou rap narratif portés par une vraie écriture, une histoire ou une intention forte.',
+        is_active = true,
+        sort_order = 1
+      where id = target_id;
+    else
+      insert into public.zz_music_categories_modifiables
+        (id, name, slug, description, is_active, sort_order)
+      values
+        (
+          gen_random_uuid(),
+          'Chansons à texte',
+          'chansons-a-texte',
+          'Chansons, slam ou rap narratif portés par une vraie écriture, une histoire ou une intention forte.',
+          true,
+          1
+        );
+    end if;
+  else
+    update public.zz_music_categories_modifiables
+    set
+      name = 'Chansons à texte',
+      description = 'Chansons, slam ou rap narratif portés par une vraie écriture, une histoire ou une intention forte.',
+      is_active = true,
+      sort_order = 1
+    where id = target_id;
+  end if;
+
+
+  -- ==========================================================
+  -- Albums
+  -- ==========================================================
+  target_id := null;
+
+  select id into target_id
+  from public.zz_music_categories_modifiables
+  where lower(replace(coalesce(slug, ''), '_', '-')) = 'albums'
+  limit 1;
+
+  if target_id is null then
+    select id into target_id
+    from public.zz_music_categories_modifiables
+    where
+      name = 'Albums'
+      or lower(replace(coalesce(slug, ''), '_', '-')) in (
+        'album',
+        'album-visuel',
+        'albums-visuels',
+        'visual-album',
+        'album-narratif',
+        'albums-narratifs',
+        'experimentation-ia',
+        'experimentations-ia',
+        'experience-ia',
+        'experiences-ia',
+        'ai-experiment'
+      )
+      or name in (
+        'Album',
+        'Albums',
+        'Album visuel',
+        'Albums visuels',
+        'Album narratif',
+        'Albums narratifs',
+        'Expérimentation IA',
+        'Expérimentations IA',
+        'Expérience IA',
+        'Expériences IA'
+      )
+    order by
+      case when name = 'Albums' then 0 else 1 end,
+      sort_order nulls last,
+      name
+    limit 1;
+
+    if target_id is not null then
+      update public.zz_music_categories_modifiables
+      set
+        name = 'Albums',
+        slug = 'albums',
+        description = 'Albums visuels, albums narratifs ou suites de titres à écouter comme une œuvre complète.',
+        is_active = true,
+        sort_order = 2
+      where id = target_id;
+    else
+      insert into public.zz_music_categories_modifiables
+        (id, name, slug, description, is_active, sort_order)
+      values
+        (
+          gen_random_uuid(),
+          'Albums',
+          'albums',
+          'Albums visuels, albums narratifs ou suites de titres à écouter comme une œuvre complète.',
+          true,
+          2
+        );
+    end if;
+  else
+    update public.zz_music_categories_modifiables
+    set
+      name = 'Albums',
+      description = 'Albums visuels, albums narratifs ou suites de titres à écouter comme une œuvre complète.',
+      is_active = true,
+      sort_order = 2
+    where id = target_id;
+  end if;
+
+
+  -- ==========================================================
+  -- Promos Keefon
+  -- ==========================================================
+  target_id := null;
+
+  select id into target_id
+  from public.zz_music_categories_modifiables
+  where lower(replace(coalesce(slug, ''), '_', '-')) = 'promos-keefon'
+  limit 1;
+
+  if target_id is null then
+    select id into target_id
+    from public.zz_music_categories_modifiables
+    where
+      name = 'Promos Keefon'
+      or lower(replace(coalesce(slug, ''), '_', '-')) in (
+        'promo-keefon',
+        'promotions-keefon',
+        'promotion-keefon',
+        'createurs-invites',
+        'createur-invite'
+      )
+      or name in (
+        'Promos Keefon',
+        'Promotions Keefon',
+        'Créateurs invités',
+        'Créateur invité'
+      )
+    order by
+      case when name = 'Promos Keefon' then 0 else 1 end,
+      sort_order nulls last,
+      name
+    limit 1;
+
+    if target_id is not null then
+      update public.zz_music_categories_modifiables
+      set
+        name = 'Promos Keefon',
+        slug = 'promos-keefon',
+        description = 'Chansons, clips et créations sonores imaginés pour accompagner l’univers Keefon.',
+        is_active = true,
+        sort_order = 3
+      where id = target_id;
+    else
+      insert into public.zz_music_categories_modifiables
+        (id, name, slug, description, is_active, sort_order)
+      values
+        (
+          gen_random_uuid(),
+          'Promos Keefon',
+          'promos-keefon',
+          'Chansons, clips et créations sonores imaginés pour accompagner l’univers Keefon.',
+          true,
+          3
+        );
+    end if;
+  else
+    update public.zz_music_categories_modifiables
+    set
+      name = 'Promos Keefon',
+      description = 'Chansons, clips et créations sonores imaginés pour accompagner l’univers Keefon.',
+      is_active = true,
+      sort_order = 3
+    where id = target_id;
+  end if;
+
+
+  -- ==========================================================
+  -- Voyages sonores
+  -- ==========================================================
+  target_id := null;
+
+  select id into target_id
+  from public.zz_music_categories_modifiables
+  where lower(replace(coalesce(slug, ''), '_', '-')) = 'voyages-sonores'
+  limit 1;
+
+  if target_id is null then
+    select id into target_id
+    from public.zz_music_categories_modifiables
+    where
+      name = 'Voyages sonores'
+      or lower(replace(coalesce(slug, ''), '_', '-')) in (
+        'voyage-sonore',
+        'paysages-sonores',
+        'paysage-sonore',
+        'soundscape',
+        'soundscapes',
+        'univers-imaginaires',
+        'univers-imaginaire'
+      )
+      or name in (
+        'Voyage sonore',
+        'Voyages sonores',
+        'Paysage sonore',
+        'Paysages sonores',
+        'Univers imaginaires',
+        'Univers imaginaire'
+      )
+    order by
+      case when name = 'Voyages sonores' then 0 else 1 end,
+      sort_order nulls last,
+      name
+    limit 1;
+
+    if target_id is not null then
+      update public.zz_music_categories_modifiables
+      set
+        name = 'Voyages sonores',
+        slug = 'voyages-sonores',
+        description = 'Ambiances, paysages sonores et créations immersives.',
+        is_active = true,
+        sort_order = 4
+      where id = target_id;
+    else
+      insert into public.zz_music_categories_modifiables
+        (id, name, slug, description, is_active, sort_order)
+      values
+        (
+          gen_random_uuid(),
+          'Voyages sonores',
+          'voyages-sonores',
+          'Ambiances, paysages sonores et créations immersives.',
+          true,
+          4
+        );
+    end if;
+  else
+    update public.zz_music_categories_modifiables
+    set
+      name = 'Voyages sonores',
+      description = 'Ambiances, paysages sonores et créations immersives.',
+      is_active = true,
+      sort_order = 4
+    where id = target_id;
+  end if;
+end $$;
+
+
+-- ------------------------------------------------------------
+-- 2. Migration des créations déjà classées par anciennes rubriques
+-- ------------------------------------------------------------
+
+with legacy_category_map as (
+  select *
+  from (
+    values
+      -- Chansons à texte
+      ('chansons-a-texte', 'Chansons à texte', 'chansons-a-texte'),
+      ('chanson-a-texte', 'Chanson à texte', 'chansons-a-texte'),
+      ('chansons', 'Chansons', 'chansons-a-texte'),
+      ('chanson', 'Chanson', 'chansons-a-texte'),
+      ('song', 'Chanson', 'chansons-a-texte'),
+      ('clips', 'Clips', 'chansons-a-texte'),
+      ('clip', 'Clip', 'chansons-a-texte'),
+      ('satire', 'Satire', 'chansons-a-texte'),
+      ('autre', 'Autre', 'chansons-a-texte'),
+      ('other', 'Autre', 'chansons-a-texte'),
+
+      -- Albums
+      ('albums', 'Albums', 'albums'),
+      ('album', 'Album', 'albums'),
+      ('album-visuel', 'Album visuel', 'albums'),
+      ('albums-visuels', 'Albums visuels', 'albums'),
+      ('visual-album', 'Album visuel', 'albums'),
+      ('album-narratif', 'Album narratif', 'albums'),
+      ('albums-narratifs', 'Albums narratifs', 'albums'),
+      ('experimentation-ia', 'Expérimentation IA', 'albums'),
+      ('experimentations-ia', 'Expérimentations IA', 'albums'),
+      ('experience-ia', 'Expérience IA', 'albums'),
+      ('experiences-ia', 'Expériences IA', 'albums'),
+      ('ai-experiment', 'Expérimentation IA', 'albums'),
+
+      -- Promos Keefon
+      ('promos-keefon', 'Promos Keefon', 'promos-keefon'),
+      ('promo-keefon', 'Promo Keefon', 'promos-keefon'),
+      ('promotions-keefon', 'Promotions Keefon', 'promos-keefon'),
+      ('promotion-keefon', 'Promotion Keefon', 'promos-keefon'),
+      ('createurs-invites', 'Créateurs invités', 'promos-keefon'),
+      ('createur-invite', 'Créateur invité', 'promos-keefon'),
+
+      -- Voyages sonores
+      ('voyages-sonores', 'Voyages sonores', 'voyages-sonores'),
+      ('voyage-sonore', 'Voyage sonore', 'voyages-sonores'),
+      ('paysages-sonores', 'Paysages sonores', 'voyages-sonores'),
+      ('paysage-sonore', 'Paysage sonore', 'voyages-sonores'),
+      ('soundscape', 'Paysage sonore', 'voyages-sonores'),
+      ('soundscapes', 'Paysages sonores', 'voyages-sonores'),
+      ('univers-imaginaires', 'Univers imaginaires', 'voyages-sonores'),
+      ('univers-imaginaire', 'Univers imaginaire', 'voyages-sonores')
+  ) as m(legacy_slug, legacy_name, target_slug)
+),
+old_categories as (
+  select
+    c.id as old_category_id,
+    m.target_slug
+  from public.zz_music_categories_modifiables c
+  join legacy_category_map m
+    on lower(replace(coalesce(c.slug, ''), '_', '-')) = m.legacy_slug
+    or c.name = m.legacy_name
+),
+official_categories as (
+  select id, slug
+  from public.zz_music_categories_modifiables
+  where slug in (
+    'chansons-a-texte',
+    'albums',
+    'promos-keefon',
+    'voyages-sonores'
+  )
+)
+update public.zz_music_creations_deposees creation
+set
+  category_id = official.id,
+  creation_type = official.slug,
+  updated_at = now()
+from old_categories old
+join official_categories official
+  on official.slug = old.target_slug
+where creation.category_id = old.old_category_id;
+
+
+-- ------------------------------------------------------------
+-- 3. Migration des créations qui avaient seulement creation_type
+-- ------------------------------------------------------------
+
+with legacy_type_map as (
+  select *
+  from (
+    values
+      -- Chansons à texte
+      ('chansons-a-texte', 'chansons-a-texte'),
+      ('chanson-a-texte', 'chansons-a-texte'),
+      ('chansons', 'chansons-a-texte'),
+      ('chanson', 'chansons-a-texte'),
+      ('song', 'chansons-a-texte'),
+      ('clips', 'chansons-a-texte'),
+      ('clip', 'chansons-a-texte'),
+      ('satire', 'chansons-a-texte'),
+      ('autre', 'chansons-a-texte'),
+      ('other', 'chansons-a-texte'),
+
+      -- Albums
+      ('albums', 'albums'),
+      ('album', 'albums'),
+      ('album-visuel', 'albums'),
+      ('albums-visuels', 'albums'),
+      ('visual-album', 'albums'),
+      ('album-narratif', 'albums'),
+      ('albums-narratifs', 'albums'),
+      ('experimentation-ia', 'albums'),
+      ('experimentations-ia', 'albums'),
+      ('experience-ia', 'albums'),
+      ('experiences-ia', 'albums'),
+      ('ai-experiment', 'albums'),
+
+      -- Promos Keefon
+      ('promos-keefon', 'promos-keefon'),
+      ('promo-keefon', 'promos-keefon'),
+      ('promotions-keefon', 'promos-keefon'),
+      ('promotion-keefon', 'promos-keefon'),
+      ('createurs-invites', 'promos-keefon'),
+      ('createur-invite', 'promos-keefon'),
+
+      -- Voyages sonores
+      ('voyages-sonores', 'voyages-sonores'),
+      ('voyage-sonore', 'voyages-sonores'),
+      ('paysages-sonores', 'voyages-sonores'),
+      ('paysage-sonore', 'voyages-sonores'),
+      ('soundscape', 'voyages-sonores'),
+      ('soundscapes', 'voyages-sonores'),
+      ('univers-imaginaires', 'voyages-sonores'),
+      ('univers-imaginaire', 'voyages-sonores')
+  ) as m(legacy_type, target_slug)
+),
+official_categories as (
+  select id, slug
+  from public.zz_music_categories_modifiables
+  where slug in (
+    'chansons-a-texte',
+    'albums',
+    'promos-keefon',
+    'voyages-sonores'
+  )
+)
+update public.zz_music_creations_deposees creation
+set
+  category_id = official.id,
+  creation_type = official.slug,
+  updated_at = now()
+from legacy_type_map map
+join official_categories official
+  on official.slug = map.target_slug
+where lower(replace(coalesce(creation.creation_type, ''), '_', '-')) = map.legacy_type
+  and (
+    creation.category_id is null
+    or not exists (
+      select 1
+      from public.zz_music_categories_modifiables current_category
+      where current_category.id = creation.category_id
+        and current_category.slug in (
+          'chansons-a-texte',
+          'albums',
+          'promos-keefon',
+          'voyages-sonores'
+        )
+    )
+  );
+
+
+-- ------------------------------------------------------------
+-- 4. Alignement final : creation_type = slug officiel
+-- ------------------------------------------------------------
+
+update public.zz_music_creations_deposees creation
+set
+  creation_type = category.slug,
+  updated_at = now()
+from public.zz_music_categories_modifiables category
+where creation.category_id = category.id
+  and category.slug in (
+    'chansons-a-texte',
+    'albums',
+    'promos-keefon',
+    'voyages-sonores'
+  )
+  and creation.creation_type is distinct from category.slug;
+
+
+-- ------------------------------------------------------------
+-- 5. Désactivation des anciennes rubriques
+-- ------------------------------------------------------------
+
+with legacy_category_map as (
+  select *
+  from (
+    values
+      ('chanson-a-texte', 'Chanson à texte'),
+      ('chansons', 'Chansons'),
+      ('chanson', 'Chanson'),
+      ('song', 'Chanson'),
+      ('clips', 'Clips'),
+      ('clip', 'Clip'),
+      ('satire', 'Satire'),
+      ('autre', 'Autre'),
+      ('other', 'Autre'),
+
+      ('album', 'Album'),
+      ('album-visuel', 'Album visuel'),
+      ('albums-visuels', 'Albums visuels'),
+      ('visual-album', 'Album visuel'),
+      ('album-narratif', 'Album narratif'),
+      ('albums-narratifs', 'Albums narratifs'),
+      ('experimentation-ia', 'Expérimentation IA'),
+      ('experimentations-ia', 'Expérimentations IA'),
+      ('experience-ia', 'Expérience IA'),
+      ('experiences-ia', 'Expériences IA'),
+      ('ai-experiment', 'Expérimentation IA'),
+
+      ('promo-keefon', 'Promo Keefon'),
+      ('promotions-keefon', 'Promotions Keefon'),
+      ('promotion-keefon', 'Promotion Keefon'),
+      ('createurs-invites', 'Créateurs invités'),
+      ('createur-invite', 'Créateur invité'),
+
+      ('voyage-sonore', 'Voyage sonore'),
+      ('paysages-sonores', 'Paysages sonores'),
+      ('paysage-sonore', 'Paysage sonore'),
+      ('soundscape', 'Paysage sonore'),
+      ('soundscapes', 'Paysages sonores'),
+      ('univers-imaginaires', 'Univers imaginaires'),
+      ('univers-imaginaire', 'Univers imaginaire')
+  ) as m(legacy_slug, legacy_name)
+)
+update public.zz_music_categories_modifiables category
+set
+  is_active = false,
+  sort_order = 99
+from legacy_category_map legacy
+where (
+    lower(replace(coalesce(category.slug, ''), '_', '-')) = legacy.legacy_slug
+    or category.name = legacy.legacy_name
+  )
+  and category.slug not in (
+    'chansons-a-texte',
+    'albums',
+    'promos-keefon',
+    'voyages-sonores'
+  );
+
+
+-- ------------------------------------------------------------
+-- 6. Vérification finale
+-- ------------------------------------------------------------
+
+commit;
+
+
+-- ============================================================
+-- CONTRÔLES À REGARDER APRÈS EXÉCUTION
+-- ============================================================
+
+-- Rubriques actives visibles
+select
+  id,
+  name,
+  slug,
+  is_active,
+  sort_order
+from public.zz_music_categories_modifiables
+order by sort_order, name;
+
+
+-- Nombre de créations par rubrique
+select
+  coalesce(category.name, 'Non classée') as rubrique,
+  coalesce(category.slug, 'sans-slug') as slug,
+  count(creation.id) as nombre_creations
+from public.zz_music_creations_deposees creation
+left join public.zz_music_categories_modifiables category
+  on category.id = creation.category_id
+group by category.name, category.slug
+order by rubrique;
+
+
+-- Créations encore sans rubrique, normalement 0 ou seulement les brouillons très anciens
+select
+  id,
+  title,
+  creation_type,
+  category_id,
+  status
+from public.zz_music_creations_deposees
+where category_id is null
+order by created_at desc;
+
+
+
+
+
+
+
+
+
+_______________________________________________________________________________________
