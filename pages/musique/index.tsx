@@ -2,11 +2,17 @@ import Head from "next/head";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
+// ==============================
+// Configuration Supabase
+// ==============================
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// ==============================
+// Types de données Keefon Music
+// ==============================
 type MusicCategory = {
   id: string;
   name: string;
@@ -56,6 +62,9 @@ type MusicAlbum = {
   tracks: MusicCreation[];
 };
 
+// ==============================
+// Typage de l’API YouTube iframe
+// ==============================
 declare global {
   interface Window {
     YT?: any;
@@ -63,6 +72,9 @@ declare global {
   }
 }
 
+// ==============================
+// Fonctions utilitaires
+// ==============================
 function getYouTubeVideoId(url: string | null | undefined) {
   if (!url) return null;
 
@@ -143,10 +155,15 @@ function sortTracks(a: MusicCreation, b: MusicCreation) {
   return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
 }
 
+// ==============================
+// Page publique Keefon Music
+// ==============================
 export default function KeefonMusicPage() {
+  // Données chargées depuis Supabase.
   const [creations, setCreations] = useState<MusicCreation[]>([]);
   const [categories, setCategories] = useState<MusicCategory[]>([]);
 
+  // Modales de lecture et d’information.
   const [selectedAlbum, setSelectedAlbum] = useState<MusicAlbum | null>(null);
   const [selectedAlbumInfo, setSelectedAlbumInfo] =
     useState<MusicAlbum | null>(null);
@@ -156,10 +173,12 @@ export default function KeefonMusicPage() {
   const [selectedCreationInfo, setSelectedCreationInfo] =
     useState<MusicCreation | null>(null);
 
+  // Recherche et filtre par rubrique.
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategorySlug, setSelectedCategorySlug] = useState("all");
 
+  // États techniques : chargement, erreurs et lecteur YouTube.
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -170,6 +189,7 @@ export default function KeefonMusicPage() {
     ? getYouTubeVideoId(selectedCreation.embed_url || selectedCreation.external_url)
     : null;
 
+  // Rubriques de secours si Supabase ne renvoie rien.
   const fallbackRubriques = [
     {
       id: "fallback-1",
@@ -193,6 +213,7 @@ export default function KeefonMusicPage() {
 
   const rubriques = categories.length > 0 ? categories : fallbackRubriques;
 
+  // Regroupe les pistes ayant un album_slug dans une carte album unique.
   const allAlbums = useMemo(() => {
     const albumsMap = new Map<string, MusicAlbum>();
 
@@ -253,10 +274,12 @@ export default function KeefonMusicPage() {
       });
   }, [creations]);
 
+  // Créations simples : elles ne sont rattachées à aucun album.
   const allStandaloneCreations = useMemo(() => {
     return creations.filter((creation) => !creation.album_slug);
   }, [creations]);
 
+  // Filtrage des albums selon la recherche et la rubrique.
   const filteredAlbums = useMemo(() => {
     const query = normalizeText(searchQuery);
 
@@ -281,6 +304,7 @@ export default function KeefonMusicPage() {
     });
   }, [allAlbums, searchQuery, selectedCategorySlug, categories]);
 
+  // Filtrage des créations seules selon la recherche et la rubrique.
   const filteredStandaloneCreations = useMemo(() => {
     const query = normalizeText(searchQuery);
 
@@ -310,10 +334,12 @@ export default function KeefonMusicPage() {
   const totalResults =
     filteredAlbums.length + filteredStandaloneCreations.length;
 
+  // Chargement initial des données publiques.
   useEffect(() => {
     loadPublicMusicData();
   }, []);
 
+  // Charge l’API YouTube uniquement quand une vidéo YouTube doit être lue.
   useEffect(() => {
     if (!activeYouTubeVideoId) return;
     if (typeof window === "undefined") return;
@@ -395,6 +421,7 @@ export default function KeefonMusicPage() {
     selectedCreation,
   ]);
 
+  // Lecture Supabase : rubriques actives + créations publiées.
   async function loadPublicMusicData() {
     setIsLoading(true);
     setErrorMessage("");
@@ -450,6 +477,7 @@ export default function KeefonMusicPage() {
     return category?.slug || "";
   }
 
+  // Ouverture des modales depuis les cartes.
   function openAlbum(album: MusicAlbum) {
     const firstTrack = album.tracks[0] || null;
 
@@ -488,6 +516,7 @@ export default function KeefonMusicPage() {
       </Head>
 
       <main className="page">
+        {/* En-tête : logo + bouton de recherche/rubriques */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -503,6 +532,7 @@ export default function KeefonMusicPage() {
           </button>
         </header>
 
+        {/* Panneau déroulant de recherche et filtres */}
         {isSearchOpen && (
           <section className="searchPanel">
             <label>
@@ -562,10 +592,12 @@ export default function KeefonMusicPage() {
           </section>
         )}
 
+        {/* Hero principal */}
         <section className="hero">
           <h1>Des chansons comme des scènes de cinéma</h1>
         </section>
 
+        {/* Liste publique : albums + créations seules */}
         <section id="creations" className="resultsSection">
           {hasActiveFilter && (
             <div className="filterLine">
@@ -633,6 +665,7 @@ export default function KeefonMusicPage() {
           )}
         </section>
 
+        {/* Bloc d’appel pour proposer une création */}
         <section id="proposer" className="box creatorBox">
           <p className="label">Créateurs</p>
 
@@ -653,6 +686,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </a>
         </section>
 
+        {/* Bloc concept éditorial */}
         <section id="concept" className="box conceptBox">
           <p className="label">Le concept</p>
 
@@ -665,10 +699,12 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </p>
         </section>
 
+        {/* Pied de page */}
         <footer className="footer">
           <p>Keefon Music — Projet créatif musical</p>
         </footer>
 
+        {/* Modale de lecture : album ou création seule */}
         {selectedCreation && (
           <div className="modalBackdrop" onClick={closePlayerModal}>
             <div className="modal" onClick={(event) => event.stopPropagation()}>
@@ -824,6 +860,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </div>
         )}
 
+        {/* Modale d’information : description, note auteur et sources */}
         {(selectedAlbumInfo || selectedCreationInfo) && (
           <div className="modalBackdrop" onClick={closeInfoModal}>
             <div
@@ -949,6 +986,7 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
           </div>
         )}
 
+        {/* Styles globaux de la page musique */}
         <style jsx global>{`
           html {
             scroll-behavior: smooth;
@@ -1188,10 +1226,12 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
             font-weight: 800;
           }
 
+          /* Actions des cartes : sur desktop les boutons restent côte à côte. */
           .creationActions {
             display: flex;
             gap: 6px;
             align-items: center;
+            justify-content: flex-end;
           }
 
           .primary,
@@ -1409,30 +1449,58 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          @media (max-width: 420px) {
+          /* Mobile : cartes compactes avec Lire au-dessus du bouton info.
+             On cible uniquement les boutons dans .creationActions pour ne pas
+             réduire les gros boutons de la page comme “Proposer une création”. */
+          @media (max-width: 560px) {
             .albumCard,
             .creationCard {
-              grid-template-columns: 68px 1fr;
+              grid-template-columns: 58px minmax(0, 1fr) 30px;
+              gap: 8px;
+              padding: 8px;
+              border-radius: 15px;
             }
 
             .thumbnailWrap {
-              width: 68px;
+              width: 58px;
+              border-radius: 12px;
+            }
+
+            .itemAuthor {
+              margin-bottom: 2px;
+              font-size: 0.72rem;
+            }
+
+            .itemTitle {
+              font-size: 0.82rem;
+              line-height: 1.12;
             }
 
             .creationActions {
-              grid-column: 2 / 3;
-              justify-content: flex-start;
+              grid-column: 3 / 4;
+              grid-row: 1 / 2;
+              align-self: center;
+              justify-self: end;
+              flex-direction: column;
+              gap: 4px;
+              width: 30px;
             }
 
-            .primary {
-              min-height: 36px;
-              padding: 0 12px;
+            .creationActions .primary {
+              min-height: 20px;
+              padding: 0 6px;
+              font-size: 0.56rem;
+              line-height: 1;
             }
 
-            .infoButton {
-              width: 36px;
-              min-width: 36px;
-              min-height: 36px;
+            .creationActions .infoButton {
+              width: 20px;
+              min-width: 20px;
+              min-height: 20px;
+              height: 20px;
+              padding: 0;
+              font-size: 0.68rem;
+              line-height: 1;
             }
           }
 
@@ -1489,6 +1557,9 @@ Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp
   );
 }
 
+// ==============================
+// Carte album : regroupe plusieurs pistes
+// ==============================
 function AlbumCard({
   album,
   onOpen,
@@ -1518,23 +1589,29 @@ function AlbumCard({
         <h3 className="itemTitle">{album.album_title}</h3>
       </div>
 
+      {/* Boutons de carte : le CSS mobile les empile en colonne. */}
       <div className="creationActions">
-       <button
-  className="rounded-full bg-[#ffd166] px-1.5 py-0.5 text-[9px] font-bold text-black sm:px-4 sm:py-2 sm:text-sm"
->
-  Lire
-</button>
+        <button type="button" className="primary" onClick={onOpen}>
+          Lire
+        </button>
 
-<button
-  className="flex h-5 w-5 items-center justify-center rounded-full border border-white/40 text-[9px] font-bold text-white sm:h-10 sm:w-10 sm:text-sm"
->
-  i
-</button>
+        <button
+          type="button"
+          className="infoButton"
+          onClick={onInfo}
+          aria-label="Informations sur l’album"
+          title="Informations"
+        >
+          i
+        </button>
       </div>
     </article>
   );
 }
 
+// ==============================
+// Carte création seule
+// ==============================
 function CreationCard({
   creation,
   onOpen,
@@ -1564,6 +1641,7 @@ function CreationCard({
         <h3 className="itemTitle">{creation.title}</h3>
       </div>
 
+      {/* Boutons de carte : le CSS mobile les empile en colonne. */}
       <div className="creationActions">
         <button type="button" className="primary" onClick={onOpen}>
           Lire
