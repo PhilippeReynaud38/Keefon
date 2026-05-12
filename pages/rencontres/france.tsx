@@ -35,6 +35,7 @@ const SEO = {
 const COLORS = {
   bannerGrad: "linear-gradient(180deg, #FFF273 0%, #FFE44B 100%)",
   paleGreen: "#59FF72",
+  yellowGreen: "#E4FF02",
 };
 const FREE_MODE = true;
 
@@ -86,6 +87,31 @@ function FreeTopBarSpacer() {
   if (!FREE_MODE) return null;
   // Spacer légèrement plus haut pour que le HERO ne passe pas sous le bandeau sur mobile
   return <div className="h-[88px] sm:h-[84px] w-full" />;
+}
+
+/* ===========================  LIEN TRANSVERSAL — KEEFON MUSIC  ===========================
+   À COPIER SUR LES AUTRES PAGES RENCONTRES / VILLES :
+   - garder le href="/musique" ;
+   - garder les couleurs pour une identité cohérente ;
+   - changer seulement le texte si besoin : "Keefon Music", "Écouter Keefon Music", etc.
+   Ce bouton sert à relier Keefon Rencontre vers Keefon Music.
+============================================================================ */
+function KeefonMusicButton() {
+  return (
+    <Link
+      href="/musique"
+      aria-label="Découvrir Keefon Music"
+      title="Découvrir Keefon Music"
+      className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-black text-slate-950 shadow-lg transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-6 sm:py-2.5"
+      style={{
+        background: COLORS.yellowGreen,
+        border: "1px solid rgba(15, 23, 42, 0.22)",
+        boxShadow: "0 10px 22px rgba(0,0,0,.20)",
+      }}
+    >
+      🎵 Keefon Music
+    </Link>
+  );
 }
 
 /* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
@@ -397,6 +423,10 @@ Keefon France est un espace bienveillant pour rencontrer des célibataires parto
                 >
                   Je découvre Keefon
                 </a>
+
+                {/* BOUTON TRANSVERSAL KEEFON MUSIC — copie ce bloc sur les pages villes si tu veux le même lien */}
+                <KeefonMusicButton />
+
                 <p className="text-xs text-slate-700">
                   Inscription en quelques minutes. Tu restes maître de ce que tu
                   partages.
