@@ -1083,6 +1083,8 @@ export default function KeefonMusicPage() {
             min-height: 100vh;
             overflow-x: hidden;
             color: white;
+            --yellowGreen: #E4FF02;
+            --paleGreen: #59FF72;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -1129,23 +1131,13 @@ export default function KeefonMusicPage() {
             flex-shrink: 0;
           }
 
-          .brand {
-            color: white;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.78rem;
-            font-weight: 900;
-          }
-
+          /* Boutons du header : même forme, couleurs distinctes pour guider la navigation. */
+          .brand,
           .searchToggle,
           .rencontreLink {
             min-height: 36px;
             padding: 0 12px;
             border-radius: 999px;
-            border: 1px solid rgba(245, 199, 109, 0.42);
-            background: rgba(0, 0, 0, 0.28);
-            color: white;
             font-weight: 900;
             cursor: pointer;
             font-size: 0.82rem;
@@ -1154,18 +1146,41 @@ export default function KeefonMusicPage() {
             align-items: center;
             justify-content: center;
             white-space: nowrap;
+            transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
           }
 
+          /* Boutons Keefon Music + Recherche : jaune-vert Keefon Music. */
+          .brand,
+          .searchToggle {
+            color: var(--yellowGreen);
+            border: 1px solid rgba(228, 255, 2, 0.52);
+            background: rgba(228, 255, 2, 0.07);
+            box-shadow: 0 0 18px rgba(228, 255, 2, 0.05);
+          }
+
+          .brand {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.76rem;
+          }
+
+          /* Bouton Keefon Rencontre : vert clair pour le différencier de Music. */
           .rencontreLink {
-            color: #f5c76d;
-            background: rgba(245, 199, 109, 0.08);
-            border-color: rgba(245, 199, 109, 0.28);
+            color: var(--paleGreen);
+            border: 1px solid rgba(89, 255, 114, 0.52);
+            background: rgba(89, 255, 114, 0.07);
+            box-shadow: 0 0 18px rgba(89, 255, 114, 0.05);
           }
 
-          .rencontreLink:hover,
+          .brand:hover,
           .searchToggle:hover {
-            border-color: rgba(245, 199, 109, 0.72);
-            background: rgba(245, 199, 109, 0.12);
+            border-color: rgba(228, 255, 2, 0.82);
+            background: rgba(228, 255, 2, 0.12);
+          }
+
+          .rencontreLink:hover {
+            border-color: rgba(89, 255, 114, 0.82);
+            background: rgba(89, 255, 114, 0.12);
           }
 
           .searchPanel {
@@ -1643,16 +1658,19 @@ export default function KeefonMusicPage() {
               max-width: 48%;
             }
 
-            .searchToggle {
+            .brand,
+            .searchToggle,
+            .rencontreLink {
               min-height: 30px;
               padding: 0 10px;
               font-size: 0.72rem;
             }
 
+            .brand {
+              letter-spacing: 0.07em;
+            }
+
             .rencontreLink {
-              min-height: 30px;
-              padding: 0 10px;
-              font-size: 0.72rem;
               white-space: normal;
               text-align: center;
               line-height: 1.05;
