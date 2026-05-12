@@ -580,15 +580,11 @@ export default function KeefonMusicPage() {
 
       <main className="page">
         <header className="header">
-          <a href="/musique" className="brand">
-            Keefon Music
-          </a>
-
-          {/* Liaisons principales : Rencontre + recherche/rubriques. */}
-          <div className="headerActions">
-            <a href="/rencontres/france" className="rencontreLink">
-              <span className="desktopOnly">Keefon Rencontre</span>
-              <span className="mobileOnly">Rencontre</span>
+          {/* Identité Keefon Music + accès aux filtres.
+              Sur mobile, le bouton de recherche reste sous le logo pour libérer la droite. */}
+          <div className="brandBlock">
+            <a href="/musique" className="brand">
+              Keefon Music
             </a>
 
             <button
@@ -599,6 +595,13 @@ export default function KeefonMusicPage() {
             >
               Recherche & rubriques
             </button>
+          </div>
+
+          {/* Liaison vers Keefon Rencontre. */}
+          <div className="headerActions">
+            <a href="/rencontres/france" className="rencontreLink">
+              Keefon Rencontre
+            </a>
           </div>
         </header>
 
@@ -1100,27 +1103,30 @@ export default function KeefonMusicPage() {
             margin-right: auto;
           }
 
+          /* Header : identité Music à gauche, lien Rencontre à droite.
+             Le bouton de recherche est rangé sous Keefon Music pour alléger le haut mobile. */
           .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
             margin-bottom: 20px;
           }
 
+          .brandBlock {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            min-width: 0;
+          }
+
           .headerActions {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: flex-end;
             gap: 8px;
-          }
-
-          .desktopOnly {
-            display: inline;
-          }
-
-          .mobileOnly {
-            display: none;
+            flex-shrink: 0;
           }
 
           .brand {
@@ -1134,7 +1140,7 @@ export default function KeefonMusicPage() {
 
           .searchToggle,
           .rencontreLink {
-            min-height: 38px;
+            min-height: 36px;
             padding: 0 12px;
             border-radius: 999px;
             border: 1px solid rgba(245, 199, 109, 0.42);
@@ -1142,7 +1148,7 @@ export default function KeefonMusicPage() {
             color: white;
             font-weight: 900;
             cursor: pointer;
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -1628,25 +1634,28 @@ export default function KeefonMusicPage() {
               margin-bottom: 16px;
             }
 
-            .headerActions {
-              display: grid;
-              justify-items: end;
-              gap: 6px;
+            .brandBlock {
+              gap: 8px;
             }
 
-            .searchToggle,
-            .rencontreLink {
+            .headerActions {
+              justify-content: flex-end;
+              max-width: 48%;
+            }
+
+            .searchToggle {
               min-height: 30px;
               padding: 0 10px;
               font-size: 0.72rem;
             }
 
-            .desktopOnly {
-              display: none;
-            }
-
-            .mobileOnly {
-              display: inline;
+            .rencontreLink {
+              min-height: 30px;
+              padding: 0 10px;
+              font-size: 0.72rem;
+              white-space: normal;
+              text-align: center;
+              line-height: 1.05;
             }
 
             .footer {
