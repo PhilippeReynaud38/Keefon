@@ -760,11 +760,29 @@ export default function KeefonMusicPage() {
           </p>
         </section>
 
+        {/* =====================================================================
+            LIEN TRANSVERSAL — KEEFON MUSIC → KEEFON RENCONTRE
+            Petit encart de bas de page.
+            À garder discret : il sert à proposer le retour vers Keefon Rencontre
+            sans voler la place aux créations musicales.
+            Pour changer la destination, modifier uniquement le href ci-dessous.
+        ====================================================================== */}
+        <section className="rencontreBottomBox" aria-label="Découvrir Keefon Rencontre">
+          <div>
+            <p className="rencontreBottomKicker">Keefon Rencontre</p>
+            <p className="rencontreBottomText">
+        
+Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fin 2026 pour les 2000 premiers inscrits, avec messagerie, chat et contacts inclus. Keefon ce prononce qui phone ?.
+            </p>
+          </div>
+
+          <a href="/rencontres/france" className="rencontreBottomButton">
+            Découvrir
+          </a>
+        </section>
+
         <footer className="footer">
           <p>Keefon Music — Projet créatif musical</p>
-          <a href="/rencontres/france" className="footerRencontreLink">
-            Découvrir Keefon Rencontre
-          </a>
         </footer>
 
         {selectedCreation && (
@@ -1085,6 +1103,7 @@ export default function KeefonMusicPage() {
             color: white;
             --yellowGreen: #E4FF02;
             --paleGreen: #59FF72;
+            --tenderGreen: '#2CFF4B,
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -1475,24 +1494,72 @@ export default function KeefonMusicPage() {
             line-height: 1.6;
           }
 
+          /* =====================================================================
+             LIEN TRANSVERSAL — ENCADRÉ BAS DE PAGE VERS KEEFON RENCONTRE
+             Bloc discret et réutilisable.
+             Si tu veux le déplacer ou le recopier ailleurs, cherche :
+             rencontreBottomBox / rencontreBottomButton.
+          ====================================================================== */
+          .rencontreBottomBox {
+            width: 100%;
+            max-width: 1050px;
+            margin: 28px auto 0;
+            padding: 14px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(89, 255, 114, 0.26);
+            background: linear-gradient(135deg, rgba(89, 255, 114, 0.1), rgba(0, 0, 0, 0.34));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+          }
+
+          .rencontreBottomKicker {
+            margin: 0 0 4px;
+            color: var(--paleGreen);
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+          }
+
+          .rencontreBottomText {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 0.92rem;
+            line-height: 1.45;
+          }
+
+          .rencontreBottomButton {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 0 15px;
+            border-radius: 999px;
+            border: 1px solid rgba(89, 255, 114, 0.72);
+            background: rgba(89, 255, 114, 0.16);
+            color: var(--paleGreen);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 900;
+            white-space: nowrap;
+          }
+
+          .rencontreBottomButton:hover {
+            background: var(--paleGreen);
+            color: #071207;
+          }
+
           .footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin-top: 34px;
+            margin-top: 18px;
             opacity: 0.72;
             font-size: 0.9rem;
-          }
-
-          .footerRencontreLink {
-            color: #f5c76d;
-            text-decoration: none;
-            font-weight: 900;
-          }
-
-          .footerRencontreLink:hover {
-            text-decoration: underline;
           }
 
           .creatorBox p,
@@ -1674,6 +1741,18 @@ export default function KeefonMusicPage() {
               white-space: normal;
               text-align: center;
               line-height: 1.05;
+            }
+
+            .rencontreBottomBox {
+              align-items: flex-start;
+              flex-direction: column;
+              gap: 12px;
+              padding: 13px 14px;
+              border-radius: 18px;
+            }
+
+            .rencontreBottomButton {
+              width: 100%;
             }
 
             .footer {
