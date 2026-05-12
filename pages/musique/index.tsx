@@ -178,8 +178,8 @@ export default function KeefonMusicPage() {
     },
     {
       id: "fallback-2",
-      name: "Chansons narratives",
-      slug: "chansons-narratives",
+      name: "Chansons à texte",
+      slug: "Chansons à texte",
     },
     { id: "fallback-3", name: "Clips", slug: "clips" },
     {
@@ -1519,19 +1519,17 @@ function AlbumCard({
       </div>
 
       <div className="creationActions">
-        <button type="button" className="primary" onClick={onOpen}>
-          Lire
-        </button>
+       <button
+  className="rounded-full bg-[#ffd166] px-1.5 py-0.5 text-[9px] font-bold text-black sm:px-4 sm:py-2 sm:text-sm"
+>
+  Lire
+</button>
 
-        <button
-          type="button"
-          className="infoButton"
-          onClick={onInfo}
-          aria-label="Informations sur l’album"
-          title="Informations"
-        >
-          i
-        </button>
+<button
+  className="flex h-5 w-5 items-center justify-center rounded-full border border-white/40 text-[9px] font-bold text-white sm:h-10 sm:w-10 sm:text-sm"
+>
+  i
+</button>
       </div>
     </article>
   );
