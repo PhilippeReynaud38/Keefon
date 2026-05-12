@@ -584,14 +584,22 @@ export default function KeefonMusicPage() {
             Keefon Music
           </a>
 
-          <button
-            type="button"
-            className="searchToggle"
-            onClick={() => setIsSearchOpen((value) => !value)}
-            aria-expanded={isSearchOpen}
-          >
-            Recherche & rubriques
-          </button>
+          {/* Liaisons principales : Rencontre + recherche/rubriques. */}
+          <div className="headerActions">
+            <a href="/rencontres/france" className="rencontreLink">
+              <span className="desktopOnly">Keefon Rencontre</span>
+              <span className="mobileOnly">Rencontre</span>
+            </a>
+
+            <button
+              type="button"
+              className="searchToggle"
+              onClick={() => setIsSearchOpen((value) => !value)}
+              aria-expanded={isSearchOpen}
+            >
+              Recherche & rubriques
+            </button>
+          </div>
         </header>
 
         {isSearchOpen && (
@@ -751,6 +759,9 @@ export default function KeefonMusicPage() {
 
         <footer className="footer">
           <p>Keefon Music — Projet créatif musical</p>
+          <a href="/rencontres/france" className="footerRencontreLink">
+            Découvrir Keefon Rencontre
+          </a>
         </footer>
 
         {selectedCreation && (
@@ -1097,6 +1108,21 @@ export default function KeefonMusicPage() {
             margin-bottom: 20px;
           }
 
+          .headerActions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+          }
+
+          .desktopOnly {
+            display: inline;
+          }
+
+          .mobileOnly {
+            display: none;
+          }
+
           .brand {
             color: white;
             text-decoration: none;
@@ -1106,7 +1132,8 @@ export default function KeefonMusicPage() {
             font-weight: 900;
           }
 
-          .searchToggle {
+          .searchToggle,
+          .rencontreLink {
             min-height: 38px;
             padding: 0 12px;
             border-radius: 999px;
@@ -1116,6 +1143,23 @@ export default function KeefonMusicPage() {
             font-weight: 900;
             cursor: pointer;
             font-size: 0.84rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+          }
+
+          .rencontreLink {
+            color: #f5c76d;
+            background: rgba(245, 199, 109, 0.08);
+            border-color: rgba(245, 199, 109, 0.28);
+          }
+
+          .rencontreLink:hover,
+          .searchToggle:hover {
+            border-color: rgba(245, 199, 109, 0.72);
+            background: rgba(245, 199, 109, 0.12);
           }
 
           .searchPanel {
@@ -1411,9 +1455,23 @@ export default function KeefonMusicPage() {
           }
 
           .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
             margin-top: 34px;
             opacity: 0.72;
             font-size: 0.9rem;
+          }
+
+          .footerRencontreLink {
+            color: #f5c76d;
+            text-decoration: none;
+            font-weight: 900;
+          }
+
+          .footerRencontreLink:hover {
+            text-decoration: underline;
           }
 
           .creatorBox p,
@@ -1560,6 +1618,42 @@ export default function KeefonMusicPage() {
             margin-top: 18px;
             background: rgba(255, 90, 90, 0.18);
             border: 1px solid rgba(255, 90, 90, 0.42);
+          }
+
+          /* Mobile : le lien Rencontre reste visible sans alourdir le haut de page. */
+          @media (max-width: 560px) {
+            .header {
+              align-items: flex-start;
+              gap: 8px;
+              margin-bottom: 16px;
+            }
+
+            .headerActions {
+              display: grid;
+              justify-items: end;
+              gap: 6px;
+            }
+
+            .searchToggle,
+            .rencontreLink {
+              min-height: 30px;
+              padding: 0 10px;
+              font-size: 0.72rem;
+            }
+
+            .desktopOnly {
+              display: none;
+            }
+
+            .mobileOnly {
+              display: inline;
+            }
+
+            .footer {
+              align-items: flex-start;
+              flex-direction: column;
+              gap: 6px;
+            }
           }
 
           /* Mobile : cartes compactes avec Lire au-dessus du bouton info.
