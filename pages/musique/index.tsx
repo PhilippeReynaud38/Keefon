@@ -102,25 +102,19 @@ function platformLabel(platform: string) {
 }
 
 function creationTypeLabel(type: string) {
-  const cleanType = normalizeRubriqueSlug(type) || type;
-
-  switch (cleanType) {
+  switch (type) {
     case "song":
-    case "chansons-a-texte":
-      return "Chansons à texte";
+      return "Chanson";
     case "clip":
       return "Clip";
     case "visual_album":
-    case "ai_experiment":
-    case "albums":
-      return "Albums";
+      return "Album visuel";
     case "soundscape":
-    case "voyages-sonores":
-      return "Voyages sonores";
-    case "promos-keefon":
-      return "Promos Keefon";
+      return "Paysage sonore";
+    case "ai_experiment":
+      return "Expérimentation IA";
     default:
-      return "Création musicale";
+      return "Création";
   }
 }
 
@@ -147,98 +141,6 @@ function sortTracks(a: MusicCreation, b: MusicCreation) {
   if (aTrack !== bTrack) return aTrack - bTrack;
 
   return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-}
-
-// ==============================
-// Rubriques officielles publiques
-// ==============================
-// Ces 4 rubriques sont celles affichées aux visiteurs.
-// Les anciens noms venant de Supabase sont normalisés plus bas pour éviter les doublons.
-const officialRubriques = [
-  {
-    id: "rubrique-chansons-a-texte",
-    name: "Chansons à texte",
-    slug: "chansons-a-texte",
-  },
-  {
-    id: "rubrique-albums",
-    name: "Albums",
-    slug: "albums",
-  },
-  {
-    id: "rubrique-promos-keefon",
-    name: "Promos Keefon",
-    slug: "promos-keefon",
-  },
-  {
-    id: "rubrique-voyages-sonores",
-    name: "Voyages sonores",
-    slug: "voyages-sonores",
-  },
-];
-
-const rubriqueAliasBySlug: Record<string, string> = {
-  // Chansons à texte : chanson, clip, satire, slam ou rap narratif.
-  chanson: "chansons-a-texte",
-  chansons: "chansons-a-texte",
-  song: "chansons-a-texte",
-  clip: "chansons-a-texte",
-  clips: "chansons-a-texte",
-  satire: "chansons-a-texte",
-  slam: "chansons-a-texte",
-  rap: "chansons-a-texte",
-  "chanson-a-texte": "chansons-a-texte",
-  "chansons-a-texte": "chansons-a-texte",
-
-  // Albums : ancien album narratif / visuel + anciennes expériences IA.
-  album: "albums",
-  albums: "albums",
-  "album-narratif": "albums",
-  "albums-narratifs": "albums",
-  "album-visuel": "albums",
-  "albums-visuels": "albums",
-  "visual-album": "albums",
-  "ai-experiment": "albums",
-  "experience-ia": "albums",
-  "experiences-ia": "albums",
-  "experimentation-ia": "albums",
-  "experimentations-ia": "albums",
-
-  // Promos Keefon : anciennes rubriques créateurs invités / promotions.
-  "promo-keefon": "promos-keefon",
-  "promos-keefon": "promos-keefon",
-  "promotion-keefon": "promos-keefon",
-  "promotions-keefon": "promos-keefon",
-  "createur-invite": "promos-keefon",
-  "createurs-invites": "promos-keefon",
-
-  // Voyages sonores : ambiances, paysages sonores, univers immersifs.
-  "voyage-sonore": "voyages-sonores",
-  "voyages-sonores": "voyages-sonores",
-  "paysage-sonore": "voyages-sonores",
-  "paysages-sonores": "voyages-sonores",
-  "soundscape": "voyages-sonores",
-  "univers-imaginaire": "voyages-sonores",
-  "univers-imaginaires": "voyages-sonores",
-};
-
-function slugifyRubrique(value: string | null | undefined) {
-  return normalizeText(value)
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function normalizeRubriqueSlug(value: string | null | undefined) {
-  const slug = slugifyRubrique(value);
-  return rubriqueAliasBySlug[slug] || slug;
-}
-
-function getOfficialRubriqueName(slug: string, fallbackName = "Création musicale") {
-  return officialRubriques.find((rubrique) => rubrique.slug === slug)?.name || fallbackName;
-}
-
-function getRubriqueSlugFromCreationType(type: string | null | undefined) {
-  return normalizeRubriqueSlug(type);
 }
 
 export default function KeefonMusicPage() {
@@ -268,9 +170,28 @@ export default function KeefonMusicPage() {
     ? getYouTubeVideoId(selectedCreation.embed_url || selectedCreation.external_url)
     : null;
 
-  // Rubriques visibles dans le panneau “Recherche & rubriques”.
-  // On affiche uniquement la ligne éditoriale officielle, même si Supabase contient encore d’anciens noms.
-  const rubriques = officialRubriques;
+  const fallbackRubriques = [
+    {
+      id: "fallback-1",
+      name: "Univers imaginaires",
+      slug: "univers-imaginaires",
+    },
+    {
+      id: "fallback-2",
+      name: "Chansons à texte",
+      slug: "Chansons à texte",
+    },
+    { id: "fallback-3", name: "Clips", slug: "clips" },
+    {
+      id: "fallback-4",
+      name: "Paysages sonores",
+      slug: "paysages-sonores",
+    },
+    { id: "fallback-5", name: "Satire", slug: "satire" },
+    { id: "fallback-6", name: "Expériences IA", slug: "experiences-ia" },
+  ];
+
+  const rubriques = categories.length > 0 ? categories : fallbackRubriques;
 
   const allAlbums = useMemo(() => {
     const albumsMap = new Map<string, MusicAlbum>();
@@ -340,7 +261,7 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allAlbums.filter((album) => {
-      const categorySlug = getCategorySlug(album.category_id) || "albums";
+      const categorySlug = getCategorySlug(album.category_id);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -349,7 +270,7 @@ export default function KeefonMusicPage() {
           album.album_title,
           album.public_author_name,
           platformLabel(album.platform),
-          getCategoryName(album.category_id, "Albums"),
+          getCategoryName(album.category_id),
           ...album.tracks.map((track) => track.title),
           ...album.tracks.map((track) => track.description),
           ...album.tracks.map((track) => track.author_note || ""),
@@ -364,9 +285,7 @@ export default function KeefonMusicPage() {
     const query = normalizeText(searchQuery);
 
     return allStandaloneCreations.filter((creation) => {
-      const categorySlug =
-        getCategorySlug(creation.category_id) ||
-        getRubriqueSlugFromCreationType(creation.creation_type);
+      const categorySlug = getCategorySlug(creation.category_id);
       const matchCategory =
         selectedCategorySlug === "all" || categorySlug === selectedCategorySlug;
 
@@ -377,12 +296,7 @@ export default function KeefonMusicPage() {
           creation.description,
           creation.author_note,
           platformLabel(creation.platform),
-          getCategoryName(
-            creation.category_id,
-            getOfficialRubriqueName(
-              getRubriqueSlugFromCreationType(creation.creation_type)
-            )
-          ),
+          getCategoryName(creation.category_id),
         ].join(" ")
       );
 
@@ -522,23 +436,18 @@ export default function KeefonMusicPage() {
     setIsLoading(false);
   }
 
-  function getCategoryName(
-    categoryId: string | null,
-    fallbackName = "Création musicale"
-  ) {
-    const slug = getCategorySlug(categoryId);
-    if (!slug) return fallbackName;
+  function getCategoryName(categoryId: string | null) {
+    if (!categoryId) return "Création musicale";
 
-    return getOfficialRubriqueName(slug, fallbackName);
+    const category = categories.find((item) => item.id === categoryId);
+    return category?.name || "Création musicale";
   }
 
   function getCategorySlug(categoryId: string | null) {
     if (!categoryId) return "";
 
     const category = categories.find((item) => item.id === categoryId);
-
-    // On normalise à partir du slug ET du nom pour rattraper les anciennes rubriques Supabase.
-    return normalizeRubriqueSlug(category?.slug || category?.name || "");
+    return category?.slug || "";
   }
 
   function openAlbum(album: MusicAlbum) {
@@ -574,35 +483,45 @@ export default function KeefonMusicPage() {
         <title>Keefon Music — Des chansons comme des scènes de cinéma</title>
         <meta
           name="description"
-          content="Keefon Music présente des chansons à texte, albums, promos Keefon et voyages sonores."
+          content="Keefon Music présente des chansons narratives, clips, univers visuels et projets créatifs."
         />
+
+        {/* ==============================
+            PWA — KEEFON MUSIC
+            À GARDER SUR LA PAGE /musique UNIQUEMENT.
+            Ce manifest permet d’installer Keefon Music comme un raccourci / une appli séparée
+            de Keefon Rencontre. Les fichiers à placer sont :
+            - public/manifest-music.webmanifest
+            - public/icons/keefon-music-192.png
+            - public/icons/keefon-music-512.png
+            - public/icons/keefon-music-maskable-512.png
+        ============================== */}
+        <link rel="manifest" href="/manifest-music.webmanifest" />
+        <meta name="theme-color" content="#050505" />
+        <meta name="application-name" content="Keefon Music" />
+        <meta name="apple-mobile-web-app-title" content="Keefon Music" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <link rel="apple-touch-icon" href="/icons/keefon-music-192.png" />
       </Head>
 
       <main className="page">
         <header className="header">
-          {/* Identité Keefon Music + accès aux filtres.
-              Sur mobile, le bouton de recherche reste sous le logo pour libérer la droite. */}
-          <div className="brandBlock">
-            <a href="/musique" className="brand">
-              Keefon Music
-            </a>
+          <a href="/musique" className="brand">
+            Keefon Music
+          </a>
 
-            <button
-              type="button"
-              className="searchToggle"
-              onClick={() => setIsSearchOpen((value) => !value)}
-              aria-expanded={isSearchOpen}
-            >
-              Recherche & rubriques
-            </button>
-          </div>
-
-          {/* Liaison vers Keefon Rencontre. */}
-          <div className="headerActions">
-            <a href="/rencontres/france" className="rencontreLink">
-              Keefon Rencontre
-            </a>
-          </div>
+          <button
+            type="button"
+            className="searchToggle"
+            onClick={() => setIsSearchOpen((value) => !value)}
+            aria-expanded={isSearchOpen}
+          >
+            Recherche & rubriques
+          </button>
         </header>
 
         {isSearchOpen && (
@@ -648,11 +567,18 @@ export default function KeefonMusicPage() {
               </div>
             </div>
 
-            {/* Action secondaire : les résultats se mettent déjà à jour automatiquement. */}
             <div className="searchActions">
               <a href="/musique/proposer" className="secondary">
                 Diffuser une création
               </a>
+
+              <button
+                type="button"
+                className="primary"
+                onClick={() => setIsSearchOpen(false)}
+              >
+                Voir les résultats
+              </button>
             </div>
           </section>
         )}
@@ -734,13 +660,13 @@ export default function KeefonMusicPage() {
           <h2>Diffusez vos créations sur Keefon</h2>
 
           <p>
-            Vous pouvez proposer une création correspondant à nos rubriques : chanson à texte, album, promo Keefon ou voyage sonore. Le clip vidéo n’est pas obligatoire.
+        Vous pouvez proposer une chanson correspondant à nos catégories, un morceau audio, une ambiance sonore, un clip ou un projet plus narratif. Le clip vidéo n’est pas obligatoire.
 
-            Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
+Vous déposez simplement vos propres liens : YouTube, Suno, SoundCloud, Bandcamp, Spotify, TikTok ou autre plateforme.
           </p>
 
           <p>
-            Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
+           Keefon affiche une fiche de présentation, sans héberger vos fichiers audio ou vidéo. Vous gardez vos droits, vos plateformes, vos statistiques et vous pouvez retirer votre fiche vous-même quand vous le souhaitez.
           </p>
 
           <a href="/musique/proposer" className="primary">
@@ -758,27 +684,6 @@ export default function KeefonMusicPage() {
             installent une ambiance forte ou ouvrent une porte vers un univers
             original.
           </p>
-        </section>
-
-        {/* =====================================================================
-            LIEN TRANSVERSAL — KEEFON MUSIC → KEEFON RENCONTRE
-            Petit encart de bas de page.
-            À garder discret : il sert à proposer le retour vers Keefon Rencontre
-            sans voler la place aux créations musicales.
-            Pour changer la destination, modifier uniquement le href ci-dessous.
-        ====================================================================== */}
-        <section className="rencontreBottomBox" aria-label="Découvrir Keefon Rencontre">
-          <div>
-            <p className="rencontreBottomKicker">Keefon Rencontre</p>
-            <p className="rencontreBottomText">
-        
-Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fin 2026 pour les 2000 premiers inscrits, avec messagerie, chat et contacts inclus. Keefon ce prononce qui phone ?.
-            </p>
-          </div>
-
-          <a href="/rencontres/france" className="rencontreBottomButton">
-            Découvrir
-          </a>
         </section>
 
         <footer className="footer">
@@ -963,7 +868,7 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
 
                   <p>Auteur : {selectedAlbumInfo.public_author_name}</p>
                   <p>
-                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id, "Albums")}
+                    Rubrique : {getCategoryName(selectedAlbumInfo.category_id)}
                   </p>
                   <p>Type : Album</p>
                   <p>Plateforme : {platformLabel(selectedAlbumInfo.platform)}</p>
@@ -1025,14 +930,7 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
                   <p>Auteur : {selectedCreationInfo.public_author_name}</p>
                   <p>
                     Rubrique :{" "}
-                    {getCategoryName(
-                      selectedCreationInfo.category_id,
-                      getOfficialRubriqueName(
-                        getRubriqueSlugFromCreationType(
-                          selectedCreationInfo.creation_type
-                        )
-                      )
-                    )}
+                    {getCategoryName(selectedCreationInfo.category_id)}
                   </p>
                   <p>
                     Type :{" "}
@@ -1073,37 +971,13 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
         )}
 
         <style jsx global>{`
-          /* Base anti-débordement : évite les bandes blanches sur mobile. */
-          *,
-          *::before,
-          *::after {
-            box-sizing: border-box;
-          }
-
           html {
             scroll-behavior: smooth;
-            width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-          }
-
-          body,
-          #__next {
-            width: 100%;
-            min-height: 100%;
-            margin: 0;
-            overflow-x: hidden;
-            background: #050505;
           }
 
           .page {
-            width: 100%;
             min-height: 100vh;
-            overflow-x: hidden;
             color: white;
-            --yellowGreen: #E4FF02;
-            --paleGreen: #59FF72;
-            --tenderGreen: '#2CFF4B,
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -1118,116 +992,63 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
           .searchPanel,
           .box,
           .footer {
-            width: 100%;
-            max-width: 1050px;
+            width: min(100%, 1050px);
             margin-left: auto;
             margin-right: auto;
           }
 
-          /* Header : identité Music à gauche, lien Rencontre à droite.
-             Le bouton de recherche est rangé sous Keefon Music pour alléger le haut mobile. */
           .header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             gap: 12px;
             margin-bottom: 20px;
           }
 
-          .brandBlock {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            min-width: 0;
-          }
-
-          .headerActions {
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-end;
-            gap: 8px;
-            flex-shrink: 0;
-          }
-
-          /* Boutons du header : même forme, couleurs distinctes pour guider la navigation. */
-          .brand,
-          .searchToggle,
-          .rencontreLink {
-            min-height: 36px;
-            padding: 0 12px;
-            border-radius: 999px;
-            font-weight: 900;
-            cursor: pointer;
-            font-size: 0.82rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
-          }
-
-          /* Boutons Keefon Music + Recherche : jaune-vert Keefon Music. */
-          .brand,
-          .searchToggle {
-            color: var(--yellowGreen);
-            border: 1px solid rgba(228, 255, 2, 0.52);
-            background: rgba(228, 255, 2, 0.07);
-            box-shadow: 0 0 18px rgba(228, 255, 2, 0.05);
-          }
-
           .brand {
+            color: white;
+            text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            font-size: 0.76rem;
+            font-size: 0.78rem;
+            font-weight: 900;
           }
 
-          /* Bouton Keefon Rencontre : vert clair pour le différencier de Music. */
-          .rencontreLink {
-            color: var(--paleGreen);
-            border: 1px solid rgba(89, 255, 114, 0.52);
-            background: rgba(89, 255, 114, 0.07);
-            box-shadow: 0 0 18px rgba(89, 255, 114, 0.05);
-          }
-
-          .brand:hover,
-          .searchToggle:hover {
-            border-color: rgba(228, 255, 2, 0.82);
-            background: rgba(228, 255, 2, 0.12);
-          }
-
-          .rencontreLink:hover {
-            border-color: rgba(89, 255, 114, 0.82);
-            background: rgba(89, 255, 114, 0.12);
+          .searchToggle {
+            min-height: 38px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(245, 199, 109, 0.42);
+            background: rgba(0, 0, 0, 0.28);
+            color: white;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 0.84rem;
           }
 
           .searchPanel {
-            margin-bottom: 12px;
-            padding: 12px;
-            border-radius: 18px;
-            background: rgba(0, 0, 0, 0.58);
-            border: 1px solid rgba(245, 199, 109, 0.2);
+            margin-bottom: 18px;
+            padding: 16px;
+            border-radius: 22px;
+            background: rgba(0, 0, 0, 0.62);
+            border: 1px solid rgba(245, 199, 109, 0.22);
           }
 
           .searchPanel label {
             display: block;
-            font-size: 0.9rem;
             font-weight: 900;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
           }
 
           .searchPanel input {
             width: 100%;
-            min-width: 0;
-            margin-top: 7px;
-            padding: 10px 12px;
-            border-radius: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 8px;
+            padding: 13px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
             background: rgba(0, 0, 0, 0.42);
             color: white;
             font: inherit;
-            font-size: 0.9rem;
           }
 
           .miniLabel,
@@ -1236,72 +1057,39 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
             color: #f5c76d;
             text-transform: uppercase;
             letter-spacing: 0.16em;
-            font-size: 0.66rem;
+            font-size: 0.72rem;
             font-weight: 900;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
           }
 
-          /* Recherche > rubriques : petites capsules compactes.
-             Les résultats se filtrent automatiquement au clic, sans bouton “Voir les résultats”. */
           .badges {
             display: flex;
             flex-wrap: wrap;
-            gap: 7px;
+            gap: 10px;
           }
 
           .badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            min-height: 30px;
-            padding: 0 10px;
+            min-height: 36px;
+            padding: 0 13px;
             border-radius: 999px;
             border: 1px solid rgba(255, 255, 255, 0.16);
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.06),
-                rgba(255, 255, 255, 0.02)
-              ),
-              rgba(0, 0, 0, 0.22);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
             cursor: pointer;
-            font-weight: 900;
-            font-size: 0.74rem;
-            line-height: 1;
-            text-align: center;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
-            transition:
-              transform 0.16s ease,
-              border-color 0.16s ease,
-              background 0.16s ease;
-          }
-
-          .badge:hover {
-            transform: translateY(-1px);
-            border-color: rgba(245, 199, 109, 0.48);
-            background: rgba(255, 255, 255, 0.08);
+            font-weight: 800;
           }
 
           .badge.active {
-            background: linear-gradient(180deg, #ffd979, #f5c76d);
+            background: #f5c76d;
             color: #111;
             border-color: #f5c76d;
-            box-shadow: 0 7px 16px rgba(245, 199, 109, 0.12);
           }
 
           .searchActions {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-          }
-
-          .searchActions .secondary {
-            min-height: 32px;
-            padding: 0 12px;
-            border-radius: 999px;
-            font-size: 0.76rem;
+            gap: 10px;
+            margin-top: 18px;
           }
 
           .hero {
@@ -1388,7 +1176,6 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
 
           .thumbnail {
             width: 100%;
-            max-width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
@@ -1422,12 +1209,10 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
             font-weight: 800;
           }
 
-          /* Actions des cartes : sur desktop les boutons restent côte à côte. */
           .creationActions {
             display: flex;
             gap: 6px;
             align-items: center;
-            justify-content: flex-end;
           }
 
           .primary,
@@ -1494,70 +1279,8 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
             line-height: 1.6;
           }
 
-          /* =====================================================================
-             LIEN TRANSVERSAL — ENCADRÉ BAS DE PAGE VERS KEEFON RENCONTRE
-             Bloc discret et réutilisable.
-             Si tu veux le déplacer ou le recopier ailleurs, cherche :
-             rencontreBottomBox / rencontreBottomButton.
-          ====================================================================== */
-          .rencontreBottomBox {
-            width: 100%;
-            max-width: 1050px;
-            margin: 28px auto 0;
-            padding: 14px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(89, 255, 114, 0.26);
-            background: linear-gradient(135deg, rgba(89, 255, 114, 0.1), rgba(0, 0, 0, 0.34));
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-          }
-
-          .rencontreBottomKicker {
-            margin: 0 0 4px;
-            color: var(--paleGreen);
-            font-size: 0.78rem;
-            font-weight: 900;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-          }
-
-          .rencontreBottomText {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.82);
-            font-size: 0.92rem;
-            line-height: 1.45;
-          }
-
-          .rencontreBottomButton {
-            flex: 0 0 auto;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 34px;
-            padding: 0 15px;
-            border-radius: 999px;
-            border: 1px solid rgba(89, 255, 114, 0.72);
-            background: rgba(89, 255, 114, 0.16);
-            color: var(--paleGreen);
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 900;
-            white-space: nowrap;
-          }
-
-          .rencontreBottomButton:hover {
-            background: var(--paleGreen);
-            color: #071207;
-          }
-
           .footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 18px;
+            margin-top: 34px;
             opacity: 0.72;
             font-size: 0.9rem;
           }
@@ -1581,8 +1304,7 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
           .modal,
           .infoModal {
             position: relative;
-            width: 100%;
-            max-width: 960px;
+            width: min(100%, 960px);
             max-height: 90vh;
             overflow: auto;
             padding: 22px;
@@ -1592,7 +1314,7 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
           }
 
           .infoModal {
-            max-width: 620px;
+            width: min(100%, 620px);
           }
 
           .closeButton {
@@ -1708,112 +1430,30 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          /* Mobile : le lien Rencontre reste visible sans alourdir le haut de page. */
-          @media (max-width: 560px) {
-            .header {
-              align-items: flex-start;
-              gap: 8px;
-              margin-bottom: 16px;
-            }
-
-            .brandBlock {
-              gap: 8px;
-            }
-
-            .headerActions {
-              justify-content: flex-end;
-              max-width: 48%;
-            }
-
-            .brand,
-            .searchToggle,
-            .rencontreLink {
-              min-height: 30px;
-              padding: 0 10px;
-              font-size: 0.72rem;
-            }
-
-            .brand {
-              letter-spacing: 0.07em;
-            }
-
-            .rencontreLink {
-              white-space: normal;
-              text-align: center;
-              line-height: 1.05;
-            }
-
-            .rencontreBottomBox {
-              align-items: flex-start;
-              flex-direction: column;
-              gap: 12px;
-              padding: 13px 14px;
-              border-radius: 18px;
-            }
-
-            .rencontreBottomButton {
-              width: 100%;
-            }
-
-            .footer {
-              align-items: flex-start;
-              flex-direction: column;
-              gap: 6px;
-            }
-          }
-
-          /* Mobile : cartes compactes avec Lire au-dessus du bouton info.
-             On cible uniquement les boutons dans .creationActions pour ne pas
-             réduire les gros boutons de la page comme “Proposer une création”. */
-          @media (max-width: 560px) {
+          @media (max-width: 420px) {
             .albumCard,
             .creationCard {
-              grid-template-columns: 58px minmax(0, 1fr) 30px;
-              gap: 8px;
-              padding: 8px;
-              border-radius: 15px;
+              grid-template-columns: 68px 1fr;
             }
 
             .thumbnailWrap {
-              width: 58px;
-              border-radius: 12px;
-            }
-
-            .itemAuthor {
-              margin-bottom: 2px;
-              font-size: 0.72rem;
-            }
-
-            .itemTitle {
-              font-size: 0.82rem;
-              line-height: 1.12;
+              width: 68px;
             }
 
             .creationActions {
-              grid-column: 3 / 4;
-              grid-row: 1 / 2;
-              align-self: center;
-              justify-self: end;
-              flex-direction: column;
-              gap: 4px;
-              width: 30px;
+              grid-column: 2 / 3;
+              justify-content: flex-start;
             }
 
-            .creationActions .primary {
-              min-height: 20px;
-              padding: 0 6px;
-              font-size: 0.56rem;
-              line-height: 1;
+            .primary {
+              min-height: 36px;
+              padding: 0 12px;
             }
 
-            .creationActions .infoButton {
-              width: 20px;
-              min-width: 20px;
-              min-height: 20px;
-              height: 20px;
-              padding: 0;
-              font-size: 0.68rem;
-              line-height: 1;
+            .infoButton {
+              width: 36px;
+              min-width: 36px;
+              min-height: 36px;
             }
           }
 
@@ -1861,28 +1501,7 @@ Découvre aussi Keefon Rencontre : un espace bienveillant, gratuit jusqu’à fi
             }
 
             .searchPanel {
-              padding: 18px;
-            }
-
-            /* Desktop : capsules un peu plus confortables, sans redevenir massives. */
-            .badges {
-              gap: 9px;
-            }
-
-            .badge {
-              min-height: 34px;
-              padding: 0 14px;
-              font-size: 0.84rem;
-            }
-
-            .searchActions {
-              gap: 10px;
-            }
-
-            .searchActions .secondary {
-              min-height: 36px;
-              padding: 0 14px;
-              font-size: 0.84rem;
+              padding: 22px;
             }
           }
         `}</style>

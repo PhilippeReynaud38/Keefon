@@ -1,0 +1,30 @@
+{
+  "id": "/musique",
+  "name": "Keefon Music",
+  "short_name": "Keefon Music",
+  "description": "Des chansons comme des scènes de cinéma.",
+  "start_url": "/musique",
+  "scope": "/musique",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/icons/keefon-music-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/keefon-music-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/keefon-music-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
