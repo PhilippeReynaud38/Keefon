@@ -89,31 +89,6 @@ function FreeTopBarSpacer() {
   return <div className="h-[88px] sm:h-[84px] w-full" />;
 }
 
-/* ===========================  LIEN TRANSVERSAL — KEEFON MUSIC  ===========================
-   À COPIER SUR LES AUTRES PAGES RENCONTRES / VILLES :
-   - garder le href="/musique" ;
-   - garder les couleurs pour une identité cohérente ;
-   - changer seulement le texte si besoin : "Keefon Music", "Écouter Keefon Music", etc.
-   Ce bouton sert à relier Keefon Rencontre vers Keefon Music.
-============================================================================ */
-function KeefonMusicButton() {
-  return (
-    <Link
-      href="/musique"
-      aria-label="Découvrir Keefon Music"
-      title="Découvrir Keefon Music"
-      className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-black text-slate-950 shadow-lg transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30 sm:px-6 sm:py-2.5"
-      style={{
-        background: COLORS.yellowGreen,
-        border: "1px solid rgba(15, 23, 42, 0.22)",
-        boxShadow: "0 10px 22px rgba(0,0,0,.20)",
-      }}
-    >
-      🎵 Keefon Music
-    </Link>
-  );
-}
-
 /* ===========================  Carte rappel (même fond que le bandeau)  =========================== */
 function FreeReminderCard() {
   if (!FREE_MODE) return null;
@@ -414,20 +389,38 @@ Keefon France est un espace bienveillant pour rencontrer des célibataires parto
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                {/* ===========================  LIENS TRANSVERSAUX — KEEFON RENCONTRE / KEEFON MUSIC  ===========================
+                   À COPIER SUR LES AUTRES PAGES RENCONTRES / VILLES :
+                   - garder le bouton vert pour Keefon Rencontre ;
+                   - garder le bouton jaune-vert pour Keefon Music ;
+                   - adapter uniquement les textes si besoin selon la page.
+                   Ces boutons servent à relier clairement les deux univers Keefon.
+                ============================================================================================================ */}
                 <a
                   href="/signup"
-                  aria-label="Découvrir Keefon gratuitement"
-                  title="Découvrir Keefon gratuitement"
+                  aria-label="Découvrir Keefon Rencontre gratuitement"
+                  title="Découvrir Keefon Rencontre gratuitement"
                   className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
                   style={{ background: COLORS.paleGreen }}
                 >
-                  Je découvre Keefon
+                  Keefon Rencontre
                 </a>
 
-                {/* BOUTON TRANSVERSAL KEEFON MUSIC — copie ce bloc sur les pages villes si tu veux le même lien */}
-                <KeefonMusicButton />
+                <Link
+                  href="/musique"
+                  aria-label="Découvrir Keefon Music"
+                  title="Découvrir Keefon Music"
+                  className="inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-extrabold text-slate-900 shadow transition transform-gpu hover:-translate-y-[1px] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-slate-900/30"
+                  style={{
+                    background: COLORS.yellowGreen,
+                    border: "1px solid rgba(15, 23, 42, 0.22)",
+                  }}
+                >
+                  <span aria-hidden="true" className="mr-2">♫</span>
+                  Keefon Music
+                </Link>
 
-                <p className="text-xs text-slate-700">
+                <p className="w-full text-center text-xs text-slate-700">
                   Inscription en quelques minutes. Tu restes maître de ce que tu
                   partages.
                 </p>
