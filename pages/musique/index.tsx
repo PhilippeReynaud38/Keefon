@@ -634,7 +634,39 @@ export default function KeefonMusicPage() {
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-        <link rel="apple-touch-icon" href="/icons/keefon-music-192.png" />
+        {/* =====================================================================
+            MODIFICATION FAVICON — KEEFON MUSIC
+            Petit logo affiché dans l’onglet du navigateur sur /musique.
+            Le paramètre ?v=music-6 force Chrome à abandonner l’ancien favicon en cache.
+
+            Fichiers nécessaires dans /public/icons :
+            - keefon-music.ico
+            - keefon-music-32.png
+            - keefon-music-192.png
+        ====================================================================== */}
+        <link
+          rel="icon"
+          href="/icons/keefon-music.ico?v=music-6"
+          sizes="any"
+          key="keefon-music-favicon-ico"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/icons/keefon-music-32.png?v=music-6"
+          key="keefon-music-favicon-32"
+        />
+        <link
+          rel="shortcut icon"
+          href="/icons/keefon-music.ico?v=music-6"
+          key="keefon-music-shortcut-icon"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/icons/keefon-music-192.png?v=music-6"
+          key="keefon-music-apple-touch-icon"
+        />
       </Head>
 
       <main className="page">
@@ -1465,8 +1497,8 @@ export default function KeefonMusicPage() {
           }
 
           /* MODIFICATION — CARTES SANS BOUTON LIRE
-             La miniature devient le déclencheur de lecture.
-             On garde .thumbnailWrap pour ne pas casser le style existant. */
+             La miniature reste le déclencheur de lecture, mais sans icône ajoutée.
+             Objectif : image plus propre, cartes plus sobres, aucune pastille “play”. */
           .thumbnailButton {
             position: relative;
             padding: 0;
@@ -1478,26 +1510,8 @@ export default function KeefonMusicPage() {
               box-shadow 0.16s ease;
           }
 
-          .thumbnailButton::after {
-            content: "▶";
-            position: absolute;
-            right: 6px;
-            bottom: 6px;
-            width: 22px;
-            height: 22px;
-            border-radius: 999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-left: 2px;
-            background: rgba(245, 199, 109, 0.92);
-            color: #111;
-            font-size: 0.62rem;
-            font-weight: 900;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-            opacity: 0.92;
-          }
-
+          /* MODIFICATION — CARTES SANS BOUTON LIRE
+             Icône play retirée : le clic / tap sur l’image suffit. */
           .thumbnailButton:hover,
           .thumbnailButton:focus-visible {
             transform: translateY(-1px);
