@@ -1,4 +1,12 @@
 
+
+ATTENTION POUR LA CREATION DES PROCHAINES TABLE  : 
+
+ 	1. GRANT pour que l’API puisse accéder à la table
+ 	2. RLS policy pour contrôler précisément les droits
+
+
+
 --- LA PAGE  :  pages/musique/proposer.tsx   ==>
 
 
