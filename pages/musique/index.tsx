@@ -820,6 +820,23 @@ export default function KeefonMusicPage() {
         </section>
 
         {/* =====================================================================
+            MODIFICATION — DROITS DES ŒUVRES
+            Encadré ajouté pour rappeler que les créations présentées ne sont
+            pas libres de droit. Il est placé près du bas de page pour informer
+            sans alourdir la liste des créations.
+        ====================================================================== */}
+        <section className="rightsNotice" aria-label="Droits des œuvres présentées">
+          <p className="rightsNoticeKicker">Droits des œuvres</p>
+          <p className="rightsNoticeText">
+            Les créations présentées sur Keefon Music ne sont pas libres de droit.
+            Elles restent la propriété de leurs auteurs, créateurs, fabricants ou
+            ayants droit. Keefon les met en lumière sans revendiquer de droit de
+            propriété : toute reproduction, réutilisation, modification ou diffusion
+            sans autorisation est interdite.
+          </p>
+        </section>
+
+        {/* =====================================================================
             LIEN TRANSVERSAL — KEEFON MUSIC → KEEFON RENCONTRE
             Petit encart de bas de page.
             À garder discret : il sert à proposer le retour vers Keefon Rencontre
@@ -1447,6 +1464,48 @@ export default function KeefonMusicPage() {
             justify-content: center;
           }
 
+          /* MODIFICATION — CARTES SANS BOUTON LIRE
+             La miniature devient le déclencheur de lecture.
+             On garde .thumbnailWrap pour ne pas casser le style existant. */
+          .thumbnailButton {
+            position: relative;
+            padding: 0;
+            color: inherit;
+            cursor: pointer;
+            transition:
+              transform 0.16s ease,
+              border-color 0.16s ease,
+              box-shadow 0.16s ease;
+          }
+
+          .thumbnailButton::after {
+            content: "▶";
+            position: absolute;
+            right: 6px;
+            bottom: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 2px;
+            background: rgba(245, 199, 109, 0.92);
+            color: #111;
+            font-size: 0.62rem;
+            font-weight: 900;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+            opacity: 0.92;
+          }
+
+          .thumbnailButton:hover,
+          .thumbnailButton:focus-visible {
+            transform: translateY(-1px);
+            border-color: rgba(245, 199, 109, 0.72);
+            box-shadow: 0 0 0 3px rgba(245, 199, 109, 0.12);
+            outline: none;
+          }
+
           .thumbnail {
             width: 100%;
             max-width: 100%;
@@ -1553,6 +1612,37 @@ export default function KeefonMusicPage() {
 
           p {
             line-height: 1.6;
+          }
+
+          /* =====================================================================
+             MODIFICATION — DROITS DES ŒUVRES
+             Style de l’encadré juridique discret : visible, mais moins dominant
+             que les blocs créateurs / concept.
+          ====================================================================== */
+          .rightsNotice {
+            width: 100%;
+            max-width: 1050px;
+            margin: 22px auto 0;
+            padding: 14px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 199, 109, 0.24);
+            background: linear-gradient(135deg, rgba(245, 199, 109, 0.08), rgba(0, 0, 0, 0.34));
+          }
+
+          .rightsNoticeKicker {
+            margin: 0 0 5px;
+            color: #f5c76d;
+            font-size: 0.76rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+          }
+
+          .rightsNoticeText {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.88rem;
+            line-height: 1.45;
           }
 
           /* =====================================================================
@@ -1823,13 +1913,15 @@ export default function KeefonMusicPage() {
             }
           }
 
-          /* Mobile : cartes compactes avec Lire au-dessus du bouton info.
-             On cible uniquement les boutons dans .creationActions pour ne pas
-             réduire les gros boutons de la page comme “Proposer une création”. */
+          /* MODIFICATION — CARTES SANS BOUTON LIRE
+             Mobile : cartes compactes avec uniquement le bouton info à droite.
+             La lecture se fait désormais par clic / tap sur la miniature. */
           @media (max-width: 560px) {
             .albumCard,
             .creationCard {
-              grid-template-columns: 58px minmax(0, 1fr) 30px;
+              /* MODIFICATION — CARTES SANS BOUTON LIRE
+                 Colonne droite réduite : elle ne contient plus que le bouton info. */
+              grid-template-columns: 58px minmax(0, 1fr) 22px;
               gap: 8px;
               padding: 8px;
               border-radius: 15px;
@@ -1857,14 +1949,7 @@ export default function KeefonMusicPage() {
               justify-self: end;
               flex-direction: column;
               gap: 4px;
-              width: 30px;
-            }
-
-            .creationActions .primary {
-              min-height: 20px;
-              padding: 0 6px;
-              font-size: 0.56rem;
-              line-height: 1;
+              width: 22px;
             }
 
             .creationActions .infoButton {
@@ -1963,7 +2048,15 @@ function AlbumCard({
 }) {
   return (
     <article className="albumCard">
-      <div className="thumbnailWrap">
+      {/* MODIFICATION — CARTES SANS BOUTON LIRE
+          Un clic / tap sur la miniature lance maintenant la lecture de l’album. */}
+      <button
+        type="button"
+        className="thumbnailWrap thumbnailButton"
+        onClick={onOpen}
+        aria-label={`Lire l’album ${album.album_title}`}
+        title="Lire"
+      >
         {album.cover_thumbnail_url ? (
           <img
             src={album.cover_thumbnail_url}
@@ -1974,7 +2067,7 @@ function AlbumCard({
         ) : (
           <span className="thumbnailFallback">Keefon Music</span>
         )}
-      </div>
+      </button>
 
       <div className="creationText">
         <p className="itemAuthor">Auteur : {album.public_author_name}</p>
@@ -1982,10 +2075,6 @@ function AlbumCard({
       </div>
 
       <div className="creationActions">
-        <button type="button" className="primary" onClick={onOpen}>
-          Lire
-        </button>
-
         <button
           type="button"
           className="infoButton"
@@ -2011,7 +2100,15 @@ function CreationCard({
 }) {
   return (
     <article className="creationCard">
-      <div className="thumbnailWrap">
+      {/* MODIFICATION — CARTES SANS BOUTON LIRE
+          Un clic / tap sur la miniature lance maintenant la lecture de la création. */}
+      <button
+        type="button"
+        className="thumbnailWrap thumbnailButton"
+        onClick={onOpen}
+        aria-label={`Lire ${creation.title}`}
+        title="Lire"
+      >
         {creation.thumbnail_url ? (
           <img
             src={creation.thumbnail_url}
@@ -2022,7 +2119,7 @@ function CreationCard({
         ) : (
           <span className="thumbnailFallback">Keefon Music</span>
         )}
-      </div>
+      </button>
 
       <div className="creationText">
         <p className="itemAuthor">Auteur : {creation.public_author_name}</p>
@@ -2030,10 +2127,6 @@ function CreationCard({
       </div>
 
       <div className="creationActions">
-        <button type="button" className="primary" onClick={onOpen}>
-          Lire
-        </button>
-
         <button
           type="button"
           className="infoButton"
