@@ -2,18 +2,10 @@ import Head from "next/head";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { createClient, Session } from "@supabase/supabase-js";
 
-// ============================================================
-// Configuration Supabase
-// ============================================================
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-// ============================================================
-// Types utilisés par la page
-// ============================================================
 
 type AuthMode = "login" | "signup";
 
@@ -33,10 +25,6 @@ type MusicCategory = {
   description: string | null;
   sort_order: number;
 };
-
-// ============================================================
-// Outils : détection de plateforme et génération d'embed
-// ============================================================
 
 function detectPlatform(url: string) {
   const lowerUrl = url.toLowerCase();
@@ -89,77 +77,15 @@ function buildEmbedUrl(url: string) {
   return "";
 }
 
-
 // ============================================================
-// Rubriques officielles Keefon Music
-// ------------------------------------------------------------
-// Objectif : éviter les doublons entre anciens noms, types techniques
-// et rubriques visibles. Même si Supabase contient encore d'anciens
-// libellés, la page propose seulement ces 4 rubriques propres.
+// MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+// Ces helpers servent uniquement au formulaire de dépôt :
+// - détecter si la rubrique choisie correspond à Albums ;
+// - générer un album_slug stable pour regrouper les pistes.
 // ============================================================
 
-const officialRubriques = [
-  {
-    name: "Chansons à texte",
-    slug: "chansons-a-texte",
-    aliases: [
-      "chansons-a-texte",
-      "chansons a texte",
-      "chanson",
-      "chansons",
-      "song",
-      "clip",
-      "clips",
-      "satire",
-      "autre",
-      "other",
-    ],
-  },
-  {
-    name: "Albums",
-    slug: "albums",
-    aliases: [
-      "albums",
-      "album",
-      "album narratif",
-      "album visuel",
-      "visual_album",
-      "experimentation ia",
-      "experimentations ia",
-      "experiences ia",
-      "ai_experiment",
-    ],
-  },
-  {
-    name: "Promos Keefon",
-    slug: "promos-keefon",
-    aliases: [
-      "promos-keefon",
-      "promo keefon",
-      "promos keefon",
-      "promotion keefon",
-      "promotions keefon",
-      "createurs invites",
-      "créateurs invités",
-    ],
-  },
-  {
-    name: "Voyages sonores",
-    slug: "voyages-sonores",
-    aliases: [
-      "voyages-sonores",
-      "voyage sonore",
-      "voyages sonores",
-      "paysage sonore",
-      "paysages sonores",
-      "soundscape",
-      "univers imaginaires",
-    ],
-  },
-];
-
-function normalizeRubriqueText(value: string) {
-  return value
+function normalizeForAlbumCheck(value: string | null | undefined) {
+  return (value || "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -170,23 +96,25 @@ function normalizeRubriqueText(value: string) {
     .trim();
 }
 
-function findOfficialRubrique(category: Pick<MusicCategory, "name" | "slug">) {
-  const normalizedName = normalizeRubriqueText(category.name);
-  const normalizedSlug = normalizeRubriqueText(category.slug);
+function isAlbumCategory(category: Pick<MusicCategory, "name" | "slug"> | null | undefined) {
+  const normalizedName = normalizeForAlbumCheck(category?.name);
+  const normalizedSlug = normalizeForAlbumCheck(category?.slug);
 
-  return officialRubriques.find((rubrique) => {
-    const normalizedAliases = rubrique.aliases.map(normalizeRubriqueText);
-
-    return (
-      normalizedAliases.includes(normalizedName) ||
-      normalizedAliases.includes(normalizedSlug)
-    );
-  });
+  return (
+    normalizedName.includes("album") ||
+    normalizedSlug.includes("album") ||
+    normalizedName.includes("experience ia") ||
+    normalizedName.includes("experimentation ia") ||
+    normalizedSlug.includes("experience ia") ||
+    normalizedSlug.includes("experimentation ia")
+  );
 }
 
-// ============================================================
-// Outil : vérification minimale du mot de passe
-// ============================================================
+function slugifyAlbumTitle(value: string) {
+  return normalizeForAlbumCheck(value)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 function isPasswordStrong(password: string) {
   const hasMinimumLength = password.length >= 8;
@@ -197,26 +125,14 @@ function isPasswordStrong(password: string) {
 }
 
 export default function ProposerCreationMusiquePage() {
-  // ============================================================
-  // États : session, profil créateur et catégories
-  // ============================================================
-
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<MusicProfile | null>(null);
   const [categories, setCategories] = useState<MusicCategory[]>([]);
-
-  // ============================================================
-  // États : formulaire de connexion / inscription
-  // ============================================================
 
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  // ============================================================
-  // États : messages et chargements
-  // ============================================================
 
   const [pageMessage, setPageMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -226,30 +142,26 @@ export default function ProposerCreationMusiquePage() {
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  // Le formulaire de dépôt est disponible seulement avec un profil créateur valide.
+  // ============================================================
+  // MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+  // On garde en mémoire le type et la rubrique sélectionnés pour
+  // afficher le bloc album seulement quand il est utile.
+  // ============================================================
+
+  const [selectedCreationType, setSelectedCreationType] = useState("song");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+
+  const selectedCategory = useMemo(() => {
+    return categories.find((category) => category.id === selectedCategoryId) || null;
+  }, [categories, selectedCategoryId]);
+
+  const shouldShowAlbumFields = useMemo(() => {
+    return selectedCreationType === "visual_album" || isAlbumCategory(selectedCategory);
+  }, [selectedCreationType, selectedCategory]);
+
   const canSubmit = useMemo(() => {
     return Boolean(session && profile && profile.creator_status !== "blocked");
   }, [session, profile]);
-
-  // Rubriques affichées dans le formulaire.
-  // On part toujours des 4 rubriques officielles, puis on les relie
-  // aux éventuelles lignes Supabase existantes pour conserver category_id.
-  const availableRubriques = useMemo(() => {
-    return officialRubriques.map((rubrique) => {
-      const matchingCategory = categories.find((category) => {
-        return findOfficialRubrique(category)?.slug === rubrique.slug;
-      });
-
-      return {
-        ...rubrique,
-        categoryId: matchingCategory?.id || "",
-      };
-    });
-  }, [categories]);
-
-  // ============================================================
-  // Chargement initial + écoute de l'état de connexion Supabase
-  // ============================================================
 
   useEffect(() => {
     loadInitialData();
@@ -333,10 +245,6 @@ export default function ProposerCreationMusiquePage() {
     setProfile((data as MusicProfile) || null);
   }
 
-  // ============================================================
-  // Connexion / inscription créateur
-  // ============================================================
-
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -403,10 +311,6 @@ export default function ProposerCreationMusiquePage() {
     setPageMessage("Compte créé. Tu peux maintenant créer ton espace créateur.");
   }
 
-  // ============================================================
-  // Création / déconnexion de l'espace créateur
-  // ============================================================
-
   async function handleCreateCreatorSpace() {
     setIsCreatingProfile(true);
     setErrorMessage("");
@@ -440,10 +344,6 @@ export default function ProposerCreationMusiquePage() {
     setErrorMessage("");
   }
 
-  // ============================================================
-  // Envoi d'une création en attente de validation admin
-  // ============================================================
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -472,17 +372,23 @@ export default function ProposerCreationMusiquePage() {
     const description = String(formData.get("description") || "").trim();
     const authorNote = String(formData.get("author_note") || "").trim();
     const externalUrl = String(formData.get("external_url") || "").trim();
-    const selectedRubriqueSlug = String(
-      formData.get("rubrique_slug") || "chansons-a-texte"
-    );
-    const selectedRubrique = availableRubriques.find(
-      (rubrique) => rubrique.slug === selectedRubriqueSlug
-    );
+    const creationType = String(formData.get("creation_type") || "other");
+    const categoryId = String(formData.get("category_id") || "");
 
-    // On garde un champ technique cohérent avec les rubriques visibles.
-    // category_id est renseigné seulement si la rubrique existe déjà dans Supabase.
-    const creationType = selectedRubriqueSlug;
-    const categoryId = selectedRubrique?.categoryId || "";
+    // ============================================================
+    // MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+    // Si la création est classée dans Albums, on récupère le titre
+    // de l’album et le numéro de piste pour regrouper les morceaux.
+    // ============================================================
+
+    const albumTitle = String(formData.get("album_title") || "").trim();
+    const trackNumberRaw = String(formData.get("track_number") || "").trim();
+    const parsedTrackNumber = trackNumberRaw ? Number(trackNumberRaw) : null;
+    const trackNumber = parsedTrackNumber;
+    const selectedCategoryForSubmit =
+      categories.find((category) => category.id === categoryId) || null;
+    const isAlbumSubmission =
+      creationType === "visual_album" || isAlbumCategory(selectedCategoryForSubmit);
 
     const rightsConfirmed = formData.get("rights_confirmed") === "on";
     const diffusionAgreed = formData.get("diffusion_agreed") === "on";
@@ -490,6 +396,28 @@ export default function ProposerCreationMusiquePage() {
 
     if (!title || !publicAuthorName || !description || !externalUrl) {
       setErrorMessage("Merci de remplir tous les champs obligatoires.");
+      return;
+    }
+
+    // ============================================================
+    // MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+    // Une piste classée dans Albums doit avoir au minimum un nom
+    // d’album. Le numéro de piste reste optionnel, mais s’il est
+    // renseigné il doit être un nombre entier positif.
+    // ============================================================
+
+    if (isAlbumSubmission && !albumTitle) {
+      setErrorMessage("Indique le nom de l’album pour ranger cette piste.");
+      return;
+    }
+
+    if (
+      trackNumberRaw &&
+      (parsedTrackNumber === null ||
+        !Number.isInteger(parsedTrackNumber) ||
+        parsedTrackNumber < 1)
+    ) {
+      setErrorMessage("Le numéro de piste doit être un nombre entier positif.");
       return;
     }
 
@@ -514,6 +442,12 @@ export default function ProposerCreationMusiquePage() {
       platform,
       creation_type: creationType,
       category_id: categoryId || null,
+      // MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+      // Ces champs permettent à /musique de regrouper plusieurs
+      // créations dans une seule carte album.
+      album_title: albumTitle || null,
+      album_slug: albumTitle ? slugifyAlbumTitle(albumTitle) : null,
+      track_number: trackNumber,
       status: "pending",
       rights_confirmed: rightsConfirmed,
       diffusion_agreed: diffusionAgreed,
@@ -529,6 +463,10 @@ export default function ProposerCreationMusiquePage() {
     }
 
     form.reset();
+    // MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+    // Après envoi, on remet les sélecteurs contrôlés à leur état initial.
+    setSelectedCreationType("song");
+    setSelectedCategoryId("");
 
     setPageMessage(
       "Création envoyée. Elle apparaît maintenant en attente de validation admin."
@@ -541,14 +479,11 @@ export default function ProposerCreationMusiquePage() {
         <title>Proposer une création — Keefon Music</title>
         <meta
           name="description"
-          content="Proposer une création musicale narrative ou immersive sur Keefon Music."
+          content="Proposer une chanson, un clip ou une création narrative sur Keefon Music."
         />
       </Head>
 
       <main className="page">
-        {/* ============================================================
-            En-tête : logo + navigation simple
-        ============================================================ */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -556,7 +491,7 @@ export default function ProposerCreationMusiquePage() {
 
           <nav>
             <a href="/musique">Retour musique</a>
-            <a href="/musique/mes-creations">Mes créations</a>
+<a href="/musique/mes-creations">Mes créations</a>
             {session && (
               <button type="button" onClick={handleLogout}>
                 Déconnexion
@@ -565,9 +500,6 @@ export default function ProposerCreationMusiquePage() {
           </nav>
         </header>
 
-        {/* ============================================================
-            Bloc principal : présentation + connexion + formulaire
-        ============================================================ */}
         <section className="box">
           <p className="label">Créateurs</p>
 
@@ -585,7 +517,6 @@ export default function ProposerCreationMusiquePage() {
             une fiche, une description et un lien vers la source.
           </p>
 
-          {/* Explication du fonctionnement du dépôt */}
           <div className="infoBox">
             <h2>Comment fonctionne le dépôt ?</h2>
 
@@ -611,12 +542,10 @@ export default function ProposerCreationMusiquePage() {
             </p>
           </div>
 
-          {/* Messages utilisateur */}
           {isLoading && <p className="notice">Chargement...</p>}
           {errorMessage && <p className="error">{errorMessage}</p>}
           {pageMessage && <p className="success">{pageMessage}</p>}
 
-          {/* Connexion / création de compte */}
           {!session && !isLoading && (
             <div className="authBox">
               <div className="authTabs">
@@ -704,7 +633,6 @@ export default function ProposerCreationMusiquePage() {
             </div>
           )}
 
-          {/* Création du profil créateur après connexion */}
           {session && !isLoading && !profile && (
             <div className="connectedBox">
               <h2>Créer mon espace créateur</h2>
@@ -732,7 +660,6 @@ export default function ProposerCreationMusiquePage() {
             </div>
           )}
 
-          {/* Résumé du compte connecté */}
           {session && profile && (
             <div className="connectedBox">
               <p>
@@ -753,7 +680,6 @@ export default function ProposerCreationMusiquePage() {
             </p>
           )}
 
-          {/* Formulaire de proposition de création */}
           {canSubmit && (
             <form onSubmit={handleSubmit} className="proposalForm">
               <h2>Fiche de création</h2>
@@ -780,24 +706,83 @@ export default function ProposerCreationMusiquePage() {
                 </label>
 
                 <label>
-                  Rubrique souhaitée *
-                  <select name="rubrique_slug" defaultValue="chansons-a-texte" required>
-                    {availableRubriques.map((rubrique) => (
-                      <option key={rubrique.slug} value={rubrique.slug}>
-                        {rubrique.name}
+                  Type de création *
+                  <select
+                    name="creation_type"
+                    value={selectedCreationType}
+                    onChange={(event) => setSelectedCreationType(event.target.value)}
+                    required
+                  >
+                    <option value="song">Chanson</option>
+                    <option value="clip">Clip</option>
+                    <option value="visual_album">Album visuel</option>
+                    <option value="soundscape">Paysage sonore</option>
+                    <option value="ai_experiment">Expérimentation IA</option>
+                    <option value="other">Autre</option>
+                  </select>
+                </label>
+
+                <label>
+                  Rubrique souhaitée
+                  <select
+                    name="category_id"
+                    value={selectedCategoryId}
+                    onChange={(event) => setSelectedCategoryId(event.target.value)}
+                  >
+                    <option value="">Aucune / à classer par Keefon</option>
+
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
                       </option>
                     ))}
                   </select>
                 </label>
+              </div>
 
-                <div className="rubriqueHelp">
-                  <strong>Rubriques officielles</strong>
-                  <p>
-                    Chansons à texte, Albums, Promos Keefon et Voyages sonores.
-                    Les anciennes appellations sont volontairement regroupées pour éviter les doublons.
+              {/* ============================================================
+                  MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+                  Ce bloc réapparaît quand l’utilisateur choisit le type
+                  “Album visuel” ou une rubrique correspondant à Albums.
+                  Il sert à regrouper plusieurs pistes dans une même carte
+                  album sur la page publique.
+              ============================================================ */}
+              {shouldShowAlbumFields && (
+                <div className="albumFields">
+                  <div className="albumFieldsHeader">
+                    <strong>Rangement dans un album</strong>
+                    <span>Option utile pour CALME, albums visuels ou suites de pistes.</span>
+                  </div>
+
+                  <div className="formGrid">
+                    <label>
+                      Nom de l’album *
+                      <input
+                        name="album_title"
+                        type="text"
+                        placeholder="Ex : CALME"
+                        required={shouldShowAlbumFields}
+                      />
+                    </label>
+
+                    <label>
+                      Numéro de piste
+                      <input
+                        name="track_number"
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="Ex : 1"
+                      />
+                    </label>
+                  </div>
+
+                  <p className="notice">
+                    Utilise toujours le même nom d’album pour regrouper les pistes
+                    ensemble. Exemple : “CALME” pour toutes les pistes du projet CALME.
                   </p>
                 </div>
-              </div>
+              )}
 
               <label>
                 Lien externe *
@@ -881,43 +866,15 @@ export default function ProposerCreationMusiquePage() {
         </section>
 
         <style jsx global>{`
-          /* ============================================================
-             Correctif global mobile : évite les bandes blanches
-             causées par les blocs/paddings qui dépassent la largeur.
-          ============================================================ */
           html {
             scroll-behavior: smooth;
-          }
-
-          html,
-          body,
-          #__next {
-            width: 100%;
-            min-height: 100%;
-            margin: 0;
-            background: #05070a;
-            overflow-x: hidden;
-          }
-
-          *,
-          *::before,
-          *::after {
-            box-sizing: border-box;
           }
         `}</style>
 
         <style jsx>{`
-          /* ============================================================
-             Page : fond musical + protection contre le débordement mobile
-          ============================================================ */
           .page {
             min-height: 100vh;
-            min-height: 100svh;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden;
             color: white;
-            background-color: #05070a;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -926,13 +883,9 @@ export default function ProposerCreationMusiquePage() {
             padding: 32px 24px 80px;
           }
 
-          /* ============================================================
-             Structure principale : header + grande carte centrale
-          ============================================================ */
           .header,
           .box {
-            width: 100%;
-            max-width: 1050px;
+            width: min(100%, 1050px);
             margin-left: auto;
             margin-right: auto;
           }
@@ -962,7 +915,6 @@ export default function ProposerCreationMusiquePage() {
 
           nav a,
           nav button {
-            max-width: 100%;
             color: white;
             text-decoration: none;
             background: rgba(255, 255, 255, 0.08);
@@ -979,9 +931,6 @@ export default function ProposerCreationMusiquePage() {
             padding: 42px;
           }
 
-          /* ============================================================
-             Titres et textes
-          ============================================================ */
           .label {
             color: #f5c76d;
             text-transform: uppercase;
@@ -1007,18 +956,6 @@ export default function ProposerCreationMusiquePage() {
             line-height: 1.7;
           }
 
-          p,
-          h1,
-          h2,
-          label,
-          span,
-          strong {
-            overflow-wrap: anywhere;
-          }
-
-          /* ============================================================
-             Blocs d'information
-          ============================================================ */
           .infoBox {
             margin-top: 26px;
             padding: 22px 24px;
@@ -1057,13 +994,40 @@ export default function ProposerCreationMusiquePage() {
           }
 
           /* ============================================================
-             Cartes internes : authentification, formulaire, compte connecté
+             MODIFICATION — RANGEMENT DES PISTES DANS UN ALBUM
+             Style du bloc conditionnel qui permet de renseigner
+             l’album et le numéro de piste sans alourdir le formulaire
+             quand la rubrique n’est pas Albums.
           ============================================================ */
+          .albumFields {
+            margin: 8px 0 22px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(80, 220, 140, 0.08);
+            border: 1px solid rgba(80, 220, 140, 0.26);
+          }
+
+          .albumFieldsHeader {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+          }
+
+          .albumFieldsHeader strong {
+            color: #59ff72;
+            font-size: 1.05rem;
+          }
+
+          .albumFieldsHeader span {
+            opacity: 0.78;
+            line-height: 1.5;
+          }
+
           .authBox,
           .loginForm,
           .proposalForm,
           .connectedBox {
-            max-width: 100%;
             margin-top: 28px;
             padding: 24px;
             border-radius: 22px;
@@ -1097,44 +1061,10 @@ export default function ProposerCreationMusiquePage() {
             color: #111;
           }
 
-          /* ============================================================
-             Formulaires
-          ============================================================ */
           .formGrid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
-          }
-
-          .formGrid > label,
-          .rubriqueHelp {
-            min-width: 0;
-          }
-
-          .rubriqueHelp {
-            margin-bottom: 16px;
-            padding: 14px 16px;
-            border-radius: 16px;
-            background: rgba(245, 199, 109, 0.08);
-            border: 1px solid rgba(245, 199, 109, 0.22);
-          }
-
-          .rubriqueHelp strong {
-            display: block;
-            margin-bottom: 6px;
-            color: #f5c76d;
-          }
-
-          .rubriqueHelp p {
-            margin: 0;
-            line-height: 1.55;
-            opacity: 0.86;
-          }
-
-          @media (min-width: 801px) {
-            .rubriqueHelp {
-              align-self: end;
-            }
           }
 
           label {
@@ -1147,8 +1077,6 @@ export default function ProposerCreationMusiquePage() {
           select,
           textarea {
             width: 100%;
-            max-width: 100%;
-            min-width: 0;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -1168,7 +1096,6 @@ export default function ProposerCreationMusiquePage() {
 
           .passwordField {
             position: relative;
-            min-width: 0;
           }
 
           .passwordField input {
@@ -1211,18 +1138,13 @@ export default function ProposerCreationMusiquePage() {
           .checks input {
             width: auto;
             margin-top: 6px;
-            flex: 0 0 auto;
           }
 
-          /* ============================================================
-             Boutons et messages
-          ============================================================ */
           .primary {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-height: 46px;
-            max-width: 100%;
             padding: 0 22px;
             border-radius: 999px;
             border: 0;
@@ -1258,96 +1180,24 @@ export default function ProposerCreationMusiquePage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          /* ============================================================
-             Responsive tablette / mobile
-          ============================================================ */
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              background-position: center top;
-              padding: 24px 12px 60px;
+              padding: 24px 18px 60px;
             }
 
             .header {
-              width: 100%;
               align-items: flex-start;
               flex-direction: column;
-              gap: 14px;
-              margin-bottom: 34px;
-            }
-
-            nav {
-              width: 100%;
-              gap: 8px;
-            }
-
-            nav a,
-            nav button {
-              padding: 8px 10px;
-              font-size: 0.84rem;
+              margin-bottom: 45px;
             }
 
             .box {
-              padding: 22px 14px;
-              border-radius: 22px;
-            }
-
-            h1 {
-              font-size: clamp(2rem, 12vw, 3.25rem);
-              line-height: 1;
-            }
-
-            h2 {
-              font-size: 1.35rem;
-            }
-
-            .infoBox,
-            .rightsNotice,
-            .authBox,
-            .loginForm,
-            .proposalForm,
-            .connectedBox {
-              padding: 16px 14px;
-              border-radius: 18px;
+              padding: 28px;
             }
 
             .formGrid {
               grid-template-columns: 1fr;
-              gap: 0;
-            }
-
-            input,
-            select,
-            textarea {
-              font-size: 16px;
-              padding: 12px 12px;
-            }
-
-            .primary {
-              width: 100%;
-              min-height: 44px;
-              text-align: center;
-            }
-          }
-
-          /* Très petits mobiles : on serre encore un peu sans casser la lisibilité. */
-          @media (max-width: 380px) {
-            .page {
-              padding: 20px 10px 52px;
-            }
-
-            .box {
-              padding: 20px 12px;
-            }
-
-            .authTabs {
-              gap: 8px;
-            }
-
-            .tab {
-              min-height: 38px;
-              padding: 0 12px;
-              font-size: 0.86rem;
             }
           }
         `}</style>

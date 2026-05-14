@@ -94,125 +94,21 @@ function statusClass(status: MusicCreation["status"]) {
   }
 }
 
-// ============================================================
-// Rubriques officielles Keefon Music
-// ------------------------------------------------------------
-// On garde volontairement peu de rubriques pour éviter les doublons
-// et les libellés trop proches dans l'interface admin.
-// Les anciens noms venant de Supabase sont normalisés plus bas.
-// ============================================================
-type OfficialRubrique = {
-  name: string;
-  slug: string;
-};
-
-const OFFICIAL_RUBRIQUES: OfficialRubrique[] = [
-  { name: "Chansons à texte", slug: "chansons-a-texte" },
-  { name: "Albums", slug: "albums" },
-  { name: "Promos Keefon", slug: "promos-keefon" },
-  { name: "Voyages sonores", slug: "voyages-sonores" },
-];
-
-function slugifyRubrique(value: string | null | undefined) {
-  return (value || "")
-    .toString()
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/_/g, "-")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function normalizeRubriqueSlug(value: string | null | undefined) {
-  const slug = slugifyRubrique(value);
-
-  // Chansons à texte : chansons, clips, satire et anciens choix génériques.
-  if (
-    [
-      "chansons-a-texte",
-      "chanson-a-texte",
-      "chansons",
-      "chanson",
-      "song",
-      "clips",
-      "clip",
-      "satire",
-      "autre",
-      "other",
-    ].includes(slug)
-  ) {
-    return "chansons-a-texte";
-  }
-
-  // Albums : anciens albums visuels/narratifs + expérimentations IA.
-  if (
-    [
-      "albums",
-      "album",
-      "album-visuel",
-      "albums-visuels",
-      "visual-album",
-      "album-narratif",
-      "albums-narratifs",
-      "experimentation-ia",
-      "experimentations-ia",
-      "experience-ia",
-      "experiences-ia",
-      "ai-experiment",
-    ].includes(slug)
-  ) {
-    return "albums";
-  }
-
-  // Promos Keefon : anciennes rubriques "créateurs invités" ou promos.
-  if (
-    [
-      "promos-keefon",
-      "promo-keefon",
-      "promotions-keefon",
-      "promotion-keefon",
-      "createurs-invites",
-      "createur-invite",
-    ].includes(slug)
-  ) {
-    return "promos-keefon";
-  }
-
-  // Voyages sonores : paysages sonores + univers imaginaires.
-  if (
-    [
-      "voyages-sonores",
-      "voyage-sonore",
-      "paysages-sonores",
-      "paysage-sonore",
-      "soundscape",
-      "soundscapes",
-      "univers-imaginaires",
-      "univers-imaginaire",
-    ].includes(slug)
-  ) {
-    return "voyages-sonores";
-  }
-
-  return slug;
-}
-
-function officialRubriqueLabelFromSlug(slug: string) {
-  return (
-    OFFICIAL_RUBRIQUES.find((rubrique) => rubrique.slug === slug)?.name ||
-    "Rubrique inconnue"
-  );
-}
-
-function normalizeRubriqueLabel(value: string | null | undefined) {
-  const normalizedSlug = normalizeRubriqueSlug(value);
-  return officialRubriqueLabelFromSlug(normalizedSlug);
-}
-
 function creationTypeLabel(type: string) {
-  return normalizeRubriqueLabel(type);
+  switch (type) {
+    case "song":
+      return "Chanson";
+    case "clip":
+      return "Clip";
+    case "visual_album":
+      return "Album visuel";
+    case "soundscape":
+      return "Paysage sonore";
+    case "ai_experiment":
+      return "Expérimentation IA";
+    default:
+      return "Autre";
+  }
 }
 
 function FakeNotFoundPage() {
@@ -233,19 +129,9 @@ function FakeNotFoundPage() {
         </section>
 
         <style jsx>{`
-          /* ============================================================
-             Page 404 masquée : même fond que Keefon Music
-             + protection anti-débordement mobile.
-          ============================================================ */
           .page {
             min-height: 100vh;
-            min-height: 100svh;
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            overflow-x: hidden;
             color: white;
-            background-color: #05070a;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -261,9 +147,7 @@ function FakeNotFoundPage() {
           }
 
           .fakeBox {
-            width: 100%;
-            max-width: 620px;
-            box-sizing: border-box;
+            width: min(100%, 620px);
             padding: 42px;
             border-radius: 28px;
             background: rgba(0, 0, 0, 0.52);
@@ -289,18 +173,11 @@ function FakeNotFoundPage() {
             opacity: 0.82;
           }
 
-          h1,
-          p,
-          a {
-            overflow-wrap: anywhere;
-          }
-
           .primary {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-height: 46px;
-            max-width: 100%;
             padding: 0 22px;
             margin-top: 18px;
             border-radius: 999px;
@@ -308,18 +185,17 @@ function FakeNotFoundPage() {
             background: #f5c76d;
             color: #111;
             font-weight: 900;
-            text-align: center;
             text-decoration: none;
           }
 
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              padding: 24px 14px 60px;
+              padding: 24px 18px 60px;
             }
 
             .fakeBox {
-              padding: 28px 20px;
+              padding: 30px;
             }
           }
         `}</style>
@@ -347,67 +223,51 @@ export default function AdminMusiquePage() {
     return profile?.role === "admin" || profile?.role === "super_admin";
   }, [profile]);
 
-  // ============================================================
-  // Normalisation admin des rubriques
-  // ------------------------------------------------------------
-  // Supabase peut encore contenir d'anciens noms : Album narratif,
-  // Expériences IA, Créateurs invités, etc. Ici, on les regroupe
-  // visuellement dans les 4 rubriques officielles.
-  // ============================================================
-  const categorySlugById = useMemo(() => {
-    const result = new Map<string, string>();
-
-    categories.forEach((category) => {
-      result.set(category.id, normalizeRubriqueSlug(category.slug || category.name));
-    });
-
-    return result;
-  }, [categories]);
-
-  const visibleCategories = useMemo(() => {
-    const categoryByOfficialSlug = new Map<string, MusicCategory>();
-
-    categories.forEach((category) => {
-      const normalizedSlug = normalizeRubriqueSlug(category.slug || category.name);
-      const officialRubrique = OFFICIAL_RUBRIQUES.find(
-        (rubrique) => rubrique.slug === normalizedSlug
-      );
-
-      if (!officialRubrique || categoryByOfficialSlug.has(normalizedSlug)) {
-        return;
-      }
-
-      categoryByOfficialSlug.set(normalizedSlug, {
-        ...category,
-        name: officialRubrique.name,
-        slug: officialRubrique.slug,
-      });
-    });
-
-    return OFFICIAL_RUBRIQUES.map((rubrique) =>
-      categoryByOfficialSlug.get(rubrique.slug)
-    ).filter(Boolean) as MusicCategory[];
-  }, [categories]);
-
   const filteredCreations = useMemo(() => {
     return creations.filter((creation) => {
       const statusOk =
         statusFilter === "all" ? true : creation.status === statusFilter;
-
-      const creationRubriqueSlug = creation.category_id
-        ? categorySlugById.get(creation.category_id) || ""
-        : "";
 
       const categoryOk =
         categoryFilter === "all"
           ? true
           : categoryFilter === "none"
           ? creation.category_id === null
-          : creationRubriqueSlug === categoryFilter;
+          : creation.category_id === categoryFilter;
 
       return statusOk && categoryOk;
     });
-  }, [creations, statusFilter, categoryFilter, categorySlugById]);
+  }, [creations, statusFilter, categoryFilter]);
+
+  // ============================================================
+  // MODIFICATION ADMIN — publications refusées rangées à part
+  // ------------------------------------------------------------
+  // Objectif : les créations refusées ne restent plus mélangées
+  // avec les créations publiées / en attente quand le filtre est
+  // sur "Tout voir". Elles sont affichées dans une section dédiée.
+  // ============================================================
+  const mainFilteredCreations = useMemo(() => {
+    if (statusFilter === "rejected") return [];
+
+    return filteredCreations.filter(
+      (creation) => creation.status !== "rejected"
+    );
+  }, [filteredCreations, statusFilter]);
+
+  // ============================================================
+  // MODIFICATION ADMIN — section dédiée aux refusées
+  // ------------------------------------------------------------
+  // Les refusées apparaissent :
+  // - dans la section séparée quand le filtre est "Tout voir" ;
+  // - seules dans cette section quand le filtre est "Refusées".
+  // ============================================================
+  const rejectedFilteredCreations = useMemo(() => {
+    if (statusFilter !== "all" && statusFilter !== "rejected") return [];
+
+    return filteredCreations.filter(
+      (creation) => creation.status === "rejected"
+    );
+  }, [filteredCreations, statusFilter]);
 
   useEffect(() => {
     loadInitialData();
@@ -524,23 +384,7 @@ export default function AdminMusiquePage() {
     if (!categoryId) return "Non classée";
 
     const category = categories.find((item) => item.id === categoryId);
-
-    if (!category) {
-      return "Rubrique inconnue";
-    }
-
-    return normalizeRubriqueLabel(category.slug || category.name);
-  }
-
-  function getCanonicalCategoryId(categoryId: string | null) {
-    if (!categoryId) return "none";
-
-    const currentSlug = categorySlugById.get(categoryId);
-    const canonicalCategory = visibleCategories.find(
-      (category) => category.slug === currentSlug
-    );
-
-    return canonicalCategory?.id || "none";
+    return category?.name || "Rubrique inconnue";
   }
 
   async function handleLogout() {
@@ -636,6 +480,177 @@ export default function AdminMusiquePage() {
       category_id: categoryId === "none" ? null : categoryId,
     });
   }
+ 
+
+  // ============================================================
+  // MODIFICATION ADMIN — rendu unique d’une carte création
+  // ------------------------------------------------------------
+  // La carte est centralisée ici pour pouvoir l’utiliser dans la
+  // liste principale ET dans la section séparée des publications
+  // refusées, sans dupliquer tout le JSX.
+  // ============================================================
+  function renderCreationCard(creation: MusicCreation) {
+    return (
+      <article key={creation.id} className="creationCard">
+        <div className="creationHeader">
+          <div>
+            <p className="creationType">
+              {creationTypeLabel(creation.creation_type)} · {creation.platform}
+            </p>
+
+            <h2>{creation.title}</h2>
+
+            <p className="notice">
+              Déposé par <strong>{creation.public_author_name}</strong> le{" "}
+              {new Date(creation.created_at).toLocaleDateString("fr-FR")}
+            </p>
+          </div>
+
+          <div className="statusGroup">
+            {creation.is_featured && (
+              <span className="featured">Mis en avant</span>
+            )}
+
+            <span className={statusClass(creation.status)}>
+              {statusLabel(creation.status)}
+            </span>
+          </div>
+        </div>
+
+        <p>{creation.description}</p>
+
+        {creation.author_note && (
+          <div className="authorNote">
+            <strong>Note de l’auteur</strong>
+            <p>{creation.author_note}</p>
+          </div>
+        )}
+
+        {creation.rejection_reason && (
+          <p className="error">Motif de refus : {creation.rejection_reason}</p>
+        )}
+
+        <div className="metaGrid">
+          <div>
+            <strong>Rubrique</strong>
+            <select
+              value={creation.category_id || "none"}
+              onChange={(event) => changeCategory(creation, event.target.value)}
+              disabled={isUpdating}
+            >
+              <option value="none">Non classée</option>
+
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <strong>Rubrique actuelle</strong>
+            <p>{getCategoryName(creation.category_id)}</p>
+          </div>
+
+          <div>
+            <strong>Coups de cœur</strong>
+            <p>{creation.hearts_count || 0}</p>
+          </div>
+        </div>
+
+        <div className="checks">
+          <span>Droits : {creation.rights_confirmed ? "OK" : "Non"}</span>
+          <span>Diffusion : {creation.diffusion_agreed ? "OK" : "Non"}</span>
+          <span>Gratuité : {creation.no_payment_accepted ? "OK" : "Non"}</span>
+        </div>
+
+        <div className="actions">
+          <a
+            href={creation.external_url}
+            target="_blank"
+            rel="noreferrer"
+            className="secondary"
+          >
+            Ouvrir la source
+          </a>
+
+          {creation.embed_url && (
+            <a
+              href={creation.embed_url}
+              target="_blank"
+              rel="noreferrer"
+              className="secondary"
+            >
+              Voir embed
+            </a>
+          )}
+
+          {creation.status !== "published" && (
+            <>
+              {/* ============================================================
+                  MODIFICATION ADMIN — bouton Publier rouge pour les refusées
+                  ------------------------------------------------------------
+                  Une création refusée peut être republiée, mais l’action est
+                  volontairement affichée en rouge pour signaler qu’on revient
+                  sur une décision de refus.
+              ============================================================ */}
+              <button
+                type="button"
+                className={
+                  creation.status === "rejected"
+                    ? "publishRejected"
+                    : "primary"
+                }
+                onClick={() => publishCreation(creation)}
+                disabled={isUpdating}
+              >
+                Publier
+              </button>
+            </>
+          )}
+
+          {creation.status !== "pending" && (
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => setPendingCreation(creation)}
+              disabled={isUpdating}
+            >
+              Remettre en attente
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="secondary"
+            onClick={() => toggleFeatured(creation)}
+            disabled={isUpdating}
+          >
+            {creation.is_featured ? "Retirer mise en avant" : "Mettre en avant"}
+          </button>
+
+          <button
+            type="button"
+            className="danger"
+            onClick={() => rejectCreation(creation)}
+            disabled={isUpdating}
+          >
+            Refuser
+          </button>
+
+          <button
+            type="button"
+            className="danger"
+            onClick={() => removeByAdmin(creation)}
+            disabled={isUpdating}
+          >
+            Retirer admin
+          </button>
+        </div>
+      </article>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -648,18 +663,9 @@ export default function AdminMusiquePage() {
           <p>Chargement...</p>
 
           <style jsx>{`
-            /* ============================================================
-               Écran de chargement admin musique
-               + protection anti-débordement mobile.
-            ============================================================ */
             .page {
               min-height: 100vh;
-              min-height: 100svh;
-              width: 100%;
-              max-width: 100%;
-              overflow-x: hidden;
               color: white;
-              background-color: #05070a;
               background-image: url("/musique/bg-musique.png");
               background-size: cover;
               background-position: center top;
@@ -672,19 +678,10 @@ export default function AdminMusiquePage() {
             }
 
             p {
-              max-width: 100%;
               padding: 18px 24px;
               border-radius: 999px;
               background: rgba(0, 0, 0, 0.52);
               border: 1px solid rgba(255, 255, 255, 0.16);
-              overflow-wrap: anywhere;
-            }
-
-            @media (max-width: 800px) {
-              .page {
-                background-attachment: scroll;
-                padding: 24px 14px;
-              }
             }
           `}</style>
         </main>
@@ -707,7 +704,6 @@ export default function AdminMusiquePage() {
       </Head>
 
       <main className="page">
-        {/* En-tête admin : accès rapides et déconnexion */}
         <header className="header">
           <a href="/musique" className="brand">
             Keefon Music
@@ -724,7 +720,6 @@ export default function AdminMusiquePage() {
           </nav>
         </header>
 
-        {/* Bloc principal : modération et classement des créations */}
         <section className="box">
           <p className="label">Administration</p>
 
@@ -748,7 +743,6 @@ export default function AdminMusiquePage() {
             </p>
           </div>
 
-          {/* Filtres admin : statut + rubrique */}
           <div className="filters">
             <label>
               Statut
@@ -775,8 +769,8 @@ export default function AdminMusiquePage() {
                 <option value="all">Toutes les rubriques</option>
                 <option value="none">Non classées</option>
 
-                {visibleCategories.map((category) => (
-                  <option key={category.slug} value={category.slug}>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
@@ -793,170 +787,29 @@ export default function AdminMusiquePage() {
             <span>{creations.length} création(s) au total</span>
           </div>
 
-          {/* Liste des créations déposées */}
           <div className="creationsList">
-            {filteredCreations.map((creation) => (
-              <article key={creation.id} className="creationCard">
-                <div className="creationHeader">
-                  <div>
-                    <p className="creationType">
-                      {creationTypeLabel(creation.creation_type)} ·{" "}
-                      {creation.platform}
-                    </p>
+            {mainFilteredCreations.map(renderCreationCard)}
 
-                    <h2>{creation.title}</h2>
-
-                    <p className="notice">
-                      Déposé par <strong>{creation.public_author_name}</strong>{" "}
-                      le{" "}
-                      {new Date(creation.created_at).toLocaleDateString(
-                        "fr-FR"
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="statusGroup">
-                    {creation.is_featured && (
-                      <span className="featured">Mis en avant</span>
-                    )}
-
-                    <span className={statusClass(creation.status)}>
-                      {statusLabel(creation.status)}
-                    </span>
-                  </div>
-                </div>
-
-                <p>{creation.description}</p>
-
-                {creation.author_note && (
-                  <div className="authorNote">
-                    <strong>Note de l’auteur</strong>
-                    <p>{creation.author_note}</p>
-                  </div>
-                )}
-
-                {creation.rejection_reason && (
-                  <p className="error">
-                    Motif de refus : {creation.rejection_reason}
+            {/* ============================================================
+                MODIFICATION ADMIN — section séparée des publications refusées
+                ------------------------------------------------------------
+                Les créations refusées sont rangées dans ce bloc dédié pour
+                éviter de les mélanger avec les créations en attente/publiées.
+            ============================================================ */}
+            {rejectedFilteredCreations.length > 0 && (
+              <section className="rejectedSection">
+                <div className="rejectedSectionHeader">
+                  <p className="label">Publications refusées</p>
+                  <p className="notice">
+                    Créations refusées ou à republier volontairement.
                   </p>
-                )}
-
-                <div className="metaGrid">
-                  <div>
-                    <strong>Rubrique</strong>
-                    <select
-                      value={getCanonicalCategoryId(creation.category_id)}
-                      onChange={(event) =>
-                        changeCategory(creation, event.target.value)
-                      }
-                      disabled={isUpdating}
-                    >
-                      <option value="none">Non classée</option>
-
-                      {visibleCategories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <strong>Rubrique actuelle</strong>
-                    <p>{getCategoryName(creation.category_id)}</p>
-                  </div>
-
-                  <div>
-                    <strong>Coups de cœur</strong>
-                    <p>{creation.hearts_count || 0}</p>
-                  </div>
                 </div>
 
-                <div className="checks">
-                  <span>Droits : {creation.rights_confirmed ? "OK" : "Non"}</span>
-                  <span>
-                    Diffusion : {creation.diffusion_agreed ? "OK" : "Non"}
-                  </span>
-                  <span>
-                    Gratuité : {creation.no_payment_accepted ? "OK" : "Non"}
-                  </span>
+                <div className="rejectedList">
+                  {rejectedFilteredCreations.map(renderCreationCard)}
                 </div>
-
-                {/* Actions de modération : publication, mise en avant, refus, retrait */}
-                <div className="actions">
-                  <a
-                    href={creation.external_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="secondary"
-                  >
-                    Ouvrir la source
-                  </a>
-
-                  {creation.embed_url && (
-                    <a
-                      href={creation.embed_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="secondary"
-                    >
-                      Voir embed
-                    </a>
-                  )}
-
-                  {creation.status !== "published" && (
-                    <button
-                      type="button"
-                      className="primary"
-                      onClick={() => publishCreation(creation)}
-                      disabled={isUpdating}
-                    >
-                      Publier
-                    </button>
-                  )}
-
-                  {creation.status !== "pending" && (
-                    <button
-                      type="button"
-                      className="secondary"
-                      onClick={() => setPendingCreation(creation)}
-                      disabled={isUpdating}
-                    >
-                      Remettre en attente
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    className="secondary"
-                    onClick={() => toggleFeatured(creation)}
-                    disabled={isUpdating}
-                  >
-                    {creation.is_featured
-                      ? "Retirer mise en avant"
-                      : "Mettre en avant"}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="danger"
-                    onClick={() => rejectCreation(creation)}
-                    disabled={isUpdating}
-                  >
-                    Refuser
-                  </button>
-
-                  <button
-                    type="button"
-                    className="danger"
-                    onClick={() => removeByAdmin(creation)}
-                    disabled={isUpdating}
-                  >
-                    Retirer admin
-                  </button>
-                </div>
-              </article>
-            ))}
+              </section>
+            )}
 
             {filteredCreations.length === 0 && (
               <div className="emptyBox">
@@ -968,44 +821,15 @@ export default function AdminMusiquePage() {
         </section>
 
         <style jsx global>{`
-          /* ============================================================
-             Correctif global mobile : évite les bandes blanches
-             causées par un élément qui dépasse la largeur de l'écran.
-          ============================================================ */
           html {
             scroll-behavior: smooth;
-          }
-
-          html,
-          body,
-          #__next {
-            width: 100%;
-            min-height: 100%;
-            margin: 0;
-            background: #05070a;
-            overflow-x: hidden;
-          }
-
-          *,
-          *::before,
-          *::after {
-            box-sizing: border-box;
           }
         `}</style>
 
         <style jsx>{`
-          /* ============================================================
-             Page admin : fond musical + protection anti-débordement
-          ============================================================ */
           .page {
             min-height: 100vh;
-            min-height: 100svh;
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            overflow-x: hidden;
             color: white;
-            background-color: #05070a;
             background-image: url("/musique/bg-musique.png");
             background-size: cover;
             background-position: center top;
@@ -1014,13 +838,9 @@ export default function AdminMusiquePage() {
             padding: 32px 24px 80px;
           }
 
-          /* ============================================================
-             Structure principale : header + grande carte admin
-          ============================================================ */
           .header,
           .box {
-            width: 100%;
-            max-width: 1150px;
+            width: min(100%, 1150px);
             margin-left: auto;
             margin-right: auto;
           }
@@ -1050,7 +870,6 @@ export default function AdminMusiquePage() {
 
           nav a,
           nav button {
-            max-width: 100%;
             color: white;
             text-decoration: none;
             background: rgba(255, 255, 255, 0.08);
@@ -1061,16 +880,12 @@ export default function AdminMusiquePage() {
           }
 
           .box {
-            max-width: 100%;
             background: rgba(0, 0, 0, 0.46);
             border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 28px;
             padding: 42px;
           }
 
-          /* ============================================================
-             Titres et textes
-          ============================================================ */
           .label,
           .creationType {
             color: #f5c76d;
@@ -1097,26 +912,11 @@ export default function AdminMusiquePage() {
             line-height: 1.7;
           }
 
-          p,
-          h1,
-          h2,
-          label,
-          span,
-          strong,
-          a,
-          button {
-            overflow-wrap: anywhere;
-          }
-
-          /* ============================================================
-             Cartes, filtres et blocs d'information
-          ============================================================ */
           .connectedBox,
           .filters,
           .emptyBox,
           .creationCard,
           .summary {
-            max-width: 100%;
             margin-top: 28px;
             padding: 24px;
             border-radius: 22px;
@@ -1146,7 +946,6 @@ export default function AdminMusiquePage() {
 
           select {
             width: 100%;
-            max-width: 100%;
             margin-top: 8px;
             padding: 13px 14px;
             border-radius: 14px;
@@ -1160,23 +959,18 @@ export default function AdminMusiquePage() {
             color: black;
           }
 
-          /* ============================================================
-             Boutons admin
-          ============================================================ */
           .primary,
           .secondary,
-          .danger {
+          .danger,
+          .publishRejected {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-height: 46px;
-            max-width: 100%;
             padding: 0 22px;
             border-radius: 999px;
-            text-align: center;
             text-decoration: none;
             font-weight: 900;
-            white-space: normal;
             cursor: pointer;
           }
 
@@ -1198,9 +992,21 @@ export default function AdminMusiquePage() {
             color: white;
           }
 
+          /* ============================================================
+             MODIFICATION ADMIN — bouton Publier rouge pour les refusées
+             ------------------------------------------------------------
+             Classe utilisée uniquement quand status === "rejected".
+          ============================================================ */
+          .publishRejected {
+            border: 1px solid rgba(255, 115, 115, 0.62);
+            background: rgba(255, 70, 70, 0.28);
+            color: white;
+          }
+
           .primary:disabled,
           .secondary:disabled,
-          .danger:disabled {
+          .danger:disabled,
+          .publishRejected:disabled {
             opacity: 0.6;
             cursor: wait;
           }
@@ -1226,18 +1032,13 @@ export default function AdminMusiquePage() {
             border: 1px solid rgba(255, 90, 90, 0.42);
           }
 
-          /* ============================================================
-             Liste des créations à modérer
-          ============================================================ */
           .creationsList {
-            max-width: 100%;
             margin-top: 32px;
             display: grid;
             gap: 18px;
           }
 
           .creationHeader {
-            max-width: 100%;
             display: flex;
             justify-content: space-between;
             gap: 18px;
@@ -1258,13 +1059,11 @@ export default function AdminMusiquePage() {
             align-items: center;
             justify-content: center;
             min-height: 34px;
-            max-width: 100%;
             padding: 0 12px;
             border-radius: 999px;
             font-size: 0.78rem;
             font-weight: 900;
-            text-align: center;
-            white-space: normal;
+            white-space: nowrap;
           }
 
           .featured {
@@ -1298,7 +1097,6 @@ export default function AdminMusiquePage() {
           }
 
           .authorNote {
-            max-width: 100%;
             margin-top: 18px;
             padding: 16px;
             border-radius: 16px;
@@ -1307,7 +1105,6 @@ export default function AdminMusiquePage() {
           }
 
           .metaGrid {
-            max-width: 100%;
             display: grid;
             grid-template-columns: 1.2fr 1fr 0.6fr;
             gap: 16px;
@@ -1320,7 +1117,6 @@ export default function AdminMusiquePage() {
           }
 
           .checks {
-            max-width: 100%;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
@@ -1329,7 +1125,6 @@ export default function AdminMusiquePage() {
           }
 
           .checks span {
-            max-width: 100%;
             padding: 8px 12px;
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.06);
@@ -1337,15 +1132,42 @@ export default function AdminMusiquePage() {
           }
 
           .actions {
-            max-width: 100%;
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-top: 22px;
           }
 
-          .actions > * {
-            flex-shrink: 1;
+          /* ============================================================
+             MODIFICATION ADMIN — section dédiée aux publications refusées
+             ------------------------------------------------------------
+             Bloc séparé pour que les refusées ne soient plus noyées dans
+             les autres créations quand on affiche tout.
+          ============================================================ */
+          .rejectedSection {
+            margin-top: 34px;
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 115, 115, 0.32);
+            background: rgba(255, 70, 70, 0.08);
+          }
+
+          .rejectedSectionHeader {
+            margin-bottom: 16px;
+          }
+
+          .rejectedSectionHeader .label {
+            color: #ff8d8d;
+          }
+
+          .rejectedList {
+            display: grid;
+            gap: 18px;
+          }
+
+          .rejectedList .creationCard {
+            margin-top: 0;
+            border-color: rgba(255, 115, 115, 0.22);
           }
 
           @media (max-width: 900px) {
@@ -1358,7 +1180,7 @@ export default function AdminMusiquePage() {
           @media (max-width: 800px) {
             .page {
               background-attachment: scroll;
-              padding: 24px 14px 60px;
+              padding: 24px 18px 60px;
             }
 
             .header {
@@ -1367,29 +1189,8 @@ export default function AdminMusiquePage() {
               margin-bottom: 45px;
             }
 
-            nav {
-              width: 100%;
-              gap: 8px;
-            }
-
-            nav a,
-            nav button {
-              padding: 8px 12px;
-              font-size: 0.88rem;
-            }
-
             .box {
-              border-radius: 24px;
-              padding: 24px 18px;
-            }
-
-            .connectedBox,
-            .filters,
-            .emptyBox,
-            .creationCard,
-            .summary {
-              padding: 18px;
-              border-radius: 20px;
+              padding: 28px;
             }
 
             .creationHeader {
@@ -1398,18 +1199,6 @@ export default function AdminMusiquePage() {
 
             .statusGroup {
               justify-content: flex-start;
-            }
-
-            .actions {
-              gap: 8px;
-            }
-
-            .primary,
-            .secondary,
-            .danger {
-              min-height: 40px;
-              padding: 0 14px;
-              font-size: 0.88rem;
             }
           }
         `}</style>
