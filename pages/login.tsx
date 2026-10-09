@@ -187,11 +187,9 @@ export default function Login() {
 
         {/* Lien "Mot de passe oublié ?" */}
         <p className="mt-2 text-center text-xs text-gray-600">
-          Mot de passe oublié ?
-          <br />
-          Fonction temporairement en maintenance.
-          <br />
-          Si besoin, contacte le support Keefon pour récupérer l’accès à ton compte.
+          <Link href="/forgot-password" className="text-blue-600 hover:underline">
+            Mot de passe oublié ?
+          </Link>
         </p>
       </form>
     </main>
